@@ -21,8 +21,8 @@
                                        (:horizontal (q+:qt.split-hcursor)))))
   (setf (parent splitter-handle) splitter)
   (setf (q+:auto-fill-background splitter-handle) T)
-  (setf (q+:brush (q+:palette splitter-handle) (q+:qpalette.background))
-        (q+:button (q+:palette splitter-handle))))
+  (setf (q+:color (q+:palette splitter-handle) (q+:qpalette.background))
+        (q+:darker (q+:color (q+:palette splitter-handle) (q+:qpalette.background)) 150)))
 
 (defmethod drag ((splitter-handle splitter-handle) px py nx ny)
   (with-slots-bound (splitter-handle splitter-handle)
@@ -52,18 +52,13 @@
         (handles splitter)))
 
 (defmethod insert-widget :after ((n integer) widget (splitter splitter))
-  (let ((cell (nthcdr n (handles splitter))))
-    (setf (cdr cell) (cons (car cell) (cdr cell))
-          (car cell) (make-instance 'splitter-handle :widget widget :splitter splitter))))
+  (insert (make-instance 'splitter-handle :widget widget :splitter splitter) n (handles splitter)))
 
 (defmethod remove-widget :after ((n integer) (splitter splitter))
-  (cond ((= 0 n)
-         (finalize (first (handles splitter)))
-         (setf (handles splitter) (rest (handles splitter))))
-        (T
-         (let ((cell (nthcdr (1- n) (handles splitter))))
-           (finalize (cadr cell))
-           (setf (cdr cell) (cddr cell))))))
+  (finalize (remove-nth n (handles splitter))))
+
+(defmethod swap-widget :after ((a integer) (b integer) (splitter splitter))
+  (swapcar a b (handles splitter)))
 
 (defgeneric resize-widget (place size splitter))
 

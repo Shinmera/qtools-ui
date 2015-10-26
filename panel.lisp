@@ -21,7 +21,7 @@
 (define-initializer (panel-titlebar setup)
   (setf (q+:auto-fill-background panel-titlebar) T)
   (setf (q+:color (q+:palette panel-titlebar) (q+:qpalette.background))
-        (q+:make-qcolor (q+:qt.black))))
+        (q+:darker (q+:color (q+:palette panel-titlebar) (q+:qpalette.background)))))
 
 (define-subwidget (panel-titlebar title) (q+:make-qlabel panel-titlebar)
   (setf (q+:style-sheet title) "padding: 0px 3px 0px 3px;")
@@ -63,7 +63,7 @@
 
 (defmethod (setf title) (value (panel-titlebar panel-titlebar))
   (with-slots-bound (panel-titlebar panel-titlebar)
-    (setf (q+:text title) value)))
+    (setf (q+:text title) (or value ""))))
 
 (defmethod attached-p ((panel-titlebar panel-titlebar))
   (attached-p (panel panel-titlebar)))
@@ -112,7 +112,7 @@
   (stop-overriding))
 
 (defmethod attached-p ((panel panel))
-  (not (null-qobject-p (parent panel))))
+  (not (null (parent panel))))
 
 (defmethod (setf attached-p) (value (panel panel))
   (if value
@@ -121,29 +121,33 @@
 
 (defmethod (setf title) :after (title (panel panel))
   (with-slots-bound (panel panel)
-    (setf (q+:window-title panel) title)
-    (setf (title titlebar) title)))
+    (let ((title (or title "")))
+      (setf (q+:window-title panel) title)
+      (setf (title titlebar) title))))
 
-(defmethod attach ((panel panel) (container null))
-  (when (panel-container panel)
-    (attach panel (panel-container panel))))
-
-(defmethod attach ((panel panel) new-container)
+(defmethod add-widget ((panel panel) new-container)
   (with-slots-bound (panel panel)
+    (when (attached-p panel)
+      (error "~a is already attached to ~a" panel container))
+    (unless new-container
+      (error "~a cannot be attached to nothing." panel))
     (setf taching T)
     (setf container new-container)
     (setf (q+:window-flags panel) (q+:qt.widget))
     (setf (attached-p titlebar) T)
     (when attached-size
       (q+:resize panel attached-size))
+    (call-next-method)
     (setf taching NIL)))
 
-(defmethod detach ((panel panel))
+(defmethod remove-widget ((panel panel) old-container)
   (with-slots-bound (panel panel)
-    (unless container
-      (error "~a is not attached to anything!"
-             panel))
-    (setf taching T)    
+    (unless (attached-p panel)
+      (error "~a is not attached to anything!" panel))
+    (unless (eql old-container container)
+      (error "~a is not attached to ~a." panel old-container))
+    (setf taching T)
+    (call-next-method)
     (setf (q+:window-flags panel)
           (logior (q+:qt.window-stays-on-top-hint)
                   (q+:qt.tool)
@@ -155,10 +159,24 @@
       (setf (q+:geometry panel) detached-size))
     (setf taching NIL)))
 
+(defmethod attach ((panel panel) (container null))
+  (attach panel (panel-container panel)))
+
+(defmethod attach ((panel panel) new-container)
+  (add-widget panel new-container))
+
+(defmethod detach ((panel panel))
+  (remove-widget panel (panel-container panel)))
+
 (defmethod drag ((panel panel) px py nx ny)
   (cond ((attached-p panel)
-         ;; Move inside
-         )
+         (let* ((pos (q+:map-to-global panel (q+:make-qpoint nx ny)))
+                (widget (q+:qapplication-widget-at pos)))
+           (when (and (typep widget 'panel)
+                      (eql (parent widget) (parent panel))
+                      (not (eql widget panel)))
+             (v:info :test "? ~a ~a" widget panel)
+             (swap-widget widget panel (parent panel)))))
         (T
          (q+:move panel
                   (+ (q+:x panel) (- nx px))

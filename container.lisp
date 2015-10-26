@@ -12,22 +12,24 @@
   (:default-initargs :widgets ()))
 
 (defgeneric widget (place container))
+(defgeneric widget-position (widget container))
 (defgeneric add-widget (widget container))
 (defgeneric (setf widget) (widget place container))
 (defgeneric insert-widget (widget place container))
 (defgeneric remove-widget (place container))
+(defgeneric swap-widget (a b container))
 (defgeneric update (container))
 
 (defmethod widget ((n integer) (container container))
   (nth n (widgets container)))
 
-(defmethod widget (widget (container container))
+(defmethod widget ((widget qobject) (container container))
   (find widget (widgets container)))
 
-(defmethod (setf widget) (widget (n integer) (container container))
-  (setf (nth n container) widget))
+(defmethod (setf widget) ((widget qobject) (n integer) (container container))
+  (setf (nth n (widgets container)) widget))
 
-(defmethod (setf widget) (widget find (container container))
+(defmethod (setf widget) ((widget qobject) (find qobject) (container container))
   (loop for cell on (widgets container)
         when (eql (car cell) find)
         do (return (setf (car cell) widget))))
@@ -36,7 +38,15 @@
   (call-next-method)
   (update container))
 
-(defmethod add-widget (widget (container container))
+(defmethod widget-position ((widget qobject) (container container))
+  (position widget (widgets container)))
+
+(defmethod widget-position ((n integer) (container container))
+  (unless (< -1 n (length (widgets container)))
+    (error "~a is out of bounds for ~a." n container))
+  n)
+
+(defmethod add-widget ((widget qobject) (container container))
   (push widget (widgets container))
   (setf (parent widget) container))
 
@@ -44,13 +54,11 @@
   (call-next-method)
   (update container))
 
-(defmethod insert-widget (widget (n integer) (container container))
-  (let ((cell (nthcdr n (widgets container))))
-    (setf (cdr cell) (cons (car cell) (cdr cell))
-          (car cell) widget))
+(defmethod insert-widget ((widget qobject) (n integer) (container container))
+  (insert widget n (widgets container))
   (setf (parent widget) container))
 
-(defmethod insert-widget (widget (find widget) (container container))
+(defmethod insert-widget ((widget qobject) (find qobject) (container container))
   (insert-widget widget (position widget (widgets container)) container))
 
 (defmethod insert-widget :around (widget place (container container))
@@ -58,18 +66,24 @@
   (update container))
 
 (defmethod remove-widget ((n integer) (container container))
-  (cond ((= 0 n)
-         (setf (parent (first (widgets container))) NIL)
-         (setf (widgets container) (rest (widgets container))))
-        (T
-         (let ((cell (nthcdr (1- n) (widgets container))))
-           (setf (parent (cadr cell)) NIL)
-           (setf (cdr cell) (cddr cell))))))
+  (let ((widget (remove-nth n (widgets container))))
+    (setf (parent widget) NIL)
+    widget))
 
-(defmethod remove-widget (widget (container container))
+(defmethod remove-widget ((widget qobject) (container container))
   (remove-widget (position widget (widgets container)) container))
 
 (defmethod remove-widget :around (place (container container))
+  (call-next-method)
+  (update container))
+
+(defmethod swap-widget ((a integer) (b integer) (container container))
+  (swapcar a b (widgets container)))
+
+(defmethod swap-widget (a b (container container))
+  (swap-widget (widget-position a container) (widget-position b container) container))
+
+(defmethod swap-widget :around (a b (container container))
   (call-next-method)
   (update container))
 

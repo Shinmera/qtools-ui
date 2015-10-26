@@ -51,10 +51,3 @@
 
 (defmethod update ((panel-container panel-container))
   (update (slot-value panel-container 'viewport)))
-
-(defmethod attach :after ((panel panel) (panel-container panel-container))
-  (add-widget panel panel-container))
-
-(defmethod detach :before ((panel panel))
-  (when (panel-container panel)
-    (remove-widget panel (panel-container panel))))

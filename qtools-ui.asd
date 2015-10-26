@@ -12,6 +12,7 @@
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :serial T
   :components ((:file "package")
+               (:file "toolkit")
                (:file "container")
                (:file "draggable")
                (:file "splitter")
