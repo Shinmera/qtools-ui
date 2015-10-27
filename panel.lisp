@@ -34,17 +34,27 @@
   (setf (q+:flat attach-toggle) T)
   (setf (q+:cursor attach-toggle) (q+:make-qcursor (q+:qt.arrow-cursor))))
 
+(define-subwidget (panel-titlebar collapse-toggle) (q+:make-qpushbutton "Collapse" panel-titlebar)
+  (setf (q+:style-sheet collapse-toggle) "padding: 0px 3px 0px 3px;")
+  (setf (q+:flat collapse-toggle) T)
+  (setf (q+:cursor collapse-toggle) (q+:make-qcursor (q+:qt.arrow-cursor))))
+
 (define-subwidget (panel-titlebar layout) (q+:make-qhboxlayout panel-titlebar)
   (setf (q+:alignment layout) (q+:qt.align-right))
   (setf (q+:margin layout) 0)
   (setf (q+:spacing layout) 0)
   (q+:add-widget layout title)
   (q+:add-stretch layout 1)
+  (q+:add-widget layout collapse-toggle)
   (q+:add-widget layout attach-toggle))
 
 (define-slot (panel-titlebar attach-toggle) ()
   (declare (connected attach-toggle (pressed)))
   (setf (attached-p panel) (not (attached-p panel))))
+
+(define-slot (panel-titlebar collapse-toggle) ()
+  (declare (connected collapse-toggle (pressed)))
+  (setf (collapsed-p panel) (not (collapsed-p panel))))
 
 (defmethod drag-start ((panel-titlebar panel-titlebar) x y)
   (q+:qapplication-set-override-cursor (q+:make-qcursor (q+:qt.closed-hand-cursor))))
@@ -70,7 +80,7 @@
   (with-slots-bound (panel-titlebar panel-titlebar)
     (setf (q+:text attach-toggle) (if attached-p "Detach" "Attach"))))
 
-(define-widget panel (QWidget)
+(define-widget panel (QWidget compass)
   ((container :initarg :container :accessor panel-container)
    (title :initarg :title :accessor title)
    (attached-size :initform NIL :accessor attached-size)
@@ -83,18 +93,13 @@
 (define-initializer (panel setup)
   (when (panel-container panel)
     (attach panel (panel-container panel)))
-  (setf (title panel) (title panel))
-  (setf (q+:minimum-size panel) (values 100 50)))
+  (setf (title panel) (title panel)))
 
-(define-subwidget (panel titlebar) (make-instance 'panel-titlebar :panel panel))
-
-(define-subwidget (panel layout) (q+:make-qvboxlayout panel)
-  (setf (q+:alignment layout) (q+:qt.align-top))
-  (setf (q+:margin layout) 0)
-  (setf (q+:spacing layout) 0)
-  (q+:add-widget layout titlebar))
+(define-subwidget (panel titlebar) (make-instance 'panel-titlebar :panel panel)
+  (setf (north-widget panel) titlebar))
 
 (define-override (panel resize-event) (ev)
+  (update panel)
   (unless taching
     (cond ((attached-p panel)
            (fsetf (attached-size panel) (copy (q+:size panel))))
@@ -115,6 +120,14 @@
   (if value
       (attach panel NIL)
       (detach panel)))
+
+(defmethod collapsed-p ((panel panel))
+  (not (and (center-widget panel)
+            (q+:is-visible (center-widget panel)))))
+
+(defmethod (setf collapsed-p) (value (panel panel))
+  (when (center-widget panel)
+    (setf (q+:visible (center-widget panel)) (not value))))
 
 (defmethod (setf title) :after (title (panel panel))
   (with-slots-bound (panel panel)
