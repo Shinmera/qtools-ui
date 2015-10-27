@@ -31,3 +31,6 @@
            (let ((,cell (nthcdr (1- ,n) ,list)))
              (prog1 (cadr ,cell)
                (setf (cdr ,cell) (cddr ,cell))))))))
+
+(defun clamp (low mid high)
+  (min (max mid low) high))

@@ -66,8 +66,8 @@
   (resize-widget (widget n splitter) size splitter))
 
 (defmethod resize-widget (widget size (splitter splitter))
-  (let ((w (max 0 (if (consp size) (car size) size)))
-        (h (max 0 (if (consp size) (cdr size) size))))
+  (let ((w (clamp (q+:minimum-width widget) (if (consp size) (car size) size) (q+:maximum-width widget)))
+        (h (clamp (q+:minimum-height widget) (if (consp size) (cdr size) size) (q+:maximum-height widget))))
     (setf (q+:geometry widget) (values (q+:x widget) (q+:y widget) w h))
     (update splitter)))
 
