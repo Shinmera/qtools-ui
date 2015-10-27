@@ -17,7 +17,8 @@
                (:file "draggable")
                (:file "splitter")
                (:file "panel")
-               (:file "panel-container"))
+               (:file "panel-container")
+               (:file "keychord-editor"))
   :depends-on (:qtools
                :qtcore
                :qtgui))
