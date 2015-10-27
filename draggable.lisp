@@ -10,25 +10,32 @@
 (define-widget draggable (QWidget)
   ((dragging :initform NIL :accessor dragging)))
 
-(define-signal (draggable dragging) (int int int int))
+(defgeneric drag-start (widget x y))
 (defgeneric drag (widget from-x from-y to-x to-y))
+(defgeneric drag-end (widget x y))
 
 (define-override (draggable mouse-press-event) (ev)
   (when (and (not dragging)
              (= (enum-value (q+:button ev)) (q+:qt.left-button)))
-    (setf dragging (list (q+:x ev) (q+:y ev))))
+    (setf dragging (list (q+:x ev) (q+:y ev)))
+    (drag-start draggable (q+:x ev) (q+:y ev)))
   (stop-overriding))
 
 (define-override (draggable mouse-release-event) (ev)
   (when (= (enum-value (q+:button ev)) (q+:qt.left-button))
-    (setf dragging NIL))
+    (setf dragging NIL)
+    (drag-end draggable (q+:x ev) (q+:y ev)))
   (stop-overriding))
 
 (define-override (draggable mouse-move-event) (ev)
   (when dragging
     (destructuring-bind (x y) dragging
-      (signal! draggable (dragging int int int int) x y (q+:x ev) (q+:y ev))))
+      (drag draggable x y (q+:x ev) (q+:y ev))))
   (stop-overriding))
 
-(define-slot (draggable drag drag) ((px int) (py int) (nx int) (ny int))
-  (declare (connected draggable (dragging int int int int))))
+(defmethod drag ((draggable draggable) px py nx ny)
+  (declare (ignore draggable px py nx ny)))
+(defmethod drag-start ((draggable draggable) x y)
+  (declare (ignore draggable x y)))
+(defmethod drag-end ((draggable draggable) x y)
+  (declare (ignore draggable x y)))
