@@ -13,6 +13,7 @@
   :serial T
   :components ((:file "package")
                (:file "toolkit")
+               (:file "compass")
                (:file "container")
                (:file "draggable")
                (:file "splitter")
