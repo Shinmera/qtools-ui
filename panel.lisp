@@ -19,6 +19,7 @@
     :panel (error "PANEL required.")))
 
 (define-initializer (panel-titlebar setup)
+  (setf (q+:cursor panel-titlebar) (q+:make-qcursor (q+:qt.open-hand-cursor)))
   (setf (q+:auto-fill-background panel-titlebar) T)
   (setf (q+:color (q+:palette panel-titlebar) (q+:qpalette.background))
         (q+:darker (q+:color (q+:palette panel-titlebar) (q+:qpalette.background)))))
@@ -28,14 +29,10 @@
   (when (title panel)
     (setf (q+:text title) (title panel))))
 
-(define-subwidget (panel-titlebar attach) (q+:make-qpushbutton "Attach" panel-titlebar)
-  (setf (q+:style-sheet attach) "padding: 0px 3px 0px 3px;")
-  (setf (q+:flat attach) T))
-
-(define-subwidget (panel-titlebar detach) (q+:make-qpushbutton "Detach" panel-titlebar)
-  (setf (q+:style-sheet detach) "padding: 0px 3px 0px 3px;")
-  (setf (q+:flat detach) T)
-  (q+:hide detach))
+(define-subwidget (panel-titlebar attach-toggle) (q+:make-qpushbutton "Attach" panel-titlebar)
+  (setf (q+:style-sheet attach-toggle) "padding: 0px 3px 0px 3px;")
+  (setf (q+:flat attach-toggle) T)
+  (setf (q+:cursor attach-toggle) (q+:make-qcursor (q+:qt.arrow-cursor))))
 
 (define-subwidget (panel-titlebar layout) (q+:make-qhboxlayout panel-titlebar)
   (setf (q+:alignment layout) (q+:qt.align-right))
@@ -43,19 +40,14 @@
   (setf (q+:spacing layout) 0)
   (q+:add-widget layout title)
   (q+:add-stretch layout 1)
-  (q+:add-widget layout attach)
-  (q+:add-widget layout detach))
+  (q+:add-widget layout attach-toggle))
 
-(define-slot (panel-titlebar attach) ()
-  (declare (connected attach (pressed)))
-  (attach panel NIL))
-
-(define-slot (panel-titlebar detach) ()
-  (declare (connected detach (pressed)))
-  (detach panel))
+(define-slot (panel-titlebar attach-toggle) ()
+  (declare (connected attach-toggle (pressed)))
+  (setf (attached-p panel) (not (attached-p panel))))
 
 (defmethod drag-start ((panel-titlebar panel-titlebar) x y)
-  (q+:qapplication-set-override-cursor (q+:make-qcursor (q+:qt.open-hand-cursor))))
+  (q+:qapplication-set-override-cursor (q+:make-qcursor (q+:qt.closed-hand-cursor))))
 
 (defmethod drag-end ((panel-titlebar panel-titlebar) x y)
   (q+:qapplication-restore-override-cursor))
@@ -76,8 +68,7 @@
 
 (defmethod (setf attached-p) (attached-p (panel-titlebar panel-titlebar))
   (with-slots-bound (panel-titlebar panel-titlebar)
-    (setf (q+:visible attach) (not attached-p))
-    (setf (q+:visible detach) attached-p)))
+    (setf (q+:text attach-toggle) (if attached-p "Detach" "Attach"))))
 
 (define-widget panel (QWidget)
   ((container :initarg :container :accessor panel-container)
