@@ -54,6 +54,12 @@
   (declare (connected detach (pressed)))
   (detach panel))
 
+(defmethod drag-start ((panel-titlebar panel-titlebar) x y)
+  (q+:qapplication-set-override-cursor (q+:make-qcursor (q+:qt.open-hand-cursor))))
+
+(defmethod drag-end ((panel-titlebar panel-titlebar) x y)
+  (q+:qapplication-restore-override-cursor))
+
 (defmethod drag ((panel-titlebar panel-titlebar) px py nx ny)
   (drag (panel panel-titlebar) px py nx ny))
 
@@ -175,7 +181,6 @@
            (when (and (typep widget 'panel)
                       (eql (parent widget) (parent panel))
                       (not (eql widget panel)))
-             (v:info :test "? ~a ~a" widget panel)
              (swap-widget widget panel (parent panel)))))
         (T
          (q+:move panel
