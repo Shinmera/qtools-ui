@@ -28,19 +28,23 @@
 (defmethod widget-acceptable-p ((widget qobject) (layout layout))
   T)
 
+(defun check-widget-permitted (widget layout)
+  (unless (widget-acceptable-p widget layout)
+    (cerror "~a does not accept ~a." layout widget))
+  (when (eql (parent widget) layout)
+    (error "~a is already contained in ~a." widget layout)))
+
 (defmethod (setf widget) :around (widget place (layout layout))
   (unless (widget-acceptable-p widget layout)
     (cerror "~a does not accept ~a." layout widget))
   (call-next-method))
 
 (defmethod add-widget :around (widget (layout layout))
-  (unless (widget-acceptable-p widget layout)
-    (cerror "~a does not accept ~a." layout widget))
+  (check-widget-permitted widget layout)
   (call-next-method))
 
 (defmethod insert-widget :around (widget place (layout layout))
-  (unless (widget-acceptable-p widget layout)
-    (cerror "~a does not accept ~a." layout widget))
+  (check-widget-permitted widget layout)
   (call-next-method))
 
 (define-override (layout resize-event) (ev)
