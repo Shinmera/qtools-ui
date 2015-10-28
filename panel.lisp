@@ -32,12 +32,16 @@
 (define-subwidget (panel-titlebar attach-toggle) (q+:make-qpushbutton "Attach" panel-titlebar)
   (setf (q+:style-sheet attach-toggle) "padding: 0px 3px 0px 3px;")
   (setf (q+:flat attach-toggle) T)
-  (setf (q+:cursor attach-toggle) (q+:make-qcursor (q+:qt.arrow-cursor))))
+  (setf (q+:cursor attach-toggle) (q+:make-qcursor (q+:qt.arrow-cursor)))
+  (unless (detachable-p panel)
+    (q+:hide attach-toggle)))
 
 (define-subwidget (panel-titlebar collapse-toggle) (q+:make-qpushbutton "Collapse" panel-titlebar)
   (setf (q+:style-sheet collapse-toggle) "padding: 0px 3px 0px 3px;")
   (setf (q+:flat collapse-toggle) T)
-  (setf (q+:cursor collapse-toggle) (q+:make-qcursor (q+:qt.arrow-cursor))))
+  (setf (q+:cursor collapse-toggle) (q+:make-qcursor (q+:qt.arrow-cursor)))
+  (unless (collapsable-p panel)
+    (q+:hide collapse-toggle)))
 
 (define-subwidget (panel-titlebar layout) (q+:make-qhboxlayout panel-titlebar)
   (setf (q+:alignment layout) (q+:qt.align-right))
@@ -80,19 +84,31 @@
   (with-slots-bound (panel-titlebar panel-titlebar)
     (setf (q+:text attach-toggle) (if attached-p "Detach" "Attach"))))
 
+(defmethod (setf detachable-p) (value (panel-titlebar panel-titlebar))
+  (with-slots-bound (panel-titlebar panel-titlebar)
+    (setf (q+:visible attach-toggle) value)))
+
+(defmethod (setf collapsable-p) (value (panel-titlebar panel-titlebar))
+  (with-slots-bound (panel-titlebar panel-titlebar)
+    (setf (q+:visible collapse-toggle) value)))
+
 (define-widget panel (QWidget compass)
   ((container :initarg :container :accessor panel-container)
    (title :initarg :title :accessor title)
    (attached-size :initform NIL :accessor attached-size)
    (detached-size :initform NIL :accessor detached-size)
-   (taching :initform NIL :accessor taching))
+   (taching :initform NIL :accessor taching)
+   (detachable :initarg :detachable :accessor detachable-p)
+   (collapsable :initarg :collapsable :accessor collapsable-p))
   (:default-initargs
     :container NIL
-    :title NIL))
+    :title NIL
+    :detachable T
+    :collapsable T))
 
 (define-initializer (panel setup)
   (when (panel-container panel)
-    (attach panel (panel-container panel)))
+    (attach panel NIL))
   (setf (title panel) (title panel)))
 
 (define-subwidget (panel titlebar) (make-instance 'panel-titlebar :panel panel)
@@ -122,12 +138,19 @@
       (detach panel)))
 
 (defmethod collapsed-p ((panel panel))
-  (not (and (center-widget panel)
-            (q+:is-visible (center-widget panel)))))
+  (not (and (widget :center panel)
+            (q+:is-visible (widget :center panel)))))
 
 (defmethod (setf collapsed-p) (value (panel panel))
-  (when (center-widget panel)
-    (setf (q+:visible (center-widget panel)) (not value))))
+  (if value
+      (collapse panel)
+      (expand panel)))
+
+(defmethod (setf detachable-p) :after (value (panel panel))
+  (setf (detachable-p (slot-value panel 'titlebar)) value))
+
+(defmethod (setf collapsable-p) :after (value (panel panel))
+  (setf (attachable-p (slot-value panel 'titlebar)) value))
 
 (defmethod (setf title) :after (title (panel panel))
   (with-slots-bound (panel panel)
@@ -176,7 +199,18 @@
   (add-widget panel new-container))
 
 (defmethod detach ((panel panel))
-  (remove-widget panel (panel-container panel)))
+  (when (detachable-p panel)
+    (remove-widget panel (panel-container panel))))
+
+(defmethod expand ((panel panel))
+  (when (widget :center panel)
+    (q+:show (widget :center panel))
+    (update panel)))
+
+(defmethod collapse ((panel panel))
+  (when (and (widget :center panel) (collapsable-p panel))
+    (q+:hide (widget :center panel))
+    (update panel)))
 
 (defmethod drag ((panel panel) px py nx ny)
   (cond ((attached-p panel)
