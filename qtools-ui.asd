@@ -14,13 +14,16 @@
   :components ((:file "package")
                (:file "toolkit")
                (:file "layout")
+               (:file "items")
+               (:file "repaintable")
                (:file "compass")
                (:file "container")
                (:file "draggable")
                (:file "splitter")
                (:file "panel")
                (:file "panel-container")
-               (:file "keychord-editor"))
+               (:file "keychord-editor")
+               (:file "listing"))
   :depends-on (:qtools
                :qtcore
                :qtgui))
