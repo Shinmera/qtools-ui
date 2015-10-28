@@ -33,7 +33,7 @@
     :title NIL
     :detachable T
     :collapsable T
-    :show-titlebar T))
+    :titlebar-shown T))
 
 (define-initializer (panel setup)
   (when (panel-container panel)
@@ -41,7 +41,7 @@
   (setf (title panel) (title panel)))
 
 (define-subwidget (panel titlebar) (make-instance 'panel-titlebar :panel panel)
-  (when show-titlebar
+  (when titlebar-shown
     (setf (widget :north panel) titlebar)))
 
 (define-override (panel resize-event) (ev)
