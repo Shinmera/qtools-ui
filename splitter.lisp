@@ -7,28 +7,7 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
-(define-widget splitter-handle (QWidget draggable)
-  ((widget :initarg :widget)
-   (splitter :initarg :splitter))
-  (:default-initargs
-    :widget (error "WIDGET required.")
-    :splitter (error "SPLITTER required.")))
-
-(define-initializer (splitter-handle setup)
-  (setf (q+:cursor splitter-handle) (q+:make-qcursor
-                                     (ecase (orientation splitter)
-                                       (:vertical (q+:qt.split-vcursor))
-                                       (:horizontal (q+:qt.split-hcursor)))))
-  (setf (parent splitter-handle) splitter)
-  (setf (q+:auto-fill-background splitter-handle) T)
-  (setf (q+:color (q+:palette splitter-handle) (q+:qpalette.background))
-        (q+:darker (q+:color (q+:palette splitter-handle) (q+:qpalette.background)) 150)))
-
-(defmethod drag ((splitter-handle splitter-handle) px py nx ny)
-  (with-slots-bound (splitter-handle splitter-handle)
-    (resize-widget widget (cons (+ (q+:width widget) (- nx px))
-                                (+ (q+:height widget) (- ny py)))
-                   splitter)))
+(defgeneric resize-widget (place size splitter))
 
 (define-widget splitter (QWidget container)
   ((orientation :initarg :orientation :accessor orientation)
@@ -60,8 +39,6 @@
 (defmethod swap-widget :after ((a integer) (b integer) (splitter splitter))
   (swapcar a b (handles splitter)))
 
-(defgeneric resize-widget (place size splitter))
-
 (defmethod resize-widget ((n integer) size (splitter splitter))
   (resize-widget (widget n splitter) size splitter))
 
@@ -90,3 +67,27 @@
            do (setf (q+:geometry widget) (values x 0 (q+:width widget) (q+:height splitter)))
               (setf (q+:geometry handle) (values (+ x (q+:width widget)) 0 (handle-size splitter) (q+:height splitter)))
            finally (setf (q+:minimum-width splitter) x)))))
+
+
+(define-widget splitter-handle (QWidget draggable)
+  ((widget :initarg :widget)
+   (splitter :initarg :splitter))
+  (:default-initargs
+    :widget (error "WIDGET required.")
+    :splitter (error "SPLITTER required.")))
+
+(define-initializer (splitter-handle setup)
+  (setf (q+:cursor splitter-handle) (q+:make-qcursor
+                                     (ecase (orientation splitter)
+                                       (:vertical (q+:qt.split-vcursor))
+                                       (:horizontal (q+:qt.split-hcursor)))))
+  (setf (parent splitter-handle) splitter)
+  (setf (q+:auto-fill-background splitter-handle) T)
+  (setf (q+:color (q+:palette splitter-handle) (q+:qpalette.background))
+        (q+:darker (q+:color (q+:palette splitter-handle) (q+:qpalette.background)) 150)))
+
+(defmethod drag ((splitter-handle splitter-handle) px py nx ny)
+  (with-slots-bound (splitter-handle splitter-handle)
+    (resize-widget widget (cons (+ (q+:width widget) (- nx px))
+                                (+ (q+:height widget) (- ny py)))
+                   splitter)))
