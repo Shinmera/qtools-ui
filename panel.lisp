@@ -7,97 +7,23 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
-(defgeneric attached-p (panel))
+(defgeneric panel-container (panel))
+(defgeneric title (panel))
+(defgeneric detachable-p (panel))
+(defgeneric collapsable-p (panel))
+(defgeneric titlebar-shown-p (panel))
 (defgeneric attach (panel container))
 (defgeneric detach (panel))
-(defgeneric panel-container (panel))
+(defgeneric expand (panel))
+(defgeneric collapse (panel))
 (defgeneric exit (panel))
-
-(define-widget panel-titlebar (QWidget draggable)
-  ((panel :initarg :panel :accessor panel))
-  (:default-initargs
-    :panel (error "PANEL required.")))
-
-(define-initializer (panel-titlebar setup)
-  (setf (q+:cursor panel-titlebar) (q+:make-qcursor (q+:qt.open-hand-cursor)))
-  (setf (q+:auto-fill-background panel-titlebar) T)
-  (setf (q+:color (q+:palette panel-titlebar) (q+:qpalette.background))
-        (q+:darker (q+:color (q+:palette panel-titlebar) (q+:qpalette.background)))))
-
-(define-subwidget (panel-titlebar title) (q+:make-qlabel panel-titlebar)
-  (setf (q+:style-sheet title) "padding: 0px 3px 0px 3px;")
-  (when (title panel)
-    (setf (q+:text title) (title panel))))
-
-(define-subwidget (panel-titlebar attach-toggle) (q+:make-qpushbutton "Attach" panel-titlebar)
-  (setf (q+:style-sheet attach-toggle) "padding: 0px 3px 0px 3px;")
-  (setf (q+:flat attach-toggle) T)
-  (setf (q+:cursor attach-toggle) (q+:make-qcursor (q+:qt.arrow-cursor)))
-  (unless (detachable-p panel)
-    (q+:hide attach-toggle)))
-
-(define-subwidget (panel-titlebar collapse-toggle) (q+:make-qpushbutton "Collapse" panel-titlebar)
-  (setf (q+:style-sheet collapse-toggle) "padding: 0px 3px 0px 3px;")
-  (setf (q+:flat collapse-toggle) T)
-  (setf (q+:cursor collapse-toggle) (q+:make-qcursor (q+:qt.arrow-cursor)))
-  (unless (collapsable-p panel)
-    (q+:hide collapse-toggle)))
-
-(define-subwidget (panel-titlebar layout) (q+:make-qhboxlayout panel-titlebar)
-  (setf (q+:alignment layout) (q+:qt.align-right))
-  (setf (q+:margin layout) 0)
-  (setf (q+:spacing layout) 0)
-  (q+:add-widget layout title)
-  (q+:add-stretch layout 1)
-  (q+:add-widget layout collapse-toggle)
-  (q+:add-widget layout attach-toggle))
-
-(define-slot (panel-titlebar attach-toggle) ()
-  (declare (connected attach-toggle (pressed)))
-  (setf (attached-p panel) (not (attached-p panel))))
-
-(define-slot (panel-titlebar collapse-toggle) ()
-  (declare (connected collapse-toggle (pressed)))
-  (setf (collapsed-p panel) (not (collapsed-p panel))))
-
-(defmethod drag-start ((panel-titlebar panel-titlebar) x y)
-  (q+:qapplication-set-override-cursor (q+:make-qcursor (q+:qt.closed-hand-cursor))))
-
-(defmethod drag-end ((panel-titlebar panel-titlebar) x y)
-  (q+:qapplication-restore-override-cursor))
-
-(defmethod drag ((panel-titlebar panel-titlebar) px py nx ny)
-  (drag (panel panel-titlebar) px py nx ny))
-
-(defmethod title ((panel-titlebar panel-titlebar))
-  (with-slots-bound (panel-titlebar panel-titlebar)
-    (q+:text title)))
-
-(defmethod (setf title) (value (panel-titlebar panel-titlebar))
-  (with-slots-bound (panel-titlebar panel-titlebar)
-    (setf (q+:text title) (or value ""))))
-
-(defmethod attached-p ((panel-titlebar panel-titlebar))
-  (attached-p (panel panel-titlebar)))
-
-(defmethod (setf attached-p) (attached-p (panel-titlebar panel-titlebar))
-  (with-slots-bound (panel-titlebar panel-titlebar)
-    (setf (q+:text attach-toggle) (if attached-p "Detach" "Attach"))))
-
-(defmethod (setf detachable-p) (value (panel-titlebar panel-titlebar))
-  (with-slots-bound (panel-titlebar panel-titlebar)
-    (setf (q+:visible attach-toggle) value)))
-
-(defmethod (setf collapsable-p) (value (panel-titlebar panel-titlebar))
-  (with-slots-bound (panel-titlebar panel-titlebar)
-    (setf (q+:visible collapse-toggle) value)))
 
 (define-widget panel (QWidget compass)
   ((container :initarg :container :accessor panel-container)
    (title :initarg :title :accessor title)
    (detachable :initarg :detachable :accessor detachable-p)
    (collapsable :initarg :collapsable :accessor collapsable-p)
-   (show-titlebar :initarg :show-titlebar :accessor show-titlebar-p)
+   (titlebar-shown :initarg :titlebar-shown :accessor titlebar-shown-p)
    
    (attached-size :initform NIL :accessor attached-size)
    (detached-size :initform NIL :accessor detached-size)
@@ -156,7 +82,7 @@
 (defmethod (setf collapsable-p) :after (value (panel panel))
   (setf (attachable-p (slot-value panel 'titlebar)) value))
 
-(defmethod (setf show-titlebar-p) :after (value (panel panel))
+(defmethod (setf titlebar-shown-p) :after (value (panel panel))
   (if value
       (setf (widget :north panel) (slot-value panel 'titlebar))
       (setf (widget :north panel) NIL)))
@@ -238,3 +164,83 @@
   (detach panel)
   (q+:close panel)
   (finalize panel))
+
+
+(define-widget panel-titlebar (QWidget draggable)
+  ((panel :initarg :panel :accessor panel))
+  (:default-initargs
+    :panel (error "PANEL required.")))
+
+(define-initializer (panel-titlebar setup)
+  (setf (q+:cursor panel-titlebar) (q+:make-qcursor (q+:qt.open-hand-cursor)))
+  (setf (q+:auto-fill-background panel-titlebar) T)
+  (setf (q+:color (q+:palette panel-titlebar) (q+:qpalette.background))
+        (q+:darker (q+:color (q+:palette panel-titlebar) (q+:qpalette.background)))))
+
+(define-subwidget (panel-titlebar title) (q+:make-qlabel panel-titlebar)
+  (setf (q+:style-sheet title) "padding: 0px 3px 0px 3px;")
+  (when (title panel)
+    (setf (q+:text title) (title panel))))
+
+(define-subwidget (panel-titlebar attach-toggle) (q+:make-qpushbutton "Attach" panel-titlebar)
+  (setf (q+:style-sheet attach-toggle) "padding: 0px 3px 0px 3px;")
+  (setf (q+:flat attach-toggle) T)
+  (setf (q+:cursor attach-toggle) (q+:make-qcursor (q+:qt.arrow-cursor)))
+  (unless (detachable-p panel)
+    (q+:hide attach-toggle)))
+
+(define-subwidget (panel-titlebar collapse-toggle) (q+:make-qpushbutton "Collapse" panel-titlebar)
+  (setf (q+:style-sheet collapse-toggle) "padding: 0px 3px 0px 3px;")
+  (setf (q+:flat collapse-toggle) T)
+  (setf (q+:cursor collapse-toggle) (q+:make-qcursor (q+:qt.arrow-cursor)))
+  (unless (collapsable-p panel)
+    (q+:hide collapse-toggle)))
+
+(define-subwidget (panel-titlebar layout) (q+:make-qhboxlayout panel-titlebar)
+  (setf (q+:alignment layout) (q+:qt.align-right))
+  (setf (q+:margin layout) 0)
+  (setf (q+:spacing layout) 0)
+  (q+:add-widget layout title)
+  (q+:add-stretch layout 1)
+  (q+:add-widget layout collapse-toggle)
+  (q+:add-widget layout attach-toggle))
+
+(define-slot (panel-titlebar attach-toggle) ()
+  (declare (connected attach-toggle (pressed)))
+  (setf (attached-p panel) (not (attached-p panel))))
+
+(define-slot (panel-titlebar collapse-toggle) ()
+  (declare (connected collapse-toggle (pressed)))
+  (setf (collapsed-p panel) (not (collapsed-p panel))))
+
+(defmethod drag-start ((panel-titlebar panel-titlebar) x y)
+  (q+:qapplication-set-override-cursor (q+:make-qcursor (q+:qt.closed-hand-cursor))))
+
+(defmethod drag-end ((panel-titlebar panel-titlebar) x y)
+  (q+:qapplication-restore-override-cursor))
+
+(defmethod drag ((panel-titlebar panel-titlebar) px py nx ny)
+  (drag (panel panel-titlebar) px py nx ny))
+
+(defmethod title ((panel-titlebar panel-titlebar))
+  (with-slots-bound (panel-titlebar panel-titlebar)
+    (q+:text title)))
+
+(defmethod (setf title) (value (panel-titlebar panel-titlebar))
+  (with-slots-bound (panel-titlebar panel-titlebar)
+    (setf (q+:text title) (or value ""))))
+
+(defmethod attached-p ((panel-titlebar panel-titlebar))
+  (attached-p (panel panel-titlebar)))
+
+(defmethod (setf attached-p) (attached-p (panel-titlebar panel-titlebar))
+  (with-slots-bound (panel-titlebar panel-titlebar)
+    (setf (q+:text attach-toggle) (if attached-p "Detach" "Attach"))))
+
+(defmethod (setf detachable-p) (value (panel-titlebar panel-titlebar))
+  (with-slots-bound (panel-titlebar panel-titlebar)
+    (setf (q+:visible attach-toggle) value)))
+
+(defmethod (setf collapsable-p) (value (panel-titlebar panel-titlebar))
+  (with-slots-bound (panel-titlebar panel-titlebar)
+    (setf (q+:visible collapse-toggle) value)))
