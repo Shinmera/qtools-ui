@@ -154,7 +154,7 @@
            (when (and (typep widget 'panel)
                       (eql (parent widget) (parent panel))
                       (not (eql widget panel)))
-             (swap-widget widget panel (parent panel)))))
+             (swap-widgets widget panel (parent panel)))))
         (T
          (q+:move panel
                   (+ (q+:x panel) (- nx px))

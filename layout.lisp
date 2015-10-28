@@ -12,15 +12,26 @@
 
 (defgeneric widget (place layout))
 (defgeneric (setf widget) (widget place layout))
-(defgeneric widget-position (widget layout))
+(defgeneric find-widget (widget layout &key key test test-not))
+(defgeneric widget-position (widget layout &key key test test-not))
 (defgeneric add-widget (widget layout))
 (defgeneric insert-widget (widget place layout))
 (defgeneric remove-widget (place layout))
-(defgeneric swap-widget (a b layout))
+(defgeneric swap-widgets (a b layout))
 (defgeneric update (layout))
 (defgeneric widget-acceptable-p (widget layout))
 
 (defmethod update ((layout layout)))
+
+(defmethod find-widget :around (widget layout &key key test test-not)
+  (when (and test test-not)
+    (error "Cannot specify both TEST and TEST-NOT simultaneously."))
+  (call-next-method widget layout :key (default-test test test-not) :test (or test #'eql) :test-not test-not))
+
+(defmethod widget-position :around (widget layout &key key test test-not)
+  (when (and test test-not)
+    (error "Cannot specify both TEST and TEST-NOT simultaneously."))
+  (call-next-method widget layout :key (default-test test test-not) :test (or test #'eql) :test-not test-not))
 
 (defmethod widget-acceptable-p (widget (layout layout))
   NIL)

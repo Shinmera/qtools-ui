@@ -29,13 +29,11 @@
   (call-next-method)
   (update container))
 
-(defmethod widget-position ((widget qobject) (container container))
-  (position widget (widgets container)))
+(defmethod widget-position (widget (container container) &key key test test-not)
+  (position widget (widgets container) :key key :test test :test-not test-not))
 
-(defmethod widget-position ((n integer) (container container))
-  (unless (< -1 n (length (widgets container)))
-    (error "~a is out of bounds for ~a." n container))
-  n)
+(defmethod find-widget (widget (container container) &key key test test-not)
+  (find widget (widgets container) :key key :test test :test-not test-not))
 
 (defmethod add-widget ((widget qobject) (container container))
   (push widget (widgets container))
@@ -68,12 +66,12 @@
   (call-next-method)
   (update container))
 
-(defmethod swap-widget ((a integer) (b integer) (container container))
+(defmethod swap-widgets ((a integer) (b integer) (container container))
   (swapcar a b (widgets container)))
 
-(defmethod swap-widget (a b (container container))
-  (swap-widget (widget-position a container) (widget-position b container) container))
+(defmethod swap-widgets (a b (container container))
+  (swap-widgets (widget-position a container) (widget-position b container) container))
 
-(defmethod swap-widget :around (a b (container container))
+(defmethod swap-widgets :around (a b (container container))
   (call-next-method)
   (update container))

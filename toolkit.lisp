@@ -34,3 +34,8 @@
 
 (defun clamp (low mid high)
   (min (max mid low) high))
+
+(defun default-test (test test-not)
+  (if (and (not test) (not test-not))
+      #'identity
+      test))
