@@ -95,16 +95,19 @@
 (define-widget panel (QWidget compass)
   ((container :initarg :container :accessor panel-container)
    (title :initarg :title :accessor title)
+   (detachable :initarg :detachable :accessor detachable-p)
+   (collapsable :initarg :collapsable :accessor collapsable-p)
+   (show-titlebar :initarg :show-titlebar :accessor show-titlebar-p)
+   
    (attached-size :initform NIL :accessor attached-size)
    (detached-size :initform NIL :accessor detached-size)
-   (taching :initform NIL :accessor taching)
-   (detachable :initarg :detachable :accessor detachable-p)
-   (collapsable :initarg :collapsable :accessor collapsable-p))
+   (taching :initform NIL :accessor taching))
   (:default-initargs
     :container NIL
     :title NIL
     :detachable T
-    :collapsable T))
+    :collapsable T
+    :show-titlebar T))
 
 (define-initializer (panel setup)
   (when (panel-container panel)
@@ -112,7 +115,8 @@
   (setf (title panel) (title panel)))
 
 (define-subwidget (panel titlebar) (make-instance 'panel-titlebar :panel panel)
-  (setf (widget :north panel) titlebar))
+  (when show-titlebar
+    (setf (widget :north panel) titlebar)))
 
 (define-override (panel resize-event) (ev)
   (unless taching
@@ -151,6 +155,11 @@
 
 (defmethod (setf collapsable-p) :after (value (panel panel))
   (setf (attachable-p (slot-value panel 'titlebar)) value))
+
+(defmethod (setf show-titlebar-p) :after (value (panel panel))
+  (if value
+      (setf (widget :north panel) (slot-value panel 'titlebar))
+      (setf (widget :north panel) NIL)))
 
 (defmethod (setf title) :after (title (panel panel))
   (with-slots-bound (panel panel)
