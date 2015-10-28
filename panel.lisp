@@ -96,15 +96,15 @@
   (setf (title panel) (title panel)))
 
 (define-subwidget (panel titlebar) (make-instance 'panel-titlebar :panel panel)
-  (setf (north-widget panel) titlebar))
+  (setf (widget :north panel) titlebar))
 
 (define-override (panel resize-event) (ev)
-  (update panel)
   (unless taching
     (cond ((attached-p panel)
            (fsetf (attached-size panel) (copy (q+:size panel))))
           (T
            (fsetf (detached-size panel) (copy (q+:geometry panel))))))
+  (update panel)
   (stop-overriding))
 
 (define-override (panel move-event) (ev)

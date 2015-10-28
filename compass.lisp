@@ -7,12 +7,12 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
-(define-widget compass (QWidget)
-  ((north :initarg :north :accessor north-widget)
-   (east :initarg :east :accessor east-widget)
-   (south :initarg :south :accessor south-widget)
-   (west :initarg :west :accessor west-widget)
-   (center :initarg :center :accessor center-widget))
+(define-widget compass (QWidget layout)
+  ((north :initarg :north)
+   (east :initarg :east)
+   (south :initarg :south)
+   (west :initarg :west)
+   (center :initarg :center))
   (:default-initargs
     :north NIL
     :east NIL
@@ -20,56 +20,117 @@
     :west NIL
     :center NIL))
 
-(defmacro define-compass-set-wrapper (name)
-  `(defmethod (setf ,name) :around (widget (compass compass))
-     (when (,name compass)
-       (setf (parent (,name compass)) NIL))
-     (call-next-method)
-     (when widget
-       (setf (parent widget) compass))
-     (update compass)))
+(defmethod widget ((place symbol) (compass compass))
+  (with-slots-bound (compass compass)
+    (ecase place
+      (:north north)
+      (:east east)
+      (:south south)
+      (:west west)
+      (:center center))))
 
-(macrolet ((define-all (&rest names)
-             `(progn ,@(loop for name in names
-                             collect `(define-compass-set-wrapper ,name)))))
-  (define-all north-widget east-widget south-widget west-widget center-widget))
+(defmethod (setf widget) ((widget qobject) (place symbol) (compass compass))
+  (with-slots-bound (compass compass)
+    (macrolet ((setplace (symb to)
+                 `(progn (when ,symb (setf (parent ,symb) NIL))
+                         (setf ,symb ,to))))
+      (ecase place
+        (:north (setplace north widget))
+        (:east (setplace east widget))
+        (:south (setplace south widget))
+        (:west (setplace west widget))
+        (:center (setplace center widget)))))
+  (when widget
+    (setf (parent widget) compass))
+  (update compass))
+
+(defmethod (setf widget) ((widget qobject) (place qobject) (compass compass))
+  (setf (widget (or (widget-position place compass)
+                    (error "~a is not contained in ~a." widget compass))
+                compass)
+        widget))
+
+(defmethod widget-position ((widget qobject) (compass compass))
+  (with-slots-bound (compass compass)
+    (cond ((eql widget north) :north)
+          ((eql widget east) :east)
+          ((eql widget south) :south)
+          ((eql widget west) :west)
+          ((eql widget center) :center))))
+
+(defmethod widget-position ((place symbol) (compass compass))
+  (ecase place ((:north :east :south :west :center) place)))
+
+(defmethod add-widget ((widget qobject) (compass compass))
+  (setf (widget :center compass) widget))
+
+(defmethod insert-widget ((widget qobject) (place symbol) (compass compass))
+  (setf (widget place compass) widget))
+
+(defmethod insert-widget ((widget qobject) (place qobject) (compass compass))
+  (setf (widget (or (widget-position place compass)
+                    (error "~a is not contained in ~a." place compass))
+                compass)
+        widget))
+
+(defmethod remove-widget ((place symbol) (compass compass))
+  (prog1 (widget place compass)
+    (setf (widget place compass) NIL)))
+
+(defmethod remove-widget ((widget qobject) (compass compass))
+  (remove-widget (or (widget-position widget compass)
+                     (error "~a is not contained in ~a." widget compass))
+                 compass))
+
+(defmethod swap-widget (a b (compass compass))
+  (let ((a (or (widget-position a compass)
+               (error "~a is not contained in ~a." a compass)))
+        (b (or (widget-position b compass)
+               (error "~a is not contained in ~a." b compass))))
+    (let ((first (widget a compass)))
+      (setf (widget a compass) (widget b compass)
+            (widget b compass) first))))
 
 (define-initializer (compass setup) ()
-  (when north (setf (north-widget compass) north))
-  (when east (setf (east-widget compass) east))
-  (when south (setf (south-widget compass) south))
-  (when west (setf (west-widget compass) west))
-  (when center (setf (center-widget compass) center)))
-
-(define-override (compass resize-event) (ev)
-  (update compass)
-  (stop-overriding))
-
-(define-override (compass event) (ev)
-  (when (= (enum-value (q+:type ev)) (q+:qevent.layout-request))
-    (update compass))
-  (stop-overriding))
+  (when north (setf (parent north) compass))
+  (when east (setf (parent east) compass))
+  (when south (setf (parent south) compass))
+  (when west (setf (parent west) compass))
+  (when center (setf (parent center) compass))
+  (update compass))
 
 (defmethod update ((compass compass))
   (with-slots-bound (compass compass)
-    (let ((ns (when north (q+:size-hint north)))
-          (es (when east (q+:size-hint east)))
-          (ss (when south (q+:size-hint south)))
-          (ws (when west (q+:size-hint west))))
-      (when north
-        (setf (q+:geometry north) (values 0 0
-                                          (q+:width compass) (q+:height ns))))
-      (when south
-        (setf (q+:geometry south) (values 0 (- (q+:height compass) (q+:height north))
-                                          (q+:width compass) (q+:height ss))))
-      (when west
-        (setf (q+:geometry west) (values 0 (if north (q+:height north) 0)
-                                         (q+:width ws) (- (q+:height compass) (if north (q+:height north) 0) (if south (q+:height south) 0)))))
-      (when east
-        (setf (q+:geometry east) (values (- (q+:width compass) (q+:width east)) (if north (q+:height north) 0)
-                                         (q+:width es) (- (q+:height compass) (if north (q+:height north) 0) (if south (q+:height south) 0)))))
-      (when center
-        (setf (q+:geometry center) (values (if west (q+:width west) 0)
-                                           (if north (q+:height north) 0)
-                                           (- (q+:width compass) (if west (q+:width west) 0) (if east (q+:width east) 0))
-                                           (- (q+:height compass) (if north (q+:height north) 0) (if south (q+:height south) 0))))))))
+    (macrolet ((mv (form)
+                 `(if ,(third form) ,form 0))
+               (set-geometry (target x y w h)
+                 `(when ,target (setf (q+:geometry ,target) (values ,x ,y ,w ,h)))))
+      (let ((ns (when north (q+:size-hint north)))
+            (es (when east (q+:size-hint east)))
+            (ss (when south (q+:size-hint south)))
+            (ws (when west (q+:size-hint west))))
+        (set-geometry north
+                      0 0
+                      (q+:width compass) (q+:height ns))
+        (set-geometry south
+                      0 (- (q+:height compass) (q+:height north))
+                      (q+:width compass) (q+:height ss))
+        (set-geometry west
+                      0 (mv (q+:height north))
+                      (q+:width ws) (- (q+:height compass) (mv (q+:height north)) (mv (q+:height south))))
+        (set-geometry east
+                      (- (q+:width compass) (q+:width east)) (mv (q+:height north))
+                      (q+:width es) (- (q+:height compass) (mv (q+:height north)) (mv (q+:height south))))
+        (set-geometry center
+                      (mv (q+:width west))
+                      (mv (q+:height north))
+                      (- (q+:width compass) (mv (q+:width west)) (mv (q+:width east)))
+                      (- (q+:height compass) (mv (q+:height north)) (mv (q+:height south)))))
+      (setf (q+:minimum-width compass)
+            (max (+ (mv (q+:width west)) (mv (q+:minimum-width center)) (mv (q+:width east)))
+                 (mv (q+:minimum-width north))
+                 (mv (q+:minimum-width south))))
+      (setf (q+:minimum-height compass)
+            (max (+ (mv (q+:height north)) (mv (q+:minimum-height center)) (mv (q+:height south)))
+                 (mv (q+:minimum-height west))
+                 (mv (q+:minimum-height east)))))))
