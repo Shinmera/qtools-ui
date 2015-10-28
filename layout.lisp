@@ -35,8 +35,7 @@
     (error "~a is already contained in ~a." widget layout)))
 
 (defmethod (setf widget) :around (widget place (layout layout))
-  (unless (widget-acceptable-p widget layout)
-    (cerror "~a does not accept ~a." layout widget))
+  (check-widget-permitted widget layout)
   (call-next-method))
 
 (defmethod add-widget :around (widget (layout layout))
