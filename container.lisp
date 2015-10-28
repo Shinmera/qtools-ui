@@ -7,18 +7,9 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
-(define-widget container (QWidget)
+(define-widget container (QWidget layout)
   ((widgets :initarg :widgets :accessor widgets))
   (:default-initargs :widgets ()))
-
-(defgeneric widget (place container))
-(defgeneric widget-position (widget container))
-(defgeneric add-widget (widget container))
-(defgeneric (setf widget) (widget place container))
-(defgeneric insert-widget (widget place container))
-(defgeneric remove-widget (place container))
-(defgeneric swap-widget (a b container))
-(defgeneric update (container))
 
 (defmethod widget ((n integer) (container container))
   (nth n (widgets container)))
@@ -86,5 +77,3 @@
 (defmethod swap-widget :around (a b (container container))
   (call-next-method)
   (update container))
-
-(defmethod update ((container container)))
