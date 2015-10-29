@@ -51,7 +51,7 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
 (defmethod widget-acceptable-p ((widget qobject) (listing listing))
   NIL)
 
-(define-widget listing-item (QWidget item-widget draggable repaintable)
+(define-widget listing-item (QWidget item-widget draggable repaintable mouse-propagator)
   ((active :initform NIL :accessor active-p)))
 
 (define-initializer (listing-item setup)
@@ -59,7 +59,12 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
 
 (defmethod (setf widget-item) :before (item (listing-item listing-item))
   (when (typep (widget-item listing-item) 'qobject)
-    (setf (parent (widget-item listing-item)) NIL)))
+    (setf (parent (widget-item listing-item)) NIL)
+    (q+:remove-event-filter (widget-item listing-item) listing-item)))
+
+(defmethod (setf widget-item) :after ((item qobject) (listing-item listing-item))
+  (v:info :test "INSTALL")
+  (q+:install-event-filter item listing-item))
 
 (define-override (listing-item paint-event) (ev)
   (with-finalizing ((painter (q+:make-qpainter listing-item)))
@@ -90,17 +95,17 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
 (define-override (listing-item size-hint) ()
   (if (typep (widget-item listing-item) 'qobject)
       (q+:size-hint (widget-item listing-item))
-      (q+:make-qsize -1 -1)))
+      (call-next-qmethod)))
 
 (define-override (listing-item minimum-size-hint) ()
   (if (typep (widget-item listing-item) 'qobject)
       (q+:minimum-size-hint (widget-item listing-item))
-      (q+:make-qsize -1 -1)))
+      (call-next-qmethod)))
 
-(define-override (listing-item set-geometry) (x y w h)
+(define-override (listing-item set-geometry) (&rest args)
+  (declare (ignore args))
   (update listing-item)
-  (q+:move listing-item x y)
-  (q+:resize listing-item w h))
+  (call-next-qmethod))
 
 (defmethod drag-start ((listing-item listing-item) x y)
   (declare (ignore x y))
