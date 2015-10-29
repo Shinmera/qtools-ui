@@ -31,8 +31,21 @@
    (container :initarg :container :accessor container))
   (:default-initargs :item NIL))
 
+(define-print-method (instance item-widget stream)
+  (print-unreadable-object (instance stream :type T :identity T)
+    (format stream "~s ~a" :item (widget-item instance))))
+
+(defmethod (setf widget-item) ((widget qobject) (item-widget item-widget))
+  (setf (parent widget) item-widget)
+  (setf (slot-value item-widget 'item) widget))
+
 (defmethod item-widget (item (layout item-layout))
   (find-widget item layout :key #'widget-item))
+
+(defmethod coerce-item :around (item (layout item-layout))
+  (unless (item-acceptable-p item layout)
+    (cerror "~a does not accept ~a." layout item))
+  (call-next-method))
 
 (defmethod coerce-item (item (layout item-layout))
   (make-instance 'item-widget :item item :container layout))
