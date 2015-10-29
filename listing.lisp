@@ -13,14 +13,20 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
 (defgeneric (setf active-item) (item listing))
 
 (define-widget listing (QWidget container item-layout)
-  ((active-widget :initarg :active-widget :accessor active-widget))
-  (:default-initargs :active-widget NIL))
+  ((active-widget :initarg :active-widget :accessor active-widget)
+   (minimum-row-height :initarg :minimum-row-height :accessor minimum-row-height)
+   (fixed-row-height :initarg :fixed-row-height :accessor fixed-row-height))
+  (:default-initargs
+    :active-widget NIL
+    :minimum-row-height 20
+    :fixed-row-height NIL))
 
 (defmethod update ((listing listing))
   (loop for y = 0 then (+ y height)
         for widget in (widgets listing)
         for hint = (q+:minimum-size-hint widget)
-        for height = (max 0 (q+:minimum-height widget) (q+:height hint))
+        for height = (or (fixed-row-height listing)
+                         (max (minimum-row-height listing) (q+:minimum-height widget) (q+:height hint)))
         do (setf (q+:geometry widget) (values 0 y (q+:width listing) height))))
 
 (defmethod (setf active-widget) ((widget item-widget) (listing listing))
@@ -42,6 +48,8 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
 (defmethod coerce-item (item (listing listing))
   (make-instance 'listing-item :item item :container listing))
 
+(defmethod widget-acceptable-p ((widget qobject) (listing listing))
+  NIL)
 
 (define-widget listing-item (QWidget item-widget draggable repaintable)
   ((active :initform NIL :accessor active-p)))
@@ -76,16 +84,40 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
 
 (define-override (listing-item minimum-height) ()
   (if (typep (widget-item listing-item) 'qobject)
-      (q+:minimum-height (widget-item listing-item))
+      (max 20 (q+:minimum-height (widget-item listing-item)))
       30))
+
+(define-override (listing-item size-hint) ()
+  (if (typep (widget-item listing-item) 'qobject)
+      (q+:size-hint (widget-item listing-item))
+      (q+:make-qsize -1 -1)))
+
+(define-override (listing-item minimum-size-hint) ()
+  (if (typep (widget-item listing-item) 'qobject)
+      (q+:minimum-size-hint (widget-item listing-item))
+      (q+:make-qsize -1 -1)))
+
+(define-override (listing-item set-geometry) (x y w h)
+  (update listing-item)
+  (q+:move listing-item x y)
+  (q+:resize listing-item w h))
 
 (defmethod drag-start ((listing-item listing-item) x y)
   (declare (ignore x y))
   (setf (active-widget (container listing-item)) listing-item))
 
+(defmethod drag ((listing-item listing-item) px py nx ny)
+  (let* ((pos (q+:map-to-global listing-item (q+:make-qpoint nx ny)))
+         (widget (q+:qapplication-widget-at pos)))
+    (when (and (typep widget 'listing-item)
+               (eql (container widget) (container listing-item))
+               (not (eql widget listing-item)))
+      (swap-widgets widget listing-item (container listing-item)))))
+
 (defmethod update ((listing-item listing-item))
   (when (typep (widget-item listing-item) 'qobject)
-    (setf (q+:geometry (widget-item listing-item)) (q+:geometry listing-item))))
+    (setf (q+:geometry (widget-item listing-item))
+          (values 3 3 (- (q+:width listing-item) 6) (- (q+:height listing-item) 6)))))
 
 (defmethod (setf active-p) :after (value (listing-item listing-item))
   (signal! listing-item (repaint))
@@ -101,3 +133,6 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
 (defmethod (setf active-widget) :around ((listing-item listing-item) (listing listing))
   (unless (eq listing-item (active-widget listing))
     (call-next-method)))
+
+(defmethod widget-acceptable-p ((listing-item listing-item) (listing listing))
+  T)
