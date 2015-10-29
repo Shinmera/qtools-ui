@@ -8,9 +8,11 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
 (in-readtable :qtools)
 
 (defgeneric active-widget (listing))
+(defgeneric (setf active-widget) (widget listing))
 (defgeneric active-item (listing))
+(defgeneric (setf active-item) (item listing))
 
-(define-widget listing (QWidget container)
+(define-widget listing (QWidget container item-layout)
   ((active-widget :initarg :active-widget :accessor active-widget))
   (:default-initargs :active-widget NIL))
 

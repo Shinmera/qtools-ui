@@ -80,7 +80,7 @@
   (setf (detachable-p (slot-value panel 'titlebar)) value))
 
 (defmethod (setf collapsable-p) :after (value (panel panel))
-  (setf (attachable-p (slot-value panel 'titlebar)) value))
+  (setf (collapsable-p (slot-value panel 'titlebar)) value))
 
 (defmethod (setf titlebar-shown-p) :after (value (panel panel))
   (if value
