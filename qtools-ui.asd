@@ -23,7 +23,8 @@
                (:file "panel")
                (:file "panel-container")
                (:file "keychord-editor")
-               (:file "listing"))
+               (:file "listing")
+               (:file "documentation"))
   :depends-on (:qtools
                :qtcore
                :qtgui))
