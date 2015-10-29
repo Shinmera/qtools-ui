@@ -41,7 +41,7 @@
 
 (defun check-widget-permitted (widget layout)
   (unless (widget-acceptable-p widget layout)
-    (cerror "~a does not accept ~a." layout widget))
+    (cerror "Add the widget anyway." "~a does not accept ~a." layout widget))
   (when (eql (parent widget) layout)
     (error "~a is already contained in ~a." widget layout)))
 

@@ -44,7 +44,7 @@
 
 (defmethod coerce-item :around (item (layout item-layout))
   (unless (item-acceptable-p item layout)
-    (cerror "~a does not accept ~a." layout item))
+    (cerror "Add the item anyway." "~a does not accept ~a." layout item))
   (call-next-method))
 
 (defmethod coerce-item (item (layout item-layout))
