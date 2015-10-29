@@ -47,15 +47,26 @@
 
 (defmethod (setf widget) :around (widget place (layout layout))
   (check-widget-permitted widget layout)
-  (call-next-method))
+  (prog1 (call-next-method)
+    (update layout)))
 
 (defmethod add-widget :around (widget (layout layout))
   (check-widget-permitted widget layout)
-  (call-next-method))
+  (prog1 (call-next-method)
+    (update layout)))
 
 (defmethod insert-widget :around (widget place (layout layout))
   (check-widget-permitted widget layout)
-  (call-next-method))
+  (prog1 (call-next-method)
+    (update layout)))
+
+(defmethod remove-widget :around (place (layout layout))
+  (prog1 (call-next-method)
+    (update layout)))
+
+(defmethod swap-widgets :around (a b (layout layout))
+  (prog1 (call-next-method)
+    (update layout)))
 
 (define-override (layout resize-event) (ev)
   (update layout)

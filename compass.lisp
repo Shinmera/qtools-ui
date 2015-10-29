@@ -29,7 +29,7 @@
       (:west west)
       (:center center))))
 
-(defmethod (setf widget) ((widget qobject) (place symbol) (compass compass))
+(defmethod (setf widget) (widget (place symbol) (compass compass))
   (with-slots-bound (compass compass)
     (macrolet ((setplace (symb to)
                  `(progn (when ,symb (setf (parent ,symb) NIL))
@@ -42,7 +42,7 @@
         (:center (setplace center widget)))))
   (when widget
     (setf (parent widget) compass))
-  (update compass))
+  widget)
 
 (defmethod (setf widget) ((widget qobject) (place qobject) (compass compass))
   (setf (widget (or (widget-position place compass)
@@ -109,7 +109,8 @@
                    (:west (setf west widget))
                    (:center (setf center widget)))))
           (set-place a wa)
-          (set-place b wb))))))
+          (set-place b wb)
+          compass)))))
 
 (define-initializer (compass setup) ()
   (when north (setf (parent north) compass))

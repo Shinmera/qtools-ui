@@ -25,10 +25,6 @@
         when (eql (car cell) find)
         do (return (setf (car cell) widget))))
 
-(defmethod (setf widget) :around (widget place (container container))
-  (call-next-method)
-  (update container))
-
 (defmethod widget-position (widget (container container) &key key test test-not)
   (position widget (widgets container) :key key :test test :test-not test-not))
 
@@ -37,22 +33,16 @@
 
 (defmethod add-widget ((widget qobject) (container container))
   (push widget (widgets container))
-  (setf (parent widget) container))
-
-(defmethod add-widget :around (widget (container container))
-  (call-next-method)
-  (update container))
+  (setf (parent widget) container)
+  widget)
 
 (defmethod insert-widget ((widget qobject) (n integer) (container container))
   (insert widget n (widgets container))
-  (setf (parent widget) container))
+  (setf (parent widget) container)
+  widget)
 
 (defmethod insert-widget ((widget qobject) (find qobject) (container container))
   (insert-widget widget (position widget (widgets container)) container))
-
-(defmethod insert-widget :around (widget place (container container))
-  (call-next-method)
-  (update container))
 
 (defmethod remove-widget ((n integer) (container container))
   (let ((widget (remove-nth n (widgets container))))
@@ -62,16 +52,9 @@
 (defmethod remove-widget ((widget qobject) (container container))
   (remove-widget (position widget (widgets container)) container))
 
-(defmethod remove-widget :around (place (container container))
-  (call-next-method)
-  (update container))
-
 (defmethod swap-widgets ((a integer) (b integer) (container container))
-  (swapcar a b (widgets container)))
+  (swapcar a b (widgets container))
+  container)
 
 (defmethod swap-widgets (a b (container container))
   (swap-widgets (widget-position a container) (widget-position b container) container))
-
-(defmethod swap-widgets :around (a b (container container))
-  (call-next-method)
-  (update container))
