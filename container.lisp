@@ -84,6 +84,32 @@
 (defmethod ensure-widget-order ((container container))
   container)
 
+
+(define-widget sorted-container (QWidget container)
+  ((sorting :initarg :sorting :accessor sorting))
+  (:default-initargs :sorting NIL))
+
+(define-initializer (sorted-container setup)
+  (setf (sorting sorted-container) (sorting sorted-container)))
+
+(defmethod ensure-widget-order ((sorted-container sorted-container))
+  (when (sorting sorted-container)
+    (setf (widgets sorted-container) (stable-sort (widgets sorted-container) (sorting sorted-container))))
+  sorted-container)
+
+(defmethod (setf widget) :after (widget place (sorted-container sorted-container))
+  (ensure-widget-order sorted-container))
+
+(defmethod add-widget :after (widget (sorted-container sorted-container))
+  (ensure-widget-order sorted-container))
+
+(defmethod insert-widget :after (widget place (sorted-container sorted-container))
+  (ensure-widget-order sorted-container))
+
+(defmethod swap-widgets :after (a b (sorted-container sorted-container))
+  (ensure-widget-order sorted-container))
+
+
 (define-widget item-container (QWidget item-layout container)
   ())
 
@@ -95,3 +121,24 @@
   (map-widgets (lambda (widget)
                  (funcall function (widget-item widget)))
                item-container))
+
+
+(define-widget sorted-item-container (QWidget sorted-container item-layout)
+  ())
+
+(defmethod ensure-widget-order ((sorted-item-container sorted-item-container))
+  (when (sorting sorted-item-container)
+    (setf (widgets sorted-item-container) (stable-sort (widgets sorted-item-container) (sorting sorted-item-container) :key #'widget-item)))
+  sorted-item-container)
+
+(defmethod (setf sorting) ((sorting (eql T)) (sorted-item-container sorted-item-container))
+  (setf (sorting sorted-item-container) #'item<))
+
+(defmethod (setf item-at) :after (item place (sorted-item-container sorted-item-container))
+  (ensure-widget-order sorted-item-container))
+
+(defmethod swap-items :after (a b (sorted-item-container sorted-item-container))
+  (ensure-widget-order sorted-item-container))
+
+(defmethod swap-items-at :after (a b (sorted-item-container sorted-item-container))
+  (ensure-widget-order sorted-item-container))
