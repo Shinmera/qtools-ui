@@ -45,23 +45,24 @@
 
 (define-override (cell minimum-height) ()
   (if (typep (widget-item cell) 'qobject)
-      (max 20 (+ (q+:minimum-height (widget-item cell)) padding))
+      (max 20 (+ padding (q+:minimum-height (widget-item cell)) padding))
       30))
 
-(defun pad-hint (cell hint)
-  (if (q+:is-valid hint)
-      (q+:make-qsize (+ (q+:width hint) (padding cell))
-                     (+ (q+:height hint) (padding cell)))
-      hint))
+(defun padded-hint (cell hint)
+  (let ((padding (padding cell)))
+    (if (q+:is-valid hint)
+        (q+:make-qsize (+ padding (q+:width hint) padding)
+                       (+ padding (q+:height hint) padding))
+        hint)))
 
 (define-override (cell size-hint) ()
   (cond ((typep (widget-item cell) 'qobject)
-         (pad-hint cell (q+:size-hint (widget-item cell))))
+         (padded-hint cell (q+:size-hint (widget-item cell))))
         (T (call-next-qmethod))))
 
 (define-override (cell minimum-size-hint) ()
   (cond ((typep (widget-item cell) 'qobject)
-         (pad-hint cell (q+:minimum-size-hint (widget-item cell))))
+         (padded-hint cell (q+:minimum-size-hint (widget-item cell))))
         (T (call-next-qmethod))))
 
 (define-override (cell set-geometry) (&rest args)
