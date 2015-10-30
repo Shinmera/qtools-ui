@@ -22,6 +22,11 @@
 (defgeneric swap-items (a b layout))
 (defgeneric swap-items-at (a b layout))
 (defgeneric item-acceptable-p (item layout))
+(defgeneric item< (a b))
+(defgeneric item= (a b))
+(defgeneric item> (a b))
+(defgeneric item<= (a b))
+(defgeneric item>= (a b))
 
 (define-widget item-layout (QWidget layout)
   ())
@@ -97,3 +102,24 @@
 
 (defmethod item-acceptable-p (item (layout item-layout))
   T)
+
+(defmethod item< ((a string) (b string))
+  (string< a b))
+
+(defmethod item< ((a number) (b number))
+  (< a b))
+
+(defmethod item= ((a string) (b string))
+  (string= a b))
+
+(defmethod item= ((a number) (b number))
+  (= a b))
+
+(defmethod item<= (a b)
+  (or (item= a b) (item< a b)))
+
+(defmethod item>= (a b)
+  (not (item< a b)))
+
+(defmethod item> (a b)
+  (not (item<= a b)))
