@@ -7,9 +7,27 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
+(defgeneric map-widgets (function container))
+(defgeneric map-items (function item-container))
+(defgeneric ensure-widget-order (container))
+
+(defmacro do-widgets ((widget container &optional result) &body body)
+  `(block NIL
+     (map-widgets (lambda (,widget) ,@body) ,container)
+     ,result))
+
+(defmacro do-items ((item container &optional result) &body body)
+  `(block NIL
+     (map-items (lambda (,item) ,@body) ,container)
+     ,result))
+
 (define-widget container (QWidget layout)
-  ((widgets :initarg :widgets :accessor widgets))
+  ((widgets :accessor widgets))
   (:default-initargs :widgets ()))
+
+(defmethod initialize-instance :after ((container container) &key widgets &allow-other-keys)
+  (dolist (widget widgets)
+    (add-widget widget container)))
 
 (defmethod widget ((n integer) (container container))
   (nth n (widgets container)))
@@ -58,3 +76,22 @@
 
 (defmethod swap-widgets (a b (container container))
   (swap-widgets (widget-position a container) (widget-position b container) container))
+
+(defmethod map-widgets (function (container container))
+  (dolist (widget (widgets container) container)
+    (funcall function widget)))
+
+(defmethod ensure-widget-order ((container container))
+  container)
+
+(define-widget item-container (QWidget item-layout container)
+  ())
+
+(defmethod initialize-instance :after ((container container) &key items &allow-other-keys)
+  (dolist (item items)
+    (add-item item container)))
+
+(defmethod map-items (function (item-container item-container))
+  (map-widgets (lambda (widget)
+                 (funcall function (widget-item widget)))
+               item-container))
