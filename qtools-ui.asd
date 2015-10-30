@@ -18,6 +18,8 @@
                (:file "repaintable")
                (:file "mouse-propagator")
                (:file "draggable")
+               (:file "selectable")
+               (:file "cell")
                (:file "compass")
                (:file "container")
                (:file "splitter")
