@@ -12,14 +12,23 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
 (defgeneric active-item (listing))
 (defgeneric (setf active-item) (item listing))
 
-(define-widget listing (QWidget container item-layout)
+(define-widget listing (QWidget item-container)
   ((active-widget :initarg :active-widget :accessor active-widget)
    (minimum-row-height :initarg :minimum-row-height :accessor minimum-row-height)
-   (fixed-row-height :initarg :fixed-row-height :accessor fixed-row-height))
+   (fixed-row-height :initarg :fixed-row-height :accessor fixed-row-height)
+   (selectable :initarg :selectable :accessor selectable)
+   (draggable :initarg :draggable :accessor draggable)
+   (sorting :initarg :sorting :accessor sorting))
   (:default-initargs
     :active-widget NIL
     :minimum-row-height 20
-    :fixed-row-height NIL))
+    :fixed-row-height NIL
+    :selectable T
+    :draggable T
+    :sorting NIL))
+
+(define-initializer (listing setup)
+  (setf (sorting listing) (sorting listing)))
 
 (defmethod update ((listing listing))
   (loop for y = 0 then (+ y height)
@@ -28,6 +37,40 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
         for height = (or (fixed-row-height listing)
                          (max (minimum-row-height listing) (q+:minimum-height widget) (q+:height hint)))
         do (setf (q+:geometry widget) (values 0 y (q+:width listing) height))))
+
+(defmethod ensure-widget-order ((listing listing))
+  (when (sorting listing)
+    (setf (widgets listing) (stable-sort  (widgets listing) (sorting listing) :key #'widget-item)))
+  listing)
+
+(defmethod (setf sorting) ((sorting (eql T)) (listing listing))
+  (setf (sorting listing) #'item<))
+
+(defmethod (setf sorting) (sorting (listing listing))
+  (when sorting
+    (setf (draggable listing) NIL))
+  (setf (slot-value listing 'sorting) sorting))
+
+(defmethod (setf widget) :after (widget place (listing listing))
+  (ensure-widget-order listing))
+
+(defmethod add-widget :after (widget (listing listing))
+  (ensure-widget-order listing))
+
+(defmethod insert-widget :after (widget place (listing listing))
+  (ensure-widget-order listing))
+
+(defmethod swap-widgets :after (a b (listing listing))
+  (ensure-widget-order listing))
+
+(defmethod (setf item-at) :after (item place (listing listing))
+  (ensure-widget-order listing))
+
+(defmethod swap-items :after (a b (listing listing))
+  (ensure-widget-order listing))
+
+(defmethod swap-items-at :after (a b (listing listing))
+  (ensure-widget-order listing))
 
 (defmethod (setf active-widget) ((widget item-widget) (listing listing))
   (setf (slot-value listing 'active-widget) widget))
@@ -63,7 +106,6 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
     (q+:remove-event-filter (widget-item listing-item) listing-item)))
 
 (defmethod (setf widget-item) :after ((item qobject) (listing-item listing-item))
-  (v:info :test "INSTALL")
   (q+:install-event-filter item listing-item))
 
 (define-override (listing-item paint-event) (ev)
@@ -71,11 +113,11 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
     (when active
       (setf (q+:brush painter) (q+:highlight (q+:palette listing-item)))
       (q+:draw-rect painter (q+:rect listing-item)))
-    (when (stringp (widget-item listing-item))
+    (unless (typep (widget-item listing-item) 'qobject)
       (q+:draw-text painter (q+:rect listing-item)
                     (logior (q+:qt.align-left)
                             (q+:qt.align-vcenter))
-                    (widget-item listing-item))))
+                    (princ-to-string (widget-item listing-item)))))
   (stop-overriding))
 
 (define-override (listing-item resize-event) (ev)
@@ -109,15 +151,17 @@ Author: Nicolas Hafner <shinmera@tymoon.eu>
 
 (defmethod drag-start ((listing-item listing-item) x y)
   (declare (ignore x y))
-  (setf (active-widget (container listing-item)) listing-item))
+  (when (selectable (container listing-item))
+    (setf (active-widget (container listing-item)) listing-item)))
 
 (defmethod drag ((listing-item listing-item) px py nx ny)
-  (let* ((pos (q+:map-to-global listing-item (q+:make-qpoint nx ny)))
-         (widget (q+:qapplication-widget-at pos)))
-    (when (and (typep widget 'listing-item)
-               (eql (container widget) (container listing-item))
-               (not (eql widget listing-item)))
-      (swap-widgets widget listing-item (container listing-item)))))
+  (when (draggable (container listing-item))
+    (let* ((pos (q+:map-to-global listing-item (q+:make-qpoint nx ny)))
+           (widget (q+:qapplication-widget-at pos)))
+      (when (and (typep widget 'listing-item)
+                 (eql (container widget) (container listing-item))
+                 (not (eql widget listing-item)))
+        (swap-widgets widget listing-item (container listing-item))))))
 
 (defmethod update ((listing-item listing-item))
   (when (typep (widget-item listing-item) 'qobject)
