@@ -26,7 +26,7 @@
   (error "~a is not a selectable-item." widget))
 
 (defmethod (setf active-widget) :around (widget (selectable-layout selectable-layout))
-  (unless (eq selectable-item (active-widget selectable-layout))
+  (unless (eq widget (active-widget selectable-layout))
     (call-next-method)))
 
 (defmethod (setf active-widget) ((null null) (selectable-layout selectable-layout))

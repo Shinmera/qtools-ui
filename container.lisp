@@ -26,6 +26,7 @@
   (:default-initargs :widgets ()))
 
 (defmethod initialize-instance :after ((container container) &key widgets &allow-other-keys)
+  (setf (widgets container) NIL)
   (dolist (widget widgets)
     (add-widget widget container)))
 

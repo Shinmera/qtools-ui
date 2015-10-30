@@ -24,7 +24,7 @@
 
 (define-override (cell paint-event) (ev)
   (with-finalizing ((painter (q+:make-qpainter cell)))
-    (when active
+    (when (active-p cell)
       (setf (q+:brush painter) (q+:highlight (q+:palette cell)))
       (q+:draw-rect painter (q+:rect cell)))
     (unless (typep (widget-item cell) 'qobject)
