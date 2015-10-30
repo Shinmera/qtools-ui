@@ -75,8 +75,9 @@
   (setf (active-widget (container cell)) cell))
 
 (defmethod drag ((cell cell) px py nx ny)
-  (let* ((pos (q+:map-to-global cell (q+:make-qpoint nx ny)))
-         (widget (q+:qapplication-widget-at pos)))
+  (declare (ignore px py))
+  (let* ((pos (q+:map-to-parent cell (q+:make-qpoint nx ny)))
+         (widget (widget-at-point pos (container cell))))
     (when (and (typep widget 'cell)
                (eql (container widget) (container cell))
                (not (eql widget cell)))
