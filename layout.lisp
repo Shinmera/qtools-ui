@@ -14,6 +14,7 @@
 (defgeneric (setf widget) (widget place layout))
 (defgeneric find-widget (widget layout &key key test test-not))
 (defgeneric widget-position (widget layout &key key test test-not))
+(defgeneric widget-at-point (point layout))
 (defgeneric add-widget (widget layout))
 (defgeneric insert-widget (widget place layout))
 (defgeneric remove-widget (place layout))
@@ -38,6 +39,14 @@
 
 (defmethod widget-acceptable-p ((widget qobject) (layout layout))
   T)
+
+(defmethod widget-at-point :around ((point qobject) (layout layout))
+  (when (and (<= 0 (q+:x point) (q+:width layout))
+             (<= 0 (q+:y point) (q+:height layout)))
+    (call-next-method)))
+
+(defmethod widget-at-point ((point cons) (layout layout))
+  (widget-at-point (q+:make-qpointf (car point) (cdr point)) layout))
 
 (defun check-widget-permitted (widget layout)
   (unless (widget-acceptable-p widget layout)

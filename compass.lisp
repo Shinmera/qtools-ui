@@ -72,6 +72,16 @@
             ((compare west) west)
             ((compare center) center)))))
 
+(defmethod widget-at-point ((point qobject) (compass compass))
+  (with-slots-bound (compass compass)
+    (flet ((compare (field)
+             (and field (q+:contains (q+:geometry field) point))))
+      (cond ((compare north) north)
+            ((compare east) east)
+            ((compare south) south)
+            ((compare west) west)
+            ((compare center) center)))))
+
 (defmethod add-widget ((widget qobject) (compass compass))
   (setf (widget :center compass) widget))
 

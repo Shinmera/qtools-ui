@@ -50,6 +50,11 @@
 (defmethod find-widget (widget (container container) &key key test test-not)
   (find widget (widgets container) :key key :test test :test-not test-not))
 
+(defmethod widget-at-point ((point qobject) (container container))
+  (do-widgets (widget container)
+    (when (q+:contains (q+:geometry widget) point)
+      (return widget))))
+
 (defmethod add-widget ((widget qobject) (container container))
   (push widget (widgets container))
   (setf (parent widget) container)
