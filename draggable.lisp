@@ -35,7 +35,9 @@
 
 (defmethod drag ((draggable draggable) px py nx ny)
   (declare (ignore draggable px py nx ny)))
+
 (defmethod drag-start ((draggable draggable) x y)
   (declare (ignore draggable x y)))
+
 (defmethod drag-end ((draggable draggable) x y)
   (declare (ignore draggable x y)))
