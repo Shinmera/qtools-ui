@@ -149,8 +149,8 @@
 
 (defmethod drag ((panel panel) px py nx ny)
   (cond ((attached-p panel)
-         (let* ((pos (q+:map-to-global panel (q+:make-qpoint nx ny)))
-                (widget (q+:qapplication-widget-at pos)))
+         (let* ((pos (q+:map-to-parent panel (q+:make-qpoint nx ny)))
+                (widget (widget-at-point pos (parent panel))))
            (when (and (typep widget 'panel)
                       (eql (parent widget) (parent panel))
                       (not (eql widget panel)))
