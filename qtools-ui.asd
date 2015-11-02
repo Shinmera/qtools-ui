@@ -27,6 +27,7 @@
                (:file "panel-container")
                (:file "keychord-editor")
                (:file "listing")
+               (:file "slider")
                (:file "documentation"))
   :depends-on (:qtools
                :qtcore
