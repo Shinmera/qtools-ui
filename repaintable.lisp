@@ -14,3 +14,6 @@
 
 (define-initializer (repaintable setup)
   (connect! repaintable (repaint) repaintable (update)))
+
+(defmethod repaint ((repaintable repaintable))
+  (signal! repaintable (repaint)))
