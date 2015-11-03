@@ -74,4 +74,4 @@
 (defun coerce-color (color)
   (etypecase color
     (qobject color)
-    (cons (color (first color) (second color) (third color)))))
+    (cons (c (first color) (second color) (third color)))))
