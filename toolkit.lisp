@@ -39,3 +39,39 @@
   (if (and (not test) (not test-not))
       #'identity
       test))
+
+(defun call-with-translation (painter target function)
+  (q+:save painter)
+  (q+:translate painter target)
+  (unwind-protect
+       (funcall function)
+    (q+:restore painter)))
+
+(defmacro with-translation ((painter target) &body body)
+  `(call-with-translation ,painter ,target (lambda () ,@body)))
+
+(defun color-to-rgba (r g b &optional (a 255))
+  (let ((rgba 0))
+    (setf (ldb (byte 8 0) rgba) b
+          (ldb (byte 8 8) rgba) g
+          (ldb (byte 8 16) rgba) r
+          (ldb (byte 8 24) rgba) a)
+    rgba))
+
+(defun rgba-to-color (rgba)
+  (values (ldb (byte 8 16) rgba)
+          (ldb (byte 8 8) rgba)
+          (ldb (byte 8 0) rgba)
+          (ldb (byte 8 24) rgba)))
+
+(defvar *color-map* (make-hash-table :test 'eql))
+
+(defun c (r g b &optional (a 255))
+  (let ((rgba (color-to-rgba r g b a)))
+    (or (gethash rgba *color-map*)
+        (setf (gethash rgba *color-map*) (q+:make-qcolor r g b a)))))
+
+(defun coerce-color (color)
+  (etypecase color
+    (qobject color)
+    (cons (color (first color) (second color) (third color)))))
