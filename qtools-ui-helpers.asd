@@ -5,13 +5,15 @@
 |#
 
 (in-package #:cl-user)
-(asdf:defsystem qtools-ui-color-triangle
+(asdf:defsystem qtools-ui-helpers
   :version "0.0.0"
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :serial T
-  :components ((:file "color-triangle"))
+  :components ((:file "repaintable")
+               (:file "mouse-propagator")
+               (:file "draggable")
+               (:file "selectable"))
   :depends-on (:qtools-ui-base
-               :qtgui
-               :cl-opengl))
+               :qtools-ui-layout))

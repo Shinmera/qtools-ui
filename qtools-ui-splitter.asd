@@ -5,21 +5,13 @@
 |#
 
 (in-package #:cl-user)
-(asdf:defsystem qtools-ui
+(asdf:defsystem qtools-ui-splitter
   :version "0.0.0"
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :serial T
+  :components ((:file "splitter"))
   :depends-on (:qtools-ui-base
-               :qtools-ui-cell
-               :qtools-ui-color-triangle
-               :qtools-ui-compass
-               :qtools-ui-container
                :qtools-ui-helpers
-               :qtools-ui-keychord-editor
-               :qtools-ui-layout
-               :qtools-ui-listing
-               :qtools-ui-panels
-               :qtools-ui-slider
-               :qtools-ui-splitter))
+               :qtools-ui-container))
