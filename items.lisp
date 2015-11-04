@@ -109,11 +109,17 @@
 (defmethod item< ((a number) (b number))
   (< a b))
 
+(defmethod item< (a b)
+  (item< (princ-to-string a) (princ-to-string b)))
+
 (defmethod item= ((a string) (b string))
   (string= a b))
 
 (defmethod item= ((a number) (b number))
   (= a b))
+
+(defmethod item= (a b)
+  (item= (princ-to-string a) (princ-to-string b)))
 
 (defmethod item<= (a b)
   (or (item= a b) (item< a b)))
