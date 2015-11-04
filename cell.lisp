@@ -28,7 +28,7 @@
       (setf (q+:brush painter) (q+:highlight (q+:palette cell)))
       (q+:draw-rect painter (q+:rect cell)))
     (unless (typep (widget-item cell) 'qobject)
-      (q+:draw-text painter (q+:rect cell)
+      (q+:draw-text painter (q+:adjusted (q+:rect cell) padding padding (- padding) (- padding))
                     (logior (q+:qt.align-left)
                             (q+:qt.align-vcenter))
                     (princ-to-string (widget-item cell)))))
