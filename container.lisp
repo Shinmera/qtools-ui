@@ -22,13 +22,10 @@
      ,result))
 
 (define-widget container (QWidget layout)
-  ((widgets :accessor widgets))
-  (:default-initargs :widgets ()))
+  ((widgets :initform () :accessor widgets)))
 
 (defmethod initialize-instance :after ((container container) &key widgets &allow-other-keys)
-  (setf (widgets container) NIL)
-  (dolist (widget widgets)
-    (add-widget widget container)))
+  (add-widget widgets container))
 
 (defmethod widget ((n integer) (container container))
   (nth n (widgets container)))
