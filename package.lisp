@@ -5,6 +5,7 @@
 |#
 
 (in-package #:cl-user)
+
 (defpackage #:qtools-ui
   (:nicknames #:qui #:org.shirakumo.qtools.ui)
   (:use #:cl+qt)
@@ -103,6 +104,8 @@
    #:detachable-p
    #:collapsable-p
    #:titlebar-shown-p
+   #:attached-p
+   #:collapsed-p
    #:attach
    #:detach
    #:expand

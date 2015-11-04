@@ -73,5 +73,11 @@
 
 (defun coerce-color (color)
   (etypecase color
-    (qobject color)
-    (cons (c (first color) (second color) (third color)))))
+    (qobject
+     color)
+    (integer
+     (multiple-value-bind (r g b a) (rgba-to-color color)
+               (c r g b a)))
+    (cons
+     (destructuring-bind (r g b &optional (a 255)) color
+            (c r g b a)))))

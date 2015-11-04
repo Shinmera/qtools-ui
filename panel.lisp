@@ -17,6 +17,8 @@
 (defgeneric (setf collapsable-p) (value panel))
 (defgeneric titlebar-shown-p (panel))
 (defgeneric (setf titlebar-shown-p) (value panel))
+(defgeneric attached-p (panel))
+(defgeneric collapsed-p (panel))
 (defgeneric attach (panel container))
 (defgeneric detach (panel))
 (defgeneric expand (panel))

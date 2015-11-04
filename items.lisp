@@ -42,16 +42,23 @@
   (print-unreadable-object (instance stream :type T :identity T)
     (format stream "~s ~a" :item (widget-item instance))))
 
+(defun check-item-permitted (item layout)
+  (unless (item-acceptable-p item layout)
+    (cerror "Add the item anyway." "~a does not accept ~a." layout item)))
+
 (defmethod (setf widget-item) ((widget qobject) (item-widget item-widget))
   (setf (parent widget) item-widget)
   (setf (slot-value item-widget 'item) widget))
 
+(defmethod (setf widget-item) :around (item (item-widget item-widget))
+  (check-item-permitted item (container item-widget))
+  (call-next-method))
+
 (defmethod item-widget (item (layout item-layout))
   (find-widget item layout :key #'widget-item))
 
-(defmethod coerce-item :around (item (layout item-layout))
-  (unless (item-acceptable-p item layout)
-    (cerror "Add the item anyway." "~a does not accept ~a." layout item))
+(defmethod coerce-item :around (item (item-layout item-layout))
+  (check-item-permitted item item-layout)
   (call-next-method))
 
 (defmethod coerce-item (item (layout item-layout))
@@ -81,7 +88,7 @@
   (call-next-method item layout :key key :test (default-test test test-not) :test-not test-not))
 
 (defmethod find-item (item (layout item-layout) &key key test test-not)
-  (find-widget item layout :key (lambda (widget) (funcall key (widget-item widget))) :test test :test-not test-not))
+  (widget-item (find-widget item layout :key (lambda (widget) (funcall key (widget-item widget))) :test test :test-not test-not)))
 
 (defmethod add-item (item (layout item-layout))
   (add-widget (coerce-item item layout) layout))
