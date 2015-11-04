@@ -8,13 +8,12 @@
 (in-readtable :qtools)
 
 (defgeneric dragging (draggable))
-
-(define-widget draggable (QWidget)
-  ((dragging :initform NIL :accessor dragging)))
-
 (defgeneric drag-start (widget x y))
 (defgeneric drag (widget from-x from-y to-x to-y))
 (defgeneric drag-end (widget x y))
+
+(define-widget draggable (QWidget)
+  ((dragging :initform NIL :accessor dragging)))
 
 (define-override (draggable mouse-press-event) (ev)
   (when (and (not dragging)

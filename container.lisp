@@ -12,6 +12,8 @@
 (defgeneric ensure-widget-order (container))
 (defgeneric sorting (sorted-container))
 (defgeneric (setf sorting) (sorting sorted-container))
+(defgeneric widgets (container))
+(defgeneric (setf widgets) (widgets container))
 
 (defmacro do-widgets ((widget container &optional result) &body body)
   `(block NIL
