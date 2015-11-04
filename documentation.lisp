@@ -10,7 +10,7 @@
 (defmacro setdocs (&body pairs)
   `(progn
      ,@(loop for (var doc) in pairs
-             collect (destructuring-bind (var &optional (type 'function))
+             collect (destructuring-bind (var &optional (type 'cl:function))
                          (if (listp var) var (list var))
                        `(setf (documentation ',var ',type) ,doc)))))
 
@@ -354,7 +354,7 @@ Supports iconifying, rearranging of the panels, and vertical or horizontal orien
   (titlebar-shown-p
    "Accessor to whether the panel's titlebar is visible.")
 
-  (atached-p
+  (attached-p
    "Accessor to whether the panel is attached.
 
 See ATTACH
@@ -411,7 +411,7 @@ See REPAINT"))
   (active-item
    "Accessor for the currently active item on the layout.")
   
-  ((selectable type)
+  (selectable
    "Accessor for whether selecting a widget/item is allowed.")
   
   ((selectable-layout type)
