@@ -8,6 +8,10 @@
 (in-readtable :qtools)
 
 (defgeneric resize-widget (place size splitter))
+(defgeneric orientation (splitter))
+(defgeneric (setf orientation) (orientation splitter))
+(defgeneric handle-size (splitter))
+(defgeneric (setf handle-size) (handle-size splitter))
 
 (define-widget splitter (QWidget container)
   ((orientation :initarg :orientation :accessor orientation)
@@ -17,14 +21,11 @@
     :orientation :vertical
     :handle-size 5))
 
-(define-override (splitter resize-event) (ev)
-  (update splitter)
-  (stop-overriding))
+(defmethod (setf orientation) :after (value (splitter splitter))
+  (update splitter))
 
-(define-override (splitter event) (ev)
-  (when (= (enum-value (q+:type ev)) (q+:qevent.layout-request))
-    (update splitter))
-  (stop-overriding))
+(defmethod (setf handle-size) :after (value (splitter splitter))
+  (update splitter))
 
 (defmethod add-widget :after (widget (splitter splitter))
   (push (make-instance 'splitter-handle :widget widget :splitter splitter)

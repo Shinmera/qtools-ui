@@ -7,6 +7,8 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
+(defgeneric dragging (draggable))
+
 (define-widget draggable (QWidget)
   ((dragging :initform NIL :accessor dragging)))
 

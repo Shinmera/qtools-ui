@@ -10,6 +10,8 @@
 (defgeneric map-widgets (function container))
 (defgeneric map-items (function item-container))
 (defgeneric ensure-widget-order (container))
+(defgeneric sorting (sorted-container))
+(defgeneric (setf sorting) (sorting sorted-container))
 
 (defmacro do-widgets ((widget container &optional result) &body body)
   `(block NIL

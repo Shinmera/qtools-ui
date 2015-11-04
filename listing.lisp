@@ -7,6 +7,13 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
+(defgeneric minimum-row-height (listing))
+(defgeneric (setf minimum-row-height) (value listing))
+(defgeneric fixed-row-height (listing))
+(defgeneric (setf fixed-row-height) (value listing))
+(defgeneric draggable (listing))
+(defgeneric (setf draggable) (value listing))
+
 (define-widget listing (QWidget sorted-item-container selectable-layout)
   ((minimum-row-height :initarg :minimum-row-height :accessor minimum-row-height)
    (fixed-row-height :initarg :fixed-row-height :accessor fixed-row-height)

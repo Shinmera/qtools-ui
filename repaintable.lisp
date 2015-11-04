@@ -7,6 +7,8 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
+(defgeneric repaint (repaintable))
+
 (define-widget repaintable (QWidget)
   ())
 

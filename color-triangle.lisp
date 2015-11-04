@@ -7,6 +7,9 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
+(defgeneric color (source))
+(defgeneric (setf color) (color source))
+
 (define-widget color-triangle (QGLWidget repaintable)
   ((color :initarg :color :finalized T :accessor color)
    (gradient :initform (make-circle-rainbow-gradient) :finalized T)

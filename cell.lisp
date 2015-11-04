@@ -7,6 +7,9 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
+(defgeneric padding (cell))
+(defgeneric (setf padding) (padding cell))
+
 (define-widget cell (QWidget selectable-item draggable repaintable mouse-propagator)
   ((padding :initarg :padding :accessor padding))
   (:default-initargs :padding 3))

@@ -7,6 +7,8 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
+(defgeneric container (item-widget))
+(defgeneric (setf container) (container item-widget))
 (defgeneric widget-item (item-widget))
 (defgeneric (setf widget-item) (item item-widget))
 (defgeneric item-widget (item layout))

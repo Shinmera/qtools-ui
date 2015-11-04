@@ -7,6 +7,9 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
+(defgeneric target (mouse-propagator))
+(defgeneric (setf target) (target mouse-propagator))
+
 (define-widget mouse-propagator (QObject)
   ((target :initarg :target :accessor target)))
 

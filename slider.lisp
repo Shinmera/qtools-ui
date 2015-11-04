@@ -7,6 +7,15 @@
 (in-package #:org.shirakumo.qtools.ui)
 (named-readtables:in-readtable :qtools)
 
+(defgeneric maximum (slider))
+(defgeneric (setf maximum) (maximum slider))
+(defgeneric minimum (slider))
+(defgeneric (setf minimum) (minimum slider))
+(defgeneric stepping (slider))
+(defgeneric (setf stepping) (stepping slider))
+(defgeneric default (slider))
+(defgeneric (setf default) (default slider))
+
 (define-widget double-slider (QSlider)
   ((maximum :initarg :maximum :accessor maximum)
    (minimum :initarg :minimum :accessor minimum)

@@ -11,6 +11,8 @@
 (defgeneric (setf active-widget) (widget listing))
 (defgeneric active-item (listing))
 (defgeneric (setf active-item) (item listing))
+(defgeneric selectable (selectable-layout))
+(defgeneric (setf selectable) (value selectable-layout))
 
 (define-widget selectable-layout (QWidget item-layout)
   ((active-widget :initarg :active-widget :accessor active-widget)

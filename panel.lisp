@@ -7,11 +7,16 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
-(defgeneric panel-container (panel))
+(defgeneric container (panel))
+(defgeneric (setf container) (container panel))
 (defgeneric title (panel))
+(defgeneric (setf title) (title panel))
 (defgeneric detachable-p (panel))
+(defgeneric (setf detachable-p) (value panel))
 (defgeneric collapsable-p (panel))
+(defgeneric (setf collapsable-p) (value panel))
 (defgeneric titlebar-shown-p (panel))
+(defgeneric (setf titlebar-shown-p) (value panel))
 (defgeneric attach (panel container))
 (defgeneric detach (panel))
 (defgeneric expand (panel))
@@ -19,7 +24,7 @@
 (defgeneric exit (panel))
 
 (define-widget panel (QWidget compass)
-  ((container :initarg :container :accessor panel-container)
+  ((container :initarg :container :accessor container)
    (title :initarg :title :accessor title)
    (detachable :initarg :detachable :accessor detachable-p)
    (collapsable :initarg :collapsable :accessor collapsable-p)
@@ -36,7 +41,7 @@
     :titlebar-shown T))
 
 (define-initializer (panel setup)
-  (when (panel-container panel)
+  (when (container panel)
     (attach panel NIL))
   (setf (title panel) (title panel)))
 
@@ -128,14 +133,14 @@
     (setf taching NIL)))
 
 (defmethod attach ((panel panel) (container null))
-  (attach panel (panel-container panel)))
+  (attach panel (container panel)))
 
 (defmethod attach ((panel panel) new-container)
   (add-widget panel new-container))
 
 (defmethod detach ((panel panel))
   (when (detachable-p panel)
-    (remove-widget panel (panel-container panel))))
+    (remove-widget panel (container panel))))
 
 (defmethod expand ((panel panel))
   (when (widget :center panel)

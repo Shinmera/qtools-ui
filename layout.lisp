@@ -7,9 +7,6 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
-(define-widget layout (QWidget)
-  ())
-
 (defgeneric widget (place layout))
 (defgeneric (setf widget) (widget place layout))
 (defgeneric find-widget (widget layout &key key test test-not))
@@ -22,6 +19,9 @@
 (defgeneric clear-layout (layout))
 (defgeneric update (layout))
 (defgeneric widget-acceptable-p (widget layout))
+
+(define-widget layout (QWidget)
+  ())
 
 (defmethod update ((layout layout)))
 

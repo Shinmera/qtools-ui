@@ -7,8 +7,15 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
+(defgeneric orientation (container))
+(defgeneric iconified-p (container))
+(defgeneric (setf iconified-p) (value container))
+(defgeneric iconify (container))
+(defgeneric deiconify (container))
+
 (define-widget panel-container (QScrollArea)
-  ((orientation :initarg :orientation :accessor orientation))
+  ((orientation :initarg :orientation :accessor orientation)
+   (iconified :initarg :iconified :accessor iconified-p))
   (:default-initargs
     :orientation :vertical))
 
@@ -29,10 +36,6 @@
 (define-subwidget (panel-container viewport)
                   (make-instance 'splitter :orientation (orientation panel-container))
   (setf (q+:widget panel-container) viewport))
-
-(defgeneric size (container))
-(defgeneric iconify (container))
-(defgeneric deiconify (container))
 
 (defmethod widget (place (panel-container panel-container))
   (widget place (slot-value panel-container 'viewport)))
