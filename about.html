@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>QTOOLS-UI</title>
+    <style type="text/css">
+      html{font-family: serif;}
+      code a{text-decoration: none;}
+      h1{display: inline-block; margin-bottom: 0;}
+      code{font-family: monospace;}
+      h4{display: inline-block; margin: 0; padding: 0;}
+      #symbol-index ul{list-style: none;}
+      .package li{margin-bottom: 20px;}
+      .package pre{margin: 0 0 0 10px; white-space: pre-wrap;}
+      .package .nicknames{font-weight: normal;}
+      table{margin: 20px;}
+      td{padding-bottom: 10px;}
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><img src="qtools-ui-logo.png" alt="qtools-ui"/></h1>
+      <span class="version">0.0.0</span>
+      <p class="description"/>
+    </header>
+    <div id="content">
+      <article>
+        
+          <span><h2>About Qtools-UI</h2>
+
+<p>This is a collection of useful widgets and pre-made components for use in your Qt applications. There is no specific scope that limits what might fit into this library, but for the most part it concerns itself with things like layouting and other base components that can be used anywhere.</p>
+
+<h2>Why Another Library?</h2>
+
+<p>This library builds on <a href="https://shinmera.github.io/qtools">Qtools</a>. However, while Qtools aims to provide a useful abstraction layer on top of CommonQt to make programming easier, it shouldn't really concern itself with providing useful standard components or replacement components for what Qt provides. That's where this comes in.</p>
+
+<p>Unfortunately for us, Qt is rather lacklustre in certain departments. Some standard components are either very scarcely actually useful, or close to broken in their behaviour. Most annoying of all, the layouts in Qt are usually not designed with the idea of being rewriteable, meaning it's sometimes a real pain if you would just like to remove or shuffle the widgets around.</p>
+
+<p>So, in an attempt to fix and circumvent this all, this library will contain a lot of reinventions, but does so in a much more reusable and extensible manner, allowing you to use parts of it and build on them as well.</p>
+
+<h2>Extent and Contribution</h2>
+
+<p>There is no set constraint on the extent of what this library might contain in terms of pre-made components. As such, suggestions for further components are very welcome. If you wrote a widget that might be generally useful even outside of your specific application, a pull-request to add it to this would be much appreciated.</p>
+
+<p>Qtools-UI offers individual ASDF systems for almost every component, meaning that if you do end up using it, you won't have to carry all the parts with you that you don't need. As such, the growth of this library is not impaired in any manner aside from the potentially growing complexity that should be minimised where possible.</p>
+
+<h2>How To</h2>
+
+<p>Before using this library, you should get yourself familiar with writing Qt applications in general, hopefully by using <a href="https://shinmera.github.io/qtools">Qtools</a>. Next, you'll simply need to add <code>qtools-ui</code> or a more specific component system to your dependencies. All components can then be instantiated through <code><a href="http://l1sp.org/cl/make-instance">make-instance</a></code> and the respective symbol from the <code>qui</code> package. All components are put into the same package, even if they are not necessarily loaded all at once.</p>
+
+<p>How to use the individual components of course varies by what it is. For this, hit up the documentation string for whichever you need. A very primitive example of some nifty components follows:</p>
+
+<pre><code>(cl+qt:with-main-window (w (<a href="http://l1sp.org/cl/make-instance">make-instance</a> 'qui:panel-container))
+  (<a href="#QTOOLS-UI:ADD-WIDGET">qui:add-widget</a> (<a href="http://l1sp.org/cl/make-instance">make-instance</a> 'qui:panel :title &quot;An empty panel. :(&quot;) w)
+  (<a href="#QTOOLS-UI:ADD-WIDGET">qui:add-widget</a> (<a href="http://l1sp.org/cl/make-instance">make-instance</a> 'qui:panel :title &quot;A slider, whoa!&quot;
+                                            :center (<a href="http://l1sp.org/cl/make-instance">make-instance</a> 'qui:slider)) w))
+</code></pre>
+
+<h2>General Layouting Concepts</h2>
+
+<p>Probably the most important aspect of Qtools-UI is the layouting mechanism. Central to this are the following basic functions: <code><a href="#QTOOLS-UI:WIDGET">widget</a></code>, <code><a href="#QTOOLS-UI:FIND-WIDGET">find-widget</a></code>, <code><a href="#QTOOLS-UI:WIDGET-POSITION">widget-position</a></code>, <code><a href="#QTOOLS-UI:WIDGET-AT-POINT">widget-at-point</a></code>, <code><a href="#QTOOLS-UI:ADD-WIDGET">add-widget</a></code>, <code><a href="#QTOOLS-UI:INSERT-WIDGET">insert-widget</a></code>, <code><a href="#QTOOLS-UI:REMOVE-WIDGET">remove-widget</a></code>, <code><a href="#QTOOLS-UI:SWAP-WIDGETS">swap-widgets</a></code>, <code><a href="#QTOOLS-UI:CLEAR-LAYOUT">clear-layout</a></code>. These allow you to manipulate and inspect the layout contents easily. Internally, the management of the widgets is up to the specific layout at hand. The actual positioning of the widgets is done in the layout's <code><a href="#QTOOLS-UI:UPDATE">update</a></code> mechanism, which therefore has to be called whenever a change occurs that might influence the widgets' positions. As a user of layouts you should not have to touch this method. Layouts also allow controlling which widgets they may contain, to ensure that no unsuitable widgets can enter the layout and screw up the management. This policy is controlled by <code><a href="#QTOOLS-UI:WIDGET-ACCEPTABLE-P">widget-acceptable-p</a></code>.</p>
+
+<p>Built on top of the layout system is the items system, which very closely mimics the layout API. Items are meant for situations where the actual widget in a layout has to be a wrapper around the actual widget or item the user provides. This is useful in contexts like the <code><a href="#QTOOLS-UI:LISTING">listing</a></code>, which needs to allow changing the colour when a row is selected and so forth. In order to not have to intrude into the user supplied widgets and to provide a more general system for this kind of tasks, the items are there for you. As a user you should however be aware of whether the component you're using is relying on widgets, or has to use the items layer, since you will still be able to access and manipulate the widgets directly, which might then lead to unexpected behaviour. For the most part though, the items functions map rather directly to the widgets ones, plus or minus a <code><a href="#QTOOLS-UI:WIDGET-ITEM">widget-item</a></code> or <code><a href="#QTOOLS-UI:ITEM-WIDGET">item-widget</a></code> call. Similarly to <code><a href="#QTOOLS-UI:WIDGET-ACCEPTABLE-P">widget-acceptable-p</a></code>, the items system has a <code>item-accceptable-p</code> method to control which items the item-layout can handle.</p>
+
+<p>In order to allow sorting, items also allow a general sorting mechanism that is facilitated through the <code>item&lt;</code>, <code><a href="#QTOOLS-UI:ITEM=">item=</a></code>, <code>item&gt;</code>, <code>item&lt;=</code>, and <code>item&gt;=</code> functions. If you provide a widget as an item to a sorted layout, you likely will want to add methods to at least <code>item&lt;</code> and <code><a href="#QTOOLS-UI:ITEM=">item=</a></code> to perform the proper ordering test.</p>
+</span>
+        
+      </article>
+      <article>
+        
+          <h2>Copyright</h2>
+          <span>qtools-ui</span> is licensed under the <span><a href="https://tldrlegal.com/search?q=Artistic">Artistic</a></span> license.
+          
+            © <span>Nicolas Hafner &lt;shinmera@tymoon.eu&gt;</span>
+            .
+          
+          
+        
+      </article>
+      
+        <article id="symbol-index">
+          <h2>Package Index</h2>
+          <ul><li class="package">
+              <h3>
+                <a name="QTOOLS-UI" href="#QTOOLS-UI">QTOOLS-UI</a>
+                <span class="nicknames">(ORG.SHIRAKUMO.QTOOLS.UI QUI)</span>
+              </h3>
+              <ul><li>
+                  <a name="QTOOLS-UI:CELL"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:CELL" class="name">CELL</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A cell is a generic item container that is selectable and draggable.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:COLOR-TRIANGLE"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:COLOR-TRIANGLE" class="name">COLOR-TRIANGLE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A widget for an HSV colour wheel triangle as often used in graphics applications.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:COMPASS"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:COMPASS" class="name">COMPASS</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A layout widget that aligns items North, East, South, West, and Center.
+Use the corresponding keywords for the widget places.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:CONTAINER"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:CONTAINER" class="name">CONTAINER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A simple container to hold a list of widgets and manage the various layout functions.
+This does not actually concern itself with arranging the widgets and only handles
+the internal representation of the widgets. As such, this class is to be used as
+a superclass for an actual layout that then takes care of the widget arrangement.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:DOUBLE-SLIDER"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:DOUBLE-SLIDER" class="name">DOUBLE-SLIDER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Qt does not provide a floating-point slider, hence this.
+It uses a standard slider, but uses an internal divisor to achieve floating point values.
+
+See MAXIMUM
+See MINIMUM
+See STEPPING</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:DRAGGABLE"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:DRAGGABLE" class="name">DRAGGABLE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A helper class to be used when you need to support dragging of your widget.
+
+See DRAGGING
+See DRAG-START
+See DRAG
+See DRAG-END</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ITEM-CONTAINER"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ITEM-CONTAINER" class="name">ITEM-CONTAINER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A container that uses item containers instead of direct widgets.
+
+See CONTAINER
+See ITEM-LAYOUT</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ITEM-LAYOUT"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ITEM-LAYOUT" class="name">ITEM-LAYOUT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A layout to contain items.
+
+See LAYOUT</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ITEM-WIDGET"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ITEM-WIDGET" class="name">ITEM-WIDGET</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A widget to contain an item.
+Depending on the item type, an item may or may not be contained in multiple item-widgets
+at the same time. However, an item-widget itself can only be contained once and only in
+one layout at a time.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:LAYOUT"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:LAYOUT" class="name">LAYOUT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Superclass for all custom layout widgets.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:LISTING"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:LISTING" class="name">LISTING</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Replacement for the QListWidget.
+Allows sorting, dragging, selecting, and of course dynamic modification of the contents.
+Unlike the QListWidget, this allows adding actual widgets, not just strings.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:LISTING-ITEM"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:LISTING-ITEM" class="name">LISTING-ITEM</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">The item container for the listing container.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:MOUSE-PROPAGATOR"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:MOUSE-PROPAGATOR" class="name">MOUSE-PROPAGATOR</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A helper class that propagates mouse events somewhere else, by default to itself.
+This implements an event filter. To catch the events, use QObject::installEventFilter.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:PANEL"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:PANEL" class="name">PANEL</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A dockable and collapsible panel to contain a widget.
+Useful in situations where you want to build a UI that contains several parts that the user
+should be able to freely arrange to their liking.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:PANEL-CONTAINER"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:PANEL-CONTAINER" class="name">PANEL-CONTAINER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A container for panels.
+Supports iconifying, rearranging of the panels, and vertical or horizontal orientation.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:REPAINTABLE"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:REPAINTABLE" class="name">REPAINTABLE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A widget that is safely repaintable by offering a method and signal to cause a repaint in the main thread.
+
+See REPAINT</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SELECTABLE-LAYOUT"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SELECTABLE-LAYOUT" class="name">SELECTABLE-LAYOUT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">An item-layout that allows selecting a certain item.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SLIDER"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SLIDER" class="name">SLIDER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A neat slider widget that combines a double-slider, a spin box, and a potential defaulting button.
+If the default is NIL, no button is displayed.
+
+See MAXIMUM
+See MINIMUM
+See STEPPING
+See DEFAULT</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SORTED-CONTAINER"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SORTED-CONTAINER" class="name">SORTED-CONTAINER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A container that also supports automatic sorting of the widgets.
+
+See CONTAINER
+See SORTING</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SORTED-ITEM-CONTAINER"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SORTED-ITEM-CONTAINER" class="name">SORTED-ITEM-CONTAINER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">An item-container that also supports automatic sorting of the items.
+
+See ITEM-CONTAINER
+See SORTED-CONTAINER</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SPLITTER"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SPLITTER" class="name">SPLITTER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Similar to QSplitter, but instead of distributing all available space, only uses up and extends to as much space as is needed by its widgets.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ACTIVE-ITEM"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ACTIVE-ITEM" class="name">ACTIVE-ITEM</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(LISTING)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor for the currently active item on the layout.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ACTIVE-WIDGET"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ACTIVE-WIDGET" class="name">ACTIVE-WIDGET</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(LISTING)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor for the currently active widget on the layout.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ATTACHED-P"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ATTACHED-P" class="name">ATTACHED-P</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PANEL)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor to whether the panel is attached.
+
+See ATTACH
+See DETACH</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:COLLAPSABLE-P"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:COLLAPSABLE-P" class="name">COLLAPSABLE-P</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PANEL)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor to whether the panel is collapsable.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:COLLAPSED-P"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:COLLAPSED-P" class="name">COLLAPSED-P</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PANEL)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor to whether the panel is collapsed.
+
+See COLLAPSE
+See EXPAND</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:COLOR"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:COLOR" class="name">COLOR</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(SOURCE)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor for the current colour of the colour source.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:CONTAINER"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:CONTAINER" class="name">CONTAINER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PANEL)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">The container of the item-widget.
+
+See ITEM-WIDGET</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:DEFAULT"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:DEFAULT" class="name">DEFAULT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(SLIDER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor for the slider's default value, if any.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:DETACHABLE-P"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:DETACHABLE-P" class="name">DETACHABLE-P</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PANEL)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor to whether the panel is detachable.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:DRAGGABLE"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:DRAGGABLE" class="name">DRAGGABLE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(LISTING)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor to whether widgets are draggable or not.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:DRAGGING"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:DRAGGING" class="name">DRAGGING</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(DRAGGABLE)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Whether the draggable is currently being dragged.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:FIXED-ROW-HEIGHT"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:FIXED-ROW-HEIGHT" class="name">FIXED-ROW-HEIGHT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(LISTING)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor to the fixed row height of the listing.
+If NIL, the row heights are dynamic, otherwise the listing will enforce this height.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:HANDLE-SIZE"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:HANDLE-SIZE" class="name">HANDLE-SIZE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(SPLITTER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor for the size of a splitter's handle.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ICONIFIED-P"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ICONIFIED-P" class="name">ICONIFIED-P</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(CONTAINER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor to whether the panel-container is iconified or not.
+If iconified, the panels are not actually shown, only their titles or icons.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ITEM-AT"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ITEM-AT" class="name">ITEM-AT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PLACE LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Return the item at the specified place in the layout.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:MAXIMUM"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:MAXIMUM" class="name">MAXIMUM</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(SLIDER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor for the maximum of the slider.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:MINIMUM"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:MINIMUM" class="name">MINIMUM</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(SLIDER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor for the minimum of the slider.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:MINIMUM-ROW-HEIGHT"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:MINIMUM-ROW-HEIGHT" class="name">MINIMUM-ROW-HEIGHT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(LISTING)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor to the minimum row height of the listing.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ORIENTATION"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ORIENTATION" class="name">ORIENTATION</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(SPLITTER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor for the layout's orientation, must be one of :vertical or :horizontal.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:PADDING"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:PADDING" class="name">PADDING</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(CELL)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Padding in the number of pixels to use between the cell edge and the item.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:PANEL"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:PANEL" class="name">PANEL</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(OBJECT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SELECTABLE"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SELECTABLE" class="name">SELECTABLE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(SELECTABLE-LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor for whether selecting a widget/item is allowed.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SORTING"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SORTING" class="name">SORTING</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(SORTED-CONTAINER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">The function used for sorting the container. If NIL, no sorting is applied.
+The function must accept two arguments to compare.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:STEPPING"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:STEPPING" class="name">STEPPING</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(SLIDER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor for the step size of the slider.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:TARGET"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:TARGET" class="name">TARGET</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(MOUSE-PROPAGATOR)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">The target to send the propagated mouse events to.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:TITLE"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:TITLE" class="name">TITLE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PANEL)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">The title displayed for the panel.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:TITLEBAR-SHOWN-P"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:TITLEBAR-SHOWN-P" class="name">TITLEBAR-SHOWN-P</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PANEL)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Accessor to whether the panel's titlebar is visible.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:WIDGET-ITEM"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:WIDGET-ITEM" class="name">WIDGET-ITEM</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(ITEM-WIDGET)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">The actual item wrapped by the item-widget.
+
+See ITEM-WIDGET</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:WIDGETS"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:WIDGETS" class="name">WIDGETS</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(CONTAINER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">The direct widgets stored in the container.
+You should not used this unless you are implementing a container yourself, or know
+what you are doing, as the data structure is not necessarily safe to use directly,
+or even specified to be of a certain type.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:C"/>
+                  <article>
+                    <header class="function">
+                      <span class="type">function</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:C" class="name">C</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(R G B &amp;OPTIONAL (A 255))</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Returns a corresponding QColor object.
+Note that these objects are cached. You should never modify them.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:CALL-WITH-TRANSLATION"/>
+                  <article>
+                    <header class="function">
+                      <span class="type">function</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:CALL-WITH-TRANSLATION" class="name">CALL-WITH-TRANSLATION</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PAINTER TARGET FUNCTION)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Call the function while translating the painter by the target.
+
+See QPainter::translate</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:COERCE-COLOR"/>
+                  <article>
+                    <header class="function">
+                      <span class="type">function</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:COERCE-COLOR" class="name">COERCE-COLOR</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(COLOR)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Coerce the color into a QColor object.
+Can be either a QColor, a list of the R G B and A components, or an RGBA integer.
+If not a direct QColor, the value is resolved as per C.
+
+See RGBA-TO-COLOR
+See C</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:COLOR-TO-RGBA"/>
+                  <article>
+                    <header class="function">
+                      <span class="type">function</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:COLOR-TO-RGBA" class="name">COLOR-TO-RGBA</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(R G B &amp;OPTIONAL (A 255))</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Turns an rgba quadruplet into an integer.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:RGBA-TO-COLOR"/>
+                  <article>
+                    <header class="function">
+                      <span class="type">function</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:RGBA-TO-COLOR" class="name">RGBA-TO-COLOR</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(RGBA)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Turns an integer into an rgba quadruplet.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ADD-ITEM"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ADD-ITEM" class="name">ADD-ITEM</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(ITEM LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Add the item to the layout.
+
+See ADD-WIDGET
+See COERCE-ITEM</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ADD-WIDGET"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ADD-WIDGET" class="name">ADD-WIDGET</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(WIDGET LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Add the widget to the layout.
+The positioning of the widget is completely up to the layout.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ATTACH"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ATTACH" class="name">ATTACH</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PANEL CONTAINER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Tell the panel to attach itself to a container.
+If NIL is passed as the container, the panel will try to use the last container it has been
+attached to to attach to again. If no container is given or no previous container exists,
+an error is signalled. Panels can only be attached to one container at a time.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:CLEAR-LAYOUT"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:CLEAR-LAYOUT" class="name">CLEAR-LAYOUT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Clear all widgets from the layout.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:COERCE-ITEM"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:COERCE-ITEM" class="name">COERCE-ITEM</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(ITEM LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Create a suitable item-widget for the item.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:COLLAPSE"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:COLLAPSE" class="name">COLLAPSE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PANEL)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Make the panel's center widget invisible.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:DEICONIFY"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:DEICONIFY" class="name">DEICONIFY</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(CONTAINER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Deiconify the panel-container.
+
+See ICONFIFIED-P</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:DETACH"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:DETACH" class="name">DETACH</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PANEL)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Tell the panel to detach itself from a container.
+If it is not currently attached to anything, an error is signalled. The panel will remember
+the container it has been attached to so it can easily be reattached later.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:DRAG"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:DRAG" class="name">DRAG</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(WIDGET FROM-X FROM-Y TO-X TO-Y)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Called whenever the draggable is being dragged around.
+This usually happens during a mouse-move event.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:DRAG-END"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:DRAG-END" class="name">DRAG-END</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(WIDGET X Y)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Called whenever the draggable has stopped being dragged.
+This usually happens during a mouse-release event.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:DRAG-START"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:DRAG-START" class="name">DRAG-START</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(WIDGET X Y)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Called whenever the draggable is beginning to be dragged.
+This usually happens during a mouse-press event.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ENSURE-WIDGET-ORDER"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ENSURE-WIDGET-ORDER" class="name">ENSURE-WIDGET-ORDER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(CONTAINER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Make sure that the widgets of the container are in the right order.
+This may change the widget's positions.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:EXIT"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:EXIT" class="name">EXIT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PANEL)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Close the panel.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:EXPAND"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:EXPAND" class="name">EXPAND</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PANEL)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Make the panel's center widget visible.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:FIND-ITEM"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:FIND-ITEM" class="name">FIND-ITEM</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(ITEM LAYOUT &amp;KEY KEY TEST TEST-NOT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Find the item in the layout.
+
+See FIND-WIDGET</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:FIND-WIDGET"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:FIND-WIDGET" class="name">FIND-WIDGET</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(WIDGET LAYOUT &amp;KEY KEY TEST TEST-NOT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Find the widget in the layout.
+
+See FIND</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ICONIFY"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ICONIFY" class="name">ICONIFY</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(CONTAINER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Iconify the panel-container.
+
+See ICONFIFIED-P</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:INSERT-ITEM"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:INSERT-ITEM" class="name">INSERT-ITEM</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(ITEM PLACE LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Insert the item into the layout at the specified place.
+
+See INSERT-WIDGET
+See COERCE-ITEM</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:INSERT-WIDGET"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:INSERT-WIDGET" class="name">INSERT-WIDGET</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(WIDGET PLACE LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Insert the widget at the specified place in the layout.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ITEM-ACCEPTABLE-P"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ITEM-ACCEPTABLE-P" class="name">ITEM-ACCEPTABLE-P</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(ITEM LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A predicate to decide whether the item is suitable for inclusion in the widget.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ITEM-POSITION"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ITEM-POSITION" class="name">ITEM-POSITION</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(ITEM LAYOUT &amp;KEY KEY TEST TEST-NOT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Return the position of the item in the layout.
+
+See WIDGET-POSITION</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ITEM-WIDGET"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ITEM-WIDGET" class="name">ITEM-WIDGET</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(ITEM LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Find the item-widget for the given item in the layout.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ITEM&lt;"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ITEM&lt;" class="name">ITEM&lt;</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(A B)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Whether A precedes B.
+Default methods for STRING and NUMBER exist, as well as a general method that simply
+prints the object to a string using PRINC and calls ITEM&lt; again with the results of that.
+
+Add your own methods to this if you need more precise sorting.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ITEM&lt;="/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ITEM&lt;=" class="name">ITEM&lt;=</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(A B)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Whether A precedes B.
+Uses ITEM&lt; and ITEM= to calculate the result. You should not need to add methods to this.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ITEM="/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ITEM=" class="name">ITEM=</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(A B)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Whether A is equal to B.
+Default methods for STRING and NUMBER exist, as well as a general method that simply
+prints the object to a string using PRINC and calls ITEM= again with the results of that.
+
+Add your own methods to this if you need more precise sorting.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ITEM&gt;="/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ITEM&gt;=" class="name">ITEM&gt;=</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(A B)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Whether A follows B.
+Uses ITEM&lt; and ITEM= to calculate the result. You should not need to add methods to this.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:MAP-ITEMS"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:MAP-ITEMS" class="name">MAP-ITEMS</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(FUNCTION ITEM-CONTAINER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Map the function over the container's items.
+The mapping order is in sequence with the item positions.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:MAP-WIDGETS"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:MAP-WIDGETS" class="name">MAP-WIDGETS</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(FUNCTION CONTAINER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Map the function over the container's widgets.
+The mapping order is in sequence with the widget positions.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:REMOVE-ITEM"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:REMOVE-ITEM" class="name">REMOVE-ITEM</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(ITEM LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Remove the item from the layout.
+
+See REMOVE-WIDGET
+See ITEM-WIDGET</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:REMOVE-ITEM-AT"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:REMOVE-ITEM-AT" class="name">REMOVE-ITEM-AT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PLACE LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Remove the item at the specified place in the layout.
+
+See REMOVE-WIDGET</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:REMOVE-WIDGET"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:REMOVE-WIDGET" class="name">REMOVE-WIDGET</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PLACE LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Remove the widget or the widget at the specified place from the layout.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:REPAINT"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:REPAINT" class="name">REPAINT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(REPAINTABLE)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Cause the repaintable to be repainted.
+Unlike QWidget::repaint, this method is safe to be called from any thread as it will use a
+signal to reach the main thread in which drawing events are permitted.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:RESIZE-WIDGET"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:RESIZE-WIDGET" class="name">RESIZE-WIDGET</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(PLACE SIZE SPLITTER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Resize the layout's widget to the given size.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SWAP-ITEMS"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SWAP-ITEMS" class="name">SWAP-ITEMS</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(A B LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Swap the two items in their place in the layout.
+Note that the implementation might swap the corresponding item-widget,
+or it may also choose to swap the items in place. As such, the item-widget's
+positions may change, or the actual item-widget of the item may change.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SWAP-ITEMS-AT"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SWAP-ITEMS-AT" class="name">SWAP-ITEMS-AT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(A B LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Swap the two items at the specified places in the layout.
+
+See SWAP-ITEMS</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SWAP-WIDGETS"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SWAP-WIDGETS" class="name">SWAP-WIDGETS</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(A B LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Swap the two widgets or the widgets at the specified places in the layout.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:UPDATE"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:UPDATE" class="name">UPDATE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Update the layout widgets' geometry.
+
+This is automatically called if the layout receives a layout-request event or is resized.
+It's also automatically called on the various layout modifying operations.
+If you add new operations that modify the layout as well without calling the preexisting
+ones, you should call this method to ensure the widgets are restored as appropraite.
+
+If you subclass a layout, you should implement a method on this to calculate yout layouts
+widgets' geometry properly.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:WIDGET-ACCEPTABLE-P"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:WIDGET-ACCEPTABLE-P" class="name">WIDGET-ACCEPTABLE-P</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(WIDGET LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Predicate to determine whether the layout accepts the given widget.
+This test is automatically called on all the predefined widget adding functions to make
+sure no bad widgets can be inserted into a layout.
+
+You should add methods to this to either further restrict or permit further widgets.
+You should call this to check for permission if you add new layout manipulating functions
+that don't call out to the standard layout functions.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:WIDGET-AT-POINT"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:WIDGET-AT-POINT" class="name">WIDGET-AT-POINT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(POINT LAYOUT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">See if there is a widget in the layout at the point and return it if it exists.
+POINT can be a cons of X and Y or a QPoint.
+The coordinates have to be relative to the layout.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:WIDGET-POSITION"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:WIDGET-POSITION" class="name">WIDGET-POSITION</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(WIDGET LAYOUT &amp;KEY KEY TEST TEST-NOT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Find the position of the widget in the layout.
+
+See POSITION</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:DO-ITEMS"/>
+                  <article>
+                    <header class="macro">
+                      <span class="type">macro</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:DO-ITEMS" class="name">DO-ITEMS</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">((ITEM CONTAINER &amp;OPTIONAL RESULT) &amp;BODY BODY)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Loop over the container's items.
+
+See MAP-ITEMS</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:DO-WIDGETS"/>
+                  <article>
+                    <header class="macro">
+                      <span class="type">macro</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:DO-WIDGETS" class="name">DO-WIDGETS</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">((WIDGET CONTAINER &amp;OPTIONAL RESULT) &amp;BODY BODY)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Loop over the container's widgets.
+
+See MAP-WIDGETS</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:WITH-TRANSLATION"/>
+                  <article>
+                    <header class="macro">
+                      <span class="type">macro</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:WITH-TRANSLATION" class="name">WITH-TRANSLATION</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">((PAINTER TARGET) &amp;BODY BODY)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">Convenience macro around call-with-translation
+
+See CALL-WITH-TRANSLATION</pre>
+                  </article>
+                </li></ul>
+            </li></ul>
+        </article>
+      
+    </div>
+  </body>
+</html>
