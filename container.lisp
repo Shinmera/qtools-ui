@@ -76,6 +76,11 @@
 (defmethod remove-widget ((widget qobject) (container container))
   (remove-widget (position widget (widgets container)) container))
 
+(defmethod clear-layout ((container container))
+  (loop for widget = (pop (widgets container))
+        while widget do (setf (parent widget) NIL))
+  container)
+
 (defmethod swap-widgets ((a integer) (b integer) (container container))
   (swapcar a b (widgets container))
   container)

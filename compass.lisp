@@ -103,6 +103,9 @@
                      (error "~a is not contained in ~a." widget compass))
                  compass))
 
+(defmethod clear-layout ((compass compass))
+  (remove-widget (list :north :east :south :west :center) compass))
+
 (defmethod swap-widgets (a b (compass compass))
   (with-slots-bound (compass compass)
     (let ((a (or (widget-position a compass)

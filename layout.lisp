@@ -19,6 +19,7 @@
 (defgeneric insert-widget (widget place layout))
 (defgeneric remove-widget (place layout))
 (defgeneric swap-widgets (a b layout))
+(defgeneric clear-layout (layout))
 (defgeneric update (layout))
 (defgeneric widget-acceptable-p (widget layout))
 
@@ -64,14 +65,26 @@
   (prog1 (call-next-method)
     (update layout)))
 
+(defmethod add-widget ((widgets list) (layout layout))
+  (dolist (widget widgets widgets)
+    (add-widget widget layout)))
+
 (defmethod insert-widget :around (widget place (layout layout))
   (check-widget-permitted widget layout)
   (prog1 (call-next-method)
     (update layout)))
 
+(defmethod insert-widget ((widgets list) place (layout layout))
+  (dolist (widget widgets widgets)
+    (insert-widget widget place layout)))
+
 (defmethod remove-widget :around (place (layout layout))
   (prog1 (call-next-method)
     (update layout)))
+
+(defmethod remove-widget ((widgets list) (layout layout))
+  (dolist (widget widgets widgets)
+    (remove-widget widget layout)))
 
 (defmethod swap-widgets :around (a b (layout layout))
   (prog1 (call-next-method)
