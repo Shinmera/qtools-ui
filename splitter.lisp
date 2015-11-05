@@ -37,7 +37,7 @@
 (defmethod remove-widget :after ((n integer) (splitter splitter))
   (finalize (remove-nth n (handles splitter))))
 
-(defmethod swap-widget :after ((a integer) (b integer) (splitter splitter))
+(defmethod swap-widgets :after ((a integer) (b integer) (splitter splitter))
   (swapcar a b (handles splitter)))
 
 (defmethod resize-widget ((n integer) size (splitter splitter))
