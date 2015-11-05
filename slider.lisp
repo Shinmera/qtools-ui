@@ -66,6 +66,11 @@
 
 (define-signal (slider value-changed) (double))
 
+(define-initializer (slider setup)
+  (setf (q+:minimum-height slider) 20)
+  (setf (q+:minimum-width slider) 100)
+  (setf (q+:maximum-height slider) 40))
+
 (define-subwidget (slider double-slider) (make-instance 'double-slider :maximum maximum :minimum minimum :stepping stepping)
   (setf (value double-slider) (or default minimum)))
 
