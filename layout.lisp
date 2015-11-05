@@ -52,7 +52,7 @@
 (defun check-widget-permitted (widget layout)
   (unless (widget-acceptable-p widget layout)
     (cerror "Add the widget anyway." "~a does not accept ~a." layout widget))
-  (when (eql (parent widget) layout)
+  (when (and widget (eql (parent widget) layout))
     (error "~a is already contained in ~a." widget layout)))
 
 (defmethod (setf widget) :around (widget place (layout layout))
