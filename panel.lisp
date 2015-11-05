@@ -59,19 +59,19 @@
     (setf (widget :north panel) titlebar)))
 
 (define-override (panel resize-event) (ev)
-  (unless resizing-self
+  (unless (or resizing-self (collapsed-p panel))
     (cond ((attached-p panel)
-           (unless (collapsed-p panel)
-             (fsetf (attached-size panel) (copy (q+:size panel)))))
+           (fsetf (attached-size panel) (copy (q+:size panel))))
           (T
            (fsetf (detached-size panel) (copy (q+:geometry panel))))))
   (update panel)
   (stop-overriding))
 
 (define-override (panel move-event) (ev)
-  (unless resizing-self
-    (when (not (attached-p panel))
-      (fsetf (detached-size panel) (copy (q+:geometry panel)))))
+  (unless (or resizing-self (attached-p panel))
+    (if detached-size
+        (q+:move-to detached-size (q+:pos panel))
+        (setf (detached-size panel) (copy (q+:geometry panel)))))
   (stop-overriding))
 
 (defmethod attached-p ((panel panel))
@@ -118,7 +118,7 @@
       (setf container new-container)
       (setf (q+:window-flags panel) (q+:qt.widget))
       (setf (attached-p titlebar) T)
-      (when attached-size
+      (when (and attached-size (not (collapsed-p panel)))
         (q+:resize panel attached-size))
       (call-next-method))))
 
@@ -138,7 +138,9 @@
       (setf (attached-p titlebar) NIL)
       (q+:activate-window panel)
       (when detached-size
-        (setf (q+:geometry panel) detached-size)))))
+        (if (collapsed-p panel)
+            (q+:move panel (q+:top-left detached-size))
+            (setf (q+:geometry panel) detached-size))))))
 
 (defmethod attach ((panel panel) (container null))
   (attach panel (container panel)))
@@ -151,21 +153,21 @@
     (remove-widget panel (container panel))))
 
 (defmethod expand ((panel panel))
-  (when (widget :center panel)
-    (with-slots-bound (panel panel)
-      (setf (collapsed-p titlebar) NIL)
-      (q+:show (widget :center panel))
-      (update panel)
-      (when attached-size
-        (q+:resize panel attached-size)))))
+  (with-self-resizing (panel)
+    (when (widget :center panel)
+      (with-slots-bound (panel panel)
+        (setf (collapsed-p titlebar) NIL)
+        (q+:show (widget :center panel))
+        (if (attached-p panel)
+            (when attached-size (q+:resize panel attached-size))
+            (when detached-size (q+:resize panel (q+:width detached-size) (q+:height detached-size))))))))
 
 (defmethod collapse ((panel panel))
-  (when (and (widget :center panel) (collapsable-p panel))
-    (setf (collapsed-p (slot-value panel 'titlebar)) T)
-    (q+:hide (widget :center panel))
-    (update panel)
-    (q+:resize panel (q+:width panel)
-               (q+:height (slot-value panel 'titlebar)))))
+  (with-self-resizing (panel)
+    (when (and (widget :center panel) (collapsable-p panel))
+      (setf (collapsed-p (slot-value panel 'titlebar)) T)
+      (q+:hide (widget :center panel))
+      (q+:resize panel (q+:width panel) (q+:minimum-height panel)))))
 
 (defmethod drag ((panel panel) px py nx ny)
   (cond ((attached-p panel)
