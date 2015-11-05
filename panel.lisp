@@ -34,13 +34,20 @@
    
    (attached-size :initform NIL :accessor attached-size)
    (detached-size :initform NIL :accessor detached-size)
-   (taching :initform NIL :accessor taching))
+   (resizing-self :initform NIL :accessor resizing-self))
   (:default-initargs
     :container NIL
     :title NIL
     :detachable T
     :collapsable T
     :titlebar-shown T))
+
+(defmacro with-self-resizing ((self) &body body)
+  `(unwind-protect
+        (progn
+          (setf (resizing-self ,self) T)
+          ,@body)
+     (setf (resizing-self ,self) NIL)))
 
 (define-initializer (panel setup)
   (when (container panel)
@@ -52,16 +59,17 @@
     (setf (widget :north panel) titlebar)))
 
 (define-override (panel resize-event) (ev)
-  (unless taching
+  (unless resizing-self
     (cond ((attached-p panel)
-           (fsetf (attached-size panel) (copy (q+:size panel))))
+           (unless (collapsed-p panel)
+             (fsetf (attached-size panel) (copy (q+:size panel)))))
           (T
            (fsetf (detached-size panel) (copy (q+:geometry panel))))))
   (update panel)
   (stop-overriding))
 
 (define-override (panel move-event) (ev)
-  (unless taching
+  (unless resizing-self
     (when (not (attached-p panel))
       (fsetf (detached-size panel) (copy (q+:geometry panel)))))
   (stop-overriding))
@@ -106,14 +114,13 @@
       (error "~a is already attached to ~a" panel container))
     (unless new-container
       (error "~a cannot be attached to nothing." panel))
-    (setf taching T)
-    (setf container new-container)
-    (setf (q+:window-flags panel) (q+:qt.widget))
-    (setf (attached-p titlebar) T)
-    (when attached-size
-      (q+:resize panel attached-size))
-    (call-next-method)
-    (setf taching NIL)))
+    (with-self-resizing (panel)
+      (setf container new-container)
+      (setf (q+:window-flags panel) (q+:qt.widget))
+      (setf (attached-p titlebar) T)
+      (when attached-size
+        (q+:resize panel attached-size))
+      (call-next-method))))
 
 (defmethod remove-widget ((panel panel) old-container)
   (with-slots-bound (panel panel)
@@ -121,18 +128,17 @@
       (error "~a is not attached to anything!" panel))
     (unless (eql old-container container)
       (error "~a is not attached to ~a." panel old-container))
-    (setf taching T)
-    (call-next-method)
-    (setf (q+:window-flags panel)
-          (logior (q+:qt.window-stays-on-top-hint)
-                  (q+:qt.tool)
-                  (q+:qt.frameless-window-hint)))
-    (q+:show panel)
-    (setf (attached-p titlebar) NIL)
-    (q+:activate-window panel)
-    (when detached-size
-      (setf (q+:geometry panel) detached-size))
-    (setf taching NIL)))
+    (with-self-resizing (panel)
+      (call-next-method)
+      (setf (q+:window-flags panel)
+            (logior (q+:qt.window-stays-on-top-hint)
+                    (q+:qt.tool)
+                    (q+:qt.frameless-window-hint)))
+      (q+:show panel)
+      (setf (attached-p titlebar) NIL)
+      (q+:activate-window panel)
+      (when detached-size
+        (setf (q+:geometry panel) detached-size)))))
 
 (defmethod attach ((panel panel) (container null))
   (attach panel (container panel)))
@@ -146,13 +152,20 @@
 
 (defmethod expand ((panel panel))
   (when (widget :center panel)
-    (q+:show (widget :center panel))
-    (update panel)))
+    (with-slots-bound (panel panel)
+      (setf (collapsed-p titlebar) NIL)
+      (q+:show (widget :center panel))
+      (update panel)
+      (when attached-size
+        (q+:resize panel attached-size)))))
 
 (defmethod collapse ((panel panel))
   (when (and (widget :center panel) (collapsable-p panel))
+    (setf (collapsed-p (slot-value panel 'titlebar)) T)
     (q+:hide (widget :center panel))
-    (update panel)))
+    (update panel)
+    (q+:resize panel (q+:width panel)
+               (q+:height (slot-value panel 'titlebar)))))
 
 (defmethod drag ((panel panel) px py nx ny)
   (cond ((attached-p panel)
@@ -172,6 +185,16 @@
   (q+:close panel)
   (finalize panel))
 
+(defmethod update :after ((panel panel))
+  (when (attached-p panel)
+    (update (container panel))))
+
+(defmethod (setf widget) :after (widget (place (eql :center)) (panel panel))
+  (q+:resize panel
+             (q+:width panel)
+             (+ (q+:height (slot-value panel 'titlebar))
+                (q+:height (q+:size-hint widget)))))
+
 
 (define-widget panel-titlebar (QWidget draggable)
   ((panel :initarg :panel :accessor panel))
@@ -179,6 +202,7 @@
     :panel (error "PANEL required.")))
 
 (define-initializer (panel-titlebar setup)
+  (setf (q+:fixed-height panel-titlebar) 30)
   (setf (q+:cursor panel-titlebar) (q+:make-qcursor (q+:qt.open-hand-cursor)))
   (setf (q+:auto-fill-background panel-titlebar) T)
   (setf (q+:color (q+:palette panel-titlebar) (q+:qpalette.background))
@@ -243,6 +267,13 @@
 (defmethod (setf attached-p) (attached-p (panel-titlebar panel-titlebar))
   (with-slots-bound (panel-titlebar panel-titlebar)
     (setf (q+:text attach-toggle) (if attached-p "Detach" "Attach"))))
+
+(defmethod collapsed-p ((panel-titlebar panel-titlebar))
+  (collapsed-p (panel panel-titlebar)))
+
+(defmethod (setf collapsed-p) (value (panel-titlebar panel-titlebar))
+  (with-slots-bound (panel-titlebar panel-titlebar)
+    (setf (q+:text collapse-toggle) (if value "Expand" "Collapse"))))
 
 (defmethod (setf detachable-p) (value (panel-titlebar panel-titlebar))
   (with-slots-bound (panel-titlebar panel-titlebar)
