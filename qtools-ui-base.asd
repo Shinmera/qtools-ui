@@ -6,10 +6,11 @@
 
 (in-package #:cl-user)
 (asdf:defsystem qtools-ui-base
-  :version "0.0.0"
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
+  :description "Qtools-UI's base toolkit, package, and documentation."
+  :homepage "https://github.com/Shinmera/qtools-ui"
   :serial T
   :components ((:file "package")
                (:file "toolkit")

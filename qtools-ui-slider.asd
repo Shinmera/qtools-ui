@@ -6,10 +6,11 @@
 
 (in-package #:cl-user)
 (asdf:defsystem qtools-ui-slider
-  :version "0.0.0"
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
+  :description "A more convenient slider than the QSlider."
+  :homepage "https://github.com/Shinmera/qtools-ui"
   :serial T
   :components ((:file "slider"))
   :depends-on (:qtools-ui-base))

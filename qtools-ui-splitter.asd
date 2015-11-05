@@ -6,10 +6,11 @@
 
 (in-package #:cl-user)
 (asdf:defsystem qtools-ui-splitter
-  :version "0.0.0"
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
+  :description "A better version of the QSplitter, allowing a dynamic size based on the components' size."
+  :homepage "https://github.com/Shinmera/qtools-ui"
   :serial T
   :components ((:file "splitter"))
   :depends-on (:qtools-ui-base

@@ -6,10 +6,11 @@
 
 (in-package #:cl-user)
 (asdf:defsystem qtools-ui-layout
-  :version "0.0.0"
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
+  :description "The basic layout and item-layout components required to build layouts."
+  :homepage "https://github.com/Shinmera/qtools-ui"
   :serial T
   :components ((:file "layout")
                (:file "items"))

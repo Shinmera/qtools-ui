@@ -6,10 +6,11 @@
 
 (in-package #:cl-user)
 (asdf:defsystem qtools-ui-helpers
-  :version "0.0.0"
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
+  :description "A collection of useful little helper widgets."
+  :homepage "https://github.com/Shinmera/qtools-ui"
   :serial T
   :components ((:file "repaintable")
                (:file "mouse-propagator")

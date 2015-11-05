@@ -6,10 +6,11 @@
 
 (in-package #:cl-user)
 (asdf:defsystem qtools-ui-compass
-  :version "0.0.0"
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
+  :description "A compass layout orienting things N/E/S/W/C."
+  :homepage "https://github.com/Shinmera/qtools-ui"
   :serial T
   :components ((:file "compass"))
   :depends-on (:qtools-ui-base

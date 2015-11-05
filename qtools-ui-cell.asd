@@ -6,10 +6,11 @@
 
 (in-package #:cl-user)
 (asdf:defsystem qtools-ui-cell
-  :version "0.0.0"
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
+  :description "An item-widget that presents a draggable and selectable cell."
+  :homepage "https://github.com/Shinmera/qtools-ui"
   :serial T
   :components ((:file "cell"))
   :depends-on (:qtools-ui-base
