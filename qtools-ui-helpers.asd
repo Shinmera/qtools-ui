@@ -15,6 +15,7 @@
   :components ((:file "repaintable")
                (:file "mouse-propagator")
                (:file "draggable")
-               (:file "selectable"))
+               (:file "selectable")
+               (:file "input"))
   :depends-on (:qtools-ui-base
                :qtools-ui-layout))
