@@ -7,20 +7,17 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
-(defgeneric color (source))
-(defgeneric (setf color) (color source))
-
 (define-widget color-triangle (QGLWidget repaintable)
-  ((color :initarg :color :finalized T :accessor color)
+  ((color :initarg :color :finalized T :accessor value)
    (gradient :initform (make-circle-rainbow-gradient) :finalized T)
    (pressed :initform NIL))
   (:default-initargs
     :color (q+:make-qcolor 0 255 0)))
 
 (define-initializer (color-triangle setup)
-  (setf (color color-triangle) (color color-triangle)))
+  (setf (value color-triangle) (value color-triangle)))
 
-(defmethod (setf color) (value (color-triangle color-triangle))
+(defmethod (setf value) (value (color-triangle color-triangle))
   (setf (slot-value color-triangle 'color) (coerce-color value))
   (repaint color-triangle))
 
@@ -67,11 +64,11 @@
       (:wheel
        (let ((p (round (+ 360 (- (/ (* (atan y x) 180) PI))))))
          (setf (q+:hsv color) (values p (q+:saturation color) (q+:value color))))
-       (setf (color color-triangle) (color color-triangle)))
+       (setf (value color-triangle) (value color-triangle)))
       (:picker
        (multiple-value-bind (s v) (xy-to-sv x y (q+:hsv-hue color) (- size width))
          (setf (q+:hsv color) (values (q+:hsv-hue color) s v)))
-       (setf (color color-triangle) (color color-triangle))))))
+       (setf (value color-triangle) (value color-triangle))))))
 
 (defun make-circle-rainbow-gradient ()
   (let ((gradient (q+:make-qconicalgradient 0 0 0)))

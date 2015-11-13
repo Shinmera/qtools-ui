@@ -24,10 +24,7 @@
    "A cell is a generic item container that is selectable and draggable."))
 
 ;; color-triangle.lisp
-(setdocs
-  (color
-   "Accessor for the current colour of the colour source.")
-  
+(setdocs  
   ((color-triangle type)
    "A widget for an HSV colour wheel triangle as often used in graphics applications."))
 

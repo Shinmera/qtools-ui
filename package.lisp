@@ -15,7 +15,6 @@
    #:cell)
   ;; color-triangle.lisp
   (:export
-   #:color
    #:color-triangle)
   ;; compass.lisp
   (:export
