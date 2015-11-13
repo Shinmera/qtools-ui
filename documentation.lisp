@@ -23,6 +23,13 @@
   ((cell type)
    "A cell is a generic item container that is selectable and draggable."))
 
+;; color-sliders.lisp
+(setdocs
+  ((rgb-color-slider type)
+   "A widget for an RGB sliders color chooser.")
+  ((hsv-color-slider type)
+   "A widget for an HSV sliders color chooser."))
+
 ;; color-triangle.lisp
 (setdocs  
   ((color-triangle type)

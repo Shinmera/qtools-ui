@@ -13,6 +13,10 @@
   (:export
    #:padding
    #:cell)
+  ;; color-sliders.lisp
+  (:export
+   #:rgb-color-slider
+   #:hsv-color-slider)
   ;; color-triangle.lisp
   (:export
    #:color-triangle)
