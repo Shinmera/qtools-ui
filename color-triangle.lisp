@@ -7,7 +7,7 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
-(define-widget color-triangle (QGLWidget repaintable)
+(define-widget color-triangle (QGLWidget repaintable input)
   ((color :initarg :color :finalized T :accessor value)
    (gradient :initform (make-circle-rainbow-gradient) :finalized T)
    (pressed :initform NIL))

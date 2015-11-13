@@ -7,7 +7,7 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
-(define-widget rgb-color-slider (QWidget)
+(define-widget rgb-color-slider (QWidget input)
   ((color :initarg :color :accessor value))
   (:default-initargs
     :color (c 0 0 0)))
@@ -61,7 +61,7 @@
       (setf (value b) (q+:blue value)))))
 
 
-(define-widget hsv-color-slider (QWidget)
+(define-widget hsv-color-slider (QWidget input)
   ((color :initarg :color :accessor value))
   (:default-initargs
     :color (c 0 0 0)))

@@ -14,5 +14,6 @@
   :serial T
   :components ((:file "color-triangle"))
   :depends-on (:qtools-ui-base
-               :qtgui
+               :qtools-ui-helpers
+               :qtopengl
                :cl-opengl))

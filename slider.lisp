@@ -16,7 +16,7 @@
 (defgeneric default (slider))
 (defgeneric (setf default) (default slider))
 
-(define-widget double-slider (QSlider)
+(define-widget double-slider (QSlider input)
   ((maximum :initarg :maximum :accessor maximum)
    (minimum :initarg :minimum :accessor minimum)
    (stepping :initarg :stepping :accessor stepping)
@@ -56,7 +56,7 @@
 (defmethod (setf stepping) :after (value (double-slider double-slider))
   (setf (q+:tick-interval double-slider) (round (* (slot-value double-slider 'div) value))))
 
-(define-widget slider (QWidget)
+(define-widget slider (QWidget input)
   ((maximum :initarg :maximum :accessor maximum)
    (minimum :initarg :minimum :accessor minimum)
    (stepping :initarg :stepping :accessor stepping)
