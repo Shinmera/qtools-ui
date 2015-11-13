@@ -15,7 +15,11 @@
     :color (q+:make-qcolor 0 255 0)))
 
 (define-initializer (color-triangle setup)
-  (setf (value color-triangle) (value color-triangle)))
+  (setf (value color-triangle) (value color-triangle))
+  (setf (q+:minimum-width color-triangle) 100)
+  (setf (q+:minimum-height color-triangle) 100)
+  (setf (q+:horizontal-policy (q+:size-policy color-triangle))
+        (q+:qsizepolicy.expanding)))
 
 (defmethod (setf value) (value (color-triangle color-triangle))
   (setf (slot-value color-triangle 'color) (coerce-color value))
@@ -69,6 +73,9 @@
        (multiple-value-bind (s v) (xy-to-sv x y (q+:hsv-hue color) (- size width))
          (setf (q+:hsv color) (values (q+:hsv-hue color) s v)))
        (setf (value color-triangle) (value color-triangle))))))
+
+(define-override (color-triangle size-hint) ()
+  (q+:make-qsize 250 250))
 
 (defun make-circle-rainbow-gradient ()
   (let ((gradient (q+:make-qconicalgradient 0 0 0)))
