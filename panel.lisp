@@ -27,6 +27,7 @@
 
 (define-widget panel (QWidget compass)
   ((container :initarg :container :accessor container)
+   (icon :initarg :icon :accessor icon)
    (title :initarg :title :accessor title)
    (detachable :initarg :detachable :accessor detachable-p)
    (collapsable :initarg :collapsable :accessor collapsable-p)
@@ -36,11 +37,12 @@
    (detached-size :initform NIL :accessor detached-size)
    (resizing-self :initform NIL :accessor resizing-self))
   (:default-initargs
-    :container NIL
-    :title NIL
-    :detachable T
-    :collapsable T
-    :titlebar-shown T))
+   :container NIL
+   :icon NIL 
+   :title NIL
+   :detachable T
+   :collapsable T
+   :titlebar-shown T))
 
 (defmacro with-self-resizing ((self) &body body)
   `(unwind-protect
@@ -49,10 +51,18 @@
           ,@body)
      (setf (resizing-self ,self) NIL)))
 
+(defun set-panel-window-hint (panel)
+  (setf (q+:window-flags panel)
+        (logior (q+:qt.window-stays-on-top-hint)
+                (q+:qt.tool)
+                (q+:qt.frameless-window-hint))))
+
 (define-initializer (panel setup)
-  (when (container panel)
-    (attach panel NIL))
-  (setf (title panel) (title panel)))
+  (if (container panel)
+      (attach panel NIL)
+      (set-panel-window-hint panel))
+  (setf (title panel) (title panel))
+  (setf (icon panel) (icon panel)))
 
 (define-subwidget (panel titlebar) (make-instance 'panel-titlebar :panel panel)
   (when titlebar-shown
@@ -108,6 +118,11 @@
       (setf (q+:window-title panel) title)
       (setf (title titlebar) title))))
 
+(defmethod (setf icon) :after (icon (panel panel))
+  (with-slots-bound (panel panel)
+    (setf (q+:window-icon panel) (or icon (q+:window-icon *qapplication*)))
+    (setf (icon titlebar) icon)))
+
 (defmethod add-widget ((panel panel) new-container)
   (with-slots-bound (panel panel)
     (when (attached-p panel)
@@ -130,10 +145,7 @@
       (error "~a is not attached to ~a." panel old-container))
     (with-self-resizing (panel)
       (call-next-method)
-      (setf (q+:window-flags panel)
-            (logior (q+:qt.window-stays-on-top-hint)
-                    (q+:qt.tool)
-                    (q+:qt.frameless-window-hint)))
+      (set-panel-window-hint panel)
       (q+:show panel)
       (setf (attached-p titlebar) NIL)
       (q+:activate-window panel)
@@ -143,7 +155,8 @@
             (setf (q+:geometry panel) detached-size))))))
 
 (defmethod attach ((panel panel) (container null))
-  (attach panel (container panel)))
+  (when (container panel)
+    (attach panel (container panel))))
 
 (defmethod attach ((panel panel) new-container)
   (add-widget panel new-container))
@@ -210,10 +223,11 @@
   (setf (q+:color (q+:palette panel-titlebar) (q+:qpalette.background))
         (q+:darker (q+:color (q+:palette panel-titlebar) (q+:qpalette.background)))))
 
+(define-subwidget (panel-titlebar icon) (q+:make-qlabel)
+  (setf (q+:style-sheet icon) "padding: 0px 3px 0px 3px;"))
+
 (define-subwidget (panel-titlebar title) (q+:make-qlabel panel-titlebar)
-  (setf (q+:style-sheet title) "padding: 0px 3px 0px 3px;")
-  (when (title panel)
-    (setf (q+:text title) (title panel))))
+  (setf (q+:style-sheet title) "padding: 0px 3px 0px 3px;"))
 
 (define-subwidget (panel-titlebar attach-toggle) (q+:make-qpushbutton "Attach" panel-titlebar)
   (setf (q+:style-sheet attach-toggle) "padding: 0px 3px 0px 3px;")
@@ -233,6 +247,7 @@
   (setf (q+:alignment layout) (q+:qt.align-right))
   (setf (q+:margin layout) 0)
   (setf (q+:spacing layout) 0)
+  (q+:add-widget layout icon)
   (q+:add-widget layout title)
   (q+:add-stretch layout 1)
   (q+:add-widget layout collapse-toggle)
@@ -262,6 +277,12 @@
 (defmethod (setf title) (value (panel-titlebar panel-titlebar))
   (with-slots-bound (panel-titlebar panel-titlebar)
     (setf (q+:text title) (or value ""))))
+
+(defmethod (setf icon) (value (panel-titlebar panel-titlebar))
+  (with-slots-bound (panel-titlebar panel-titlebar)
+    (if value
+        (setf (q+:pixmap icon) (q+:pixmap value (q+:height panel-titlebar) (q+:height panel-titlebar)))
+        (q+:clear icon))))
 
 (defmethod attached-p ((panel-titlebar panel-titlebar))
   (attached-p (panel panel-titlebar)))
