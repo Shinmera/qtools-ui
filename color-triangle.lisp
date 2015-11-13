@@ -67,11 +67,11 @@
       (:wheel
        (let ((p (round (+ 360 (- (/ (* (atan y x) 180) PI))))))
          (setf (q+:hsv color) (values p (q+:saturation color) (q+:value color))))
-       (q+:update color-triangle))
+       (setf (color color-triangle) (color color-triangle)))
       (:picker
        (multiple-value-bind (s v) (xy-to-sv x y (q+:hsv-hue color) (- size width))
          (setf (q+:hsv color) (values (q+:hsv-hue color) s v)))
-       (q+:update color-triangle)))))
+       (setf (color color-triangle) (color color-triangle))))))
 
 (defun make-circle-rainbow-gradient ()
   (let ((gradient (q+:make-qconicalgradient 0 0 0)))
