@@ -38,6 +38,10 @@
   (declare (connected double-slider (value-changed int)))
   (signal! double-slider (value-changed double) (/ value div)))
 
+(define-slot (double-slider released) ()
+  (declare (connected double-slider (slider-released)))
+  (signal! double-slider (input-done)))
+
 (defmethod value ((double-slider double-slider))
   (/ (q+:value double-slider) (slot-value double-slider 'div)))
 
@@ -106,6 +110,12 @@
             (/= (value spin-box) value))
     (setf (value slider) value)
     (signal! slider (value-changed double) value)))
+
+(define-slot (slider done) ()
+  (declare (connected button (clicked)))
+  (declare (connected double-slider (input-done)))
+  (declare (connected spin-box (editing-finished)))
+  (signal! slider (input-done)))
 
 (define-slot (slider reset) ()
   (declare (connected button (clicked)))

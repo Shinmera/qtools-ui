@@ -13,8 +13,11 @@
   ())
 
 (define-signal (input input-updated) ())
+(define-signal (input input-done) ())
 
 (defmethod (setf value) :around (value (input input))
+  ;; Yes yes, O(n). However, I don't expect -- or rather, I hope -- that
+  ;; the nesting of input widgets is never going to be very deep.
   (unless (find input *recursive-input-set*)
     (let ((*recursive-input-set* (list* input *recursive-input-set*)))
       (call-next-method)

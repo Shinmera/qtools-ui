@@ -46,10 +46,16 @@
   (q+:add-widget layout b)
   (q+:add-stretch layout 1))
 
-(define-slot (rgb-color-slider value-changed) ((value double))
-  (declare (connected r (value-changed double)))
-  (declare (connected g (value-changed double)))
-  (declare (connected b (value-changed double)))
+(define-slot (rgb-color-slider done) ()
+  (declare (connected r (input-done)))
+  (declare (connected g (input-done)))
+  (declare (connected b (input-done)))
+  (signal! rgb-color-slider (input-done)))
+
+(define-slot (rgb-color-slider input-updated) ()
+  (declare (connected r (input-updated)))
+  (declare (connected g (input-updated)))
+  (declare (connected b (input-updated)))
   (setf (value rgb-color-slider) (q+:make-qcolor (round (value r)) (round (value g)) (round (value b)))))
 
 (defmethod (setf value) (value (rgb-color-slider rgb-color-slider))
@@ -93,11 +99,17 @@
   (q+:add-widget layout v)
   (q+:add-stretch layout 1))
 
-(define-slot (hsv-color-slider value-changed) ((value double))
-  (declare (connected h (value-changed double)))
-  (declare (connected s (value-changed double)))
-  (declare (connected v (value-changed double)))
+(define-slot (hsv-color-slider input-updated) ()
+  (declare (connected h (input-updated)))
+  (declare (connected s (input-updated)))
+  (declare (connected v (input-updated)))
   (setf (value hsv-color-slider) (q+:qcolor-from-hsv (round (value h)) (round (value s)) (round (value v)))))
+
+(define-slot (rgb-color-slider done) ()
+  (declare (connected r (input-done)))
+  (declare (connected g (input-done)))
+  (declare (connected b (input-done)))
+  (signal! rgb-color-slider (input-done)))
 
 (defmethod (setf value) (value (hsv-color-slider hsv-color-slider))
   (let ((value (coerce-color value)))

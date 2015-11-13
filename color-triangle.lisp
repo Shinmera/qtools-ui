@@ -57,7 +57,8 @@
 (define-override (color-triangle mouse-release-event) (ev)
   (when (= (enum-value (q+:button ev)) (q+:qt.left-button))
     (ctriangle-mouse-move color-triangle ev)
-    (setf pressed NIL)))
+    (setf pressed NIL)
+    (signal! color-triangle (input-done))))
 
 (define-override (color-triangle mouse-move-event ctriangle-mouse-move) (ev)
   (let* ((size (ctriangle-size color-triangle))
