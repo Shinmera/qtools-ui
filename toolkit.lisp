@@ -52,10 +52,10 @@
 
 (defun color-to-rgba (r g b &optional (a 255))
   (let ((rgba 0))
-    (setf (ldb (byte 8 0) rgba) b
-          (ldb (byte 8 8) rgba) g
-          (ldb (byte 8 16) rgba) r
-          (ldb (byte 8 24) rgba) a)
+    (setf (ldb (byte 8 0) rgba) (round b)
+          (ldb (byte 8 8) rgba) (round g)
+          (ldb (byte 8 16) rgba) (round r)
+          (ldb (byte 8 24) rgba) (round a))
     rgba))
 
 (defun rgba-to-color (rgba)
@@ -69,7 +69,8 @@
 (defun c (r g b &optional (a 255))
   (let ((rgba (color-to-rgba r g b a)))
     (or (gethash rgba *color-map*)
-        (setf (gethash rgba *color-map*) (q+:make-qcolor r g b a)))))
+        (setf (gethash rgba *color-map*)
+              (q+:make-qcolor (round r) (round g) (round b) (round a))))))
 
 (defun coerce-color (color)
   (etypecase color
