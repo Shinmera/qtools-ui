@@ -93,6 +93,12 @@
   (q+:add-widget layout spin-box 1)
   (q+:add-widget layout button 1))
 
+(define-override (slider update) ()
+  (q+:update double-slider)
+  (q+:update spin-box)
+  (q+:update button)
+  (stop-overriding))
+
 (define-slot (slider update) ((value double))
   (declare (connected double-slider (value-changed double)))
   (declare (connected spin-box (value-changed double)))
