@@ -25,4 +25,6 @@
                :qtools-ui-listing
                :qtools-ui-panels
                :qtools-ui-slider
-               :qtools-ui-splitter))
+               :qtools-ui-splitter
+               :qtools-ui-flow-layout
+               :qtools-ui-color-history))
