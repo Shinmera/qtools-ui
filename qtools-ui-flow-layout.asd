@@ -14,4 +14,4 @@
   :serial T
   :components ((:file "flow-layout"))
   :depends-on (:qtools-ui-base
-               :qtools-ui-layout))
+               :qtools-ui-container))
