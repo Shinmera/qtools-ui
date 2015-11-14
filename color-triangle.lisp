@@ -7,8 +7,8 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
-(define-widget color-triangle (QGLWidget repaintable input)
-  ((color :initarg :color :finalized T :accessor value)
+(define-widget color-triangle (QGLWidget input)
+  ((color :initarg :color :accessor value)
    (gradient :initform (make-circle-rainbow-gradient) :finalized T)
    (pressed :initform NIL))
   (:default-initargs
@@ -22,8 +22,7 @@
         (q+:qsizepolicy.expanding)))
 
 (defmethod (setf value) (value (color-triangle color-triangle))
-  (setf (slot-value color-triangle 'color) (coerce-color value))
-  (repaint color-triangle))
+  (setf (slot-value color-triangle 'color) (coerce-color value)))
 
 (define-override (color-triangle paint-event) (ev)
   (declare (ignore ev))
