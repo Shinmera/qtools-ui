@@ -8,7 +8,7 @@
 (in-readtable :qtools)
 
 (define-widget color-picker (QDialog input)
-  ((color :initarg :color :reader value))
+  ((color :initarg :color :accessor value))
   (:default-initargs :color (c 0 0 0)))
 
 (defvar *color-picker-input-done* T)
@@ -31,8 +31,8 @@
   (q+:add-widget layout color-history 2 1 1 1)
   (let ((buttons (q+:make-qhboxlayout)))
     (q+:add-stretch buttons 1)
-    (q+:add-widget buttons ok)
-    (q+:add-widget buttons cancel)
+    (q+:add-widget buttons ok-button)
+    (q+:add-widget buttons cancel-button)
     (q+:add-stretch buttons 1)
     (q+:add-layout layout buttons 3 0 1 2)))
 
@@ -62,9 +62,10 @@
   (declare (connected color-history (input-done)))
   (setf (value color-picker) (value color-picker)))
 
-(defmethod (setf value) :after (value (picker color-picker))
-  (setf (value color-triangle) value)
-  (setf (value rgb-color-slider) value)
-  (setf (value hsv-color-slider) value)
-  (when *color-picker-input-done*
-    (setf (value color-history) value)))
+(defmethod (setf value) :after (value (color-picker color-picker))
+  (with-slots-bound (color-picker color-picker)
+    (setf (value color-triangle) value)
+    (setf (value rgb-color-slider) value)
+    (setf (value hsv-color-slider) value)
+    (when *color-picker-input-done*
+      (setf (value color-history) value))))
