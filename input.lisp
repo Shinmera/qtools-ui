@@ -9,7 +9,7 @@
 
 (defvar *recursive-input-set* NIL)
 
-(define-widget input (QWidget)
+(define-widget input (QWidget repaintable)
   ())
 
 (define-signal (input input-updated) ())
@@ -21,4 +21,5 @@
   (unless (find input *recursive-input-set*)
     (let ((*recursive-input-set* (list* input *recursive-input-set*)))
       (call-next-method)
+      (repaint input)
       (signal! input (input-updated)))))
