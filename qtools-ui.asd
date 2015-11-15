@@ -15,8 +15,6 @@
   :serial T
   :depends-on (:qtools-ui-base
                :qtools-ui-cell
-               :qtools-ui-color-sliders
-               :qtools-ui-color-triangle
                :qtools-ui-compass
                :qtools-ui-container
                :qtools-ui-helpers
@@ -27,4 +25,7 @@
                :qtools-ui-slider
                :qtools-ui-splitter
                :qtools-ui-flow-layout
-               :qtools-ui-color-history))
+               :qtools-ui-color-sliders
+               :qtools-ui-color-triangle
+               :qtools-ui-color-history
+               :qtools-ui-color-picker))
