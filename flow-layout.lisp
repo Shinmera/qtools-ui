@@ -8,7 +8,7 @@
 (in-readtable :qtools)
 
 (define-widget flow-layout (QWidget container)
-  ((size-hint :initform (q+:make-qsize -1 -1) :accessor size-hint :finalized T)))
+  ())
 
 (defmethod update ((flow-layout flow-layout))
   (when (widgets flow-layout)
@@ -19,7 +19,4 @@
                              (+ y (prog1 maxheight (setf maxheight 0) (setf x 0)))
                              y)
           do (setf (q+:geometry widget) (values x y (q+:width widget) (q+:height widget)))
-          finally (setf (q+:height (size-hint flow-layout)) (+ y maxheight)))))
-
-(define-override (flow-layout size-hint) ()
-  (copy (size-hint flow-layout)))
+          finally (setf (q+:minimum-height flow-layout) (+ y maxheight)))))
