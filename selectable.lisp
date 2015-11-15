@@ -21,7 +21,7 @@
     :active-widget NIL
     :selectable T))
 
-(define-widget selectable-item (QWidget item-widget mouse-propagator)
+(define-widget selectable-item (QWidget item-widget repaintable mouse-propagator)
   ((active :initform NIL :accessor active-p)))
 
 (defmethod (setf active-widget) (widget (selectable-layout selectable-layout))

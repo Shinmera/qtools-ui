@@ -10,7 +10,7 @@
 (defgeneric padding (cell))
 (defgeneric (setf padding) (padding cell))
 
-(define-widget cell (QWidget selectable-item draggable repaintable mouse-propagator)
+(define-widget cell (QWidget selectable-item draggable mouse-propagator)
   ((padding :initarg :padding :accessor padding))
   (:default-initargs :padding 3))
 
