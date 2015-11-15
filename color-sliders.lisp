@@ -66,6 +66,12 @@
       (setf (value g) (q+:green value))
       (setf (value b) (q+:blue value)))))
 
+(define-override (rgb-color-slider update) ()
+  (q+:update r)
+  (q+:update g)
+  (q+:update b)
+  (stop-overriding))
+
 
 (define-widget hsv-color-slider (QWidget input)
   ((color :initarg :color :accessor value))
@@ -123,5 +129,10 @@
                            (q+:qcolor-from-hsv (q+:hue value) 255 (q+:value value)))
       (set-gradient-points (q+:gradient (q+:brush (q+:palette (slot-value v 'double-slider)) (q+:qpalette.background)))
                            (q+:qcolor-from-hsv (q+:hue value) (q+:saturation value) 0)
-                           (q+:qcolor-from-hsv (q+:hue value) (q+:saturation value) 255))
-      (q+:update h) (q+:update s) (q+:update v))))
+                           (q+:qcolor-from-hsv (q+:hue value) (q+:saturation value) 255)))))
+
+(define-override (hsv-color-slider update) ()
+  (q+:update h)
+  (q+:update s)
+  (q+:update v)
+  (stop-overriding))
