@@ -112,7 +112,6 @@
     (signal! slider (value-changed double) value)))
 
 (define-slot (slider done) ()
-  (declare (connected button (clicked)))
   (declare (connected double-slider (input-done)))
   (declare (connected spin-box (editing-finished)))
   (signal! slider (input-done)))
@@ -120,7 +119,8 @@
 (define-slot (slider reset) ()
   (declare (connected button (clicked)))
   (setf (value double-slider) default)
-  (setf (value spin-box) default))
+  (setf (value spin-box) default)
+  (signal! slider (input-done)))
 
 (defmethod value ((slider slider))
   (q+:value (slot-value slider 'spin-box)))
