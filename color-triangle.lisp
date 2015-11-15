@@ -22,7 +22,11 @@
         (q+:qsizepolicy.expanding)))
 
 (defmethod (setf value) (value (color-triangle color-triangle))
-  (setf (slot-value color-triangle 'color) (coerce-color value)))
+  (setf (q+:rgba (slot-value color-triangle 'color))
+        (q+:rgba value)))
+
+(defmethod value ((color-triangle color-triangle))
+  (copy (slot-value color-triangle 'color)))
 
 (define-override (color-triangle paint-event) (ev)
   (declare (ignore ev))

@@ -7,10 +7,20 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
-(define-widget rgb-color-slider (QWidget input)
+(define-widget color-slider (QWidget input)
   ((color :initarg :color :accessor value))
   (:default-initargs
-    :color (c 0 0 0)))
+    :color (q+:make-qcolor 0 0 0)))
+
+(defmethod (setf value) (value (color-slider color-slider))
+  (setf (q+:rgba (slot-value color-slider 'color))
+        (q+:rgba value)))
+
+(defmethod value ((color-slider color-slider))
+  (copy (slot-value color-slider 'color)))
+
+(define-widget rgb-color-slider (QWidget color-slider)
+  ())
 
 (defun set-gradient-points (gradient &rest colors)
   (let ((step (/ (1- (length colors)))))
@@ -58,30 +68,19 @@
   (declare (connected b (input-updated)))
   (setf (value rgb-color-slider) (q+:make-qcolor (round (value r)) (round (value g)) (round (value b)))))
 
-(defmethod (setf value) (value (rgb-color-slider rgb-color-slider))
-  (let ((value (coerce-color value)))
-    (with-slots-bound (rgb-color-slider rgb-color-slider)
-      (setf (slot-value rgb-color-slider 'color) value)
-      (setf (value r) (q+:red value))
-      (setf (value g) (q+:green value))
-      (setf (value b) (q+:blue value)))))
+(defmethod (setf value) :after (value (rgb-color-slider rgb-color-slider))
+  (with-slots-bound (rgb-color-slider rgb-color-slider)
+    (setf (value r) (q+:red value))
+    (setf (value g) (q+:green value))
+    (setf (value b) (q+:blue value))))
 
-(define-override (rgb-color-slider update) ()
-  (q+:update r)
-  (q+:update g)
-  (q+:update b)
-  (stop-overriding))
-
-
-(define-widget hsv-color-slider (QWidget input)
-  ((color :initarg :color :accessor value))
-  (:default-initargs
-    :color (c 0 0 0)))
+(define-widget hsv-color-slider (QWidget color-slider)
+  ())
 
 (define-initializer (hsv-color-slider hsv-color-slider)
   (setf (value hsv-color-slider) (value hsv-color-slider)))
 
-(define-subwidget (hsv-color-slider h) (make-instance 'slider :minimum 0 :maximum 360 :stepping 1)
+(define-subwidget (hsv-color-slider h) (make-instance 'slider :minimum 0 :maximum 359 :stepping 1)
   (setf (q+:brush (q+:palette (slot-value h 'double-slider)) (q+:qpalette.background))
         (q+:make-qbrush (make-horizontal-gradient
                          (c 255 0 0) (c 255 255 0) (c 0 255 0)
@@ -117,19 +116,17 @@
   (declare (connected b (input-done)))
   (signal! rgb-color-slider (input-done)))
 
-(defmethod (setf value) (value (hsv-color-slider hsv-color-slider))
-  (let ((value (coerce-color value)))
-    (with-slots-bound (hsv-color-slider hsv-color-slider)
-      (setf (slot-value hsv-color-slider 'color) value)
-      (setf (value h) (max 0 (q+:hue value)))
-      (setf (value s) (q+:saturation value))
-      (setf (value v) (q+:value value))
-      (set-gradient-points (q+:gradient (q+:brush (q+:palette (slot-value s 'double-slider)) (q+:qpalette.background)))
-                           (q+:qcolor-from-hsv (q+:hue value) 0 (q+:value value))
-                           (q+:qcolor-from-hsv (q+:hue value) 255 (q+:value value)))
-      (set-gradient-points (q+:gradient (q+:brush (q+:palette (slot-value v 'double-slider)) (q+:qpalette.background)))
-                           (q+:qcolor-from-hsv (q+:hue value) (q+:saturation value) 0)
-                           (q+:qcolor-from-hsv (q+:hue value) (q+:saturation value) 255)))))
+(defmethod (setf value) :after (value (hsv-color-slider hsv-color-slider))
+  (with-slots-bound (hsv-color-slider hsv-color-slider)
+    (setf (value h) (max 0 (q+:hue value)))
+    (setf (value s) (q+:saturation value))
+    (setf (value v) (q+:value value))
+    (set-gradient-points (q+:gradient (q+:brush (q+:palette (slot-value s 'double-slider)) (q+:qpalette.background)))
+                         (q+:qcolor-from-hsv (q+:hue value) 0 (q+:value value))
+                         (q+:qcolor-from-hsv (q+:hue value) 255 (q+:value value)))
+    (set-gradient-points (q+:gradient (q+:brush (q+:palette (slot-value v 'double-slider)) (q+:qpalette.background)))
+                         (q+:qcolor-from-hsv (q+:hue value) (q+:saturation value) 0)
+                         (q+:qcolor-from-hsv (q+:hue value) (q+:saturation value) 255))))
 
 (define-override (hsv-color-slider update) ()
   (q+:update h)
