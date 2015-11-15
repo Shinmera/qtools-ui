@@ -7,19 +7,7 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
-(define-widget color-slider (QWidget input)
-  ((color :initarg :color :accessor value))
-  (:default-initargs
-    :color (q+:make-qcolor 0 0 0)))
-
-(defmethod (setf value) (value (color-slider color-slider))
-  (setf (q+:rgba (slot-value color-slider 'color))
-        (q+:rgba value)))
-
-(defmethod value ((color-slider color-slider))
-  (copy (slot-value color-slider 'color)))
-
-(define-widget rgb-color-slider (QWidget color-slider)
+(define-widget rgb-color-slider (QWidget color-storing-input)
   ())
 
 (defun set-gradient-points (gradient &rest colors)
@@ -70,11 +58,12 @@
 
 (defmethod (setf value) :after (value (rgb-color-slider rgb-color-slider))
   (with-slots-bound (rgb-color-slider rgb-color-slider)
-    (setf (value r) (q+:red value))
-    (setf (value g) (q+:green value))
-    (setf (value b) (q+:blue value))))
+    (let ((value (direct-value rgb-color-slider)))
+      (setf (value r) (q+:red value))
+      (setf (value g) (q+:green value))
+      (setf (value b) (q+:blue value)))))
 
-(define-widget hsv-color-slider (QWidget color-slider)
+(define-widget hsv-color-slider (QWidget color-storing-input)
   ())
 
 (define-initializer (hsv-color-slider hsv-color-slider)
@@ -104,6 +93,12 @@
   (q+:add-widget layout v)
   (q+:add-stretch layout 1))
 
+(define-slot (hsv-color-slider done) ()
+  (declare (connected h (input-done)))
+  (declare (connected s (input-done)))
+  (declare (connected v (input-done)))
+  (signal! hsv-color-slider (input-done)))
+
 (define-slot (hsv-color-slider input-updated) ()
   (declare (connected h (input-updated)))
   (declare (connected s (input-updated)))
@@ -118,15 +113,17 @@
 
 (defmethod (setf value) :after (value (hsv-color-slider hsv-color-slider))
   (with-slots-bound (hsv-color-slider hsv-color-slider)
-    (setf (value h) (max 0 (q+:hue value)))
-    (setf (value s) (q+:saturation value))
-    (setf (value v) (q+:value value))
-    (set-gradient-points (q+:gradient (q+:brush (q+:palette (slot-value s 'double-slider)) (q+:qpalette.background)))
-                         (q+:qcolor-from-hsv (q+:hue value) 0 (q+:value value))
-                         (q+:qcolor-from-hsv (q+:hue value) 255 (q+:value value)))
-    (set-gradient-points (q+:gradient (q+:brush (q+:palette (slot-value v 'double-slider)) (q+:qpalette.background)))
-                         (q+:qcolor-from-hsv (q+:hue value) (q+:saturation value) 0)
-                         (q+:qcolor-from-hsv (q+:hue value) (q+:saturation value) 255))))
+    (let* ((value (direct-value hsv-color-slider))
+           (hue (if (< (q+:hsv-hue value) 0) (round (value h)) (q+:hsv-hue value))))
+      (setf (value h) hue)
+      (setf (value s) (q+:saturation value))
+      (setf (value v) (q+:value value))
+      (set-gradient-points (q+:gradient (q+:brush (q+:palette (slot-value s 'double-slider)) (q+:qpalette.background)))
+                           (q+:qcolor-from-hsv hue 0 (q+:value value))
+                           (q+:qcolor-from-hsv hue 255 (q+:value value)))
+      (set-gradient-points (q+:gradient (q+:brush (q+:palette (slot-value v 'double-slider)) (q+:qpalette.background)))
+                           (q+:qcolor-from-hsv hue (q+:saturation value) 0)
+                           (q+:qcolor-from-hsv hue (q+:saturation value) 255)))))
 
 (define-override (hsv-color-slider update) ()
   (q+:update h)

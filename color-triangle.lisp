@@ -7,12 +7,9 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
-(define-widget color-triangle (QGLWidget input)
-  ((color :initarg :color :accessor value)
-   (gradient :initform (make-circle-rainbow-gradient) :finalized T)
-   (pressed :initform NIL))
-  (:default-initargs
-    :color (q+:make-qcolor 0 255 0)))
+(define-widget color-triangle (QGLWidget color-storing-input)
+  ((gradient :initform (make-circle-rainbow-gradient) :finalized T)
+   (pressed :initform NIL)))
 
 (define-initializer (color-triangle setup)
   (setf (value color-triangle) (value color-triangle))
@@ -20,13 +17,6 @@
   (setf (q+:minimum-height color-triangle) 100)
   (setf (q+:horizontal-policy (q+:size-policy color-triangle))
         (q+:qsizepolicy.expanding)))
-
-(defmethod (setf value) (value (color-triangle color-triangle))
-  (setf (q+:rgba (slot-value color-triangle 'color))
-        (q+:rgba value)))
-
-(defmethod value ((color-triangle color-triangle))
-  (copy (slot-value color-triangle 'color)))
 
 (define-override (color-triangle paint-event) (ev)
   (declare (ignore ev))
@@ -38,10 +28,11 @@
     (setf (q+:render-hint painter) (q+:qpainter.antialiasing))
     (setf (q+:render-hint painter) (q+:qpainter.high-quality-antialiasing))
     (with-translation (painter center)
-      (ctriangle-draw-wheel painter gradient size width)
-      (q+:rotate painter (- (q+:hue color)))
-      (ctriangle-draw-triangle painter color size)
-      (ctriangle-draw-ticks painter color size width))))
+      (let ((color (direct-value color-triangle)))
+        (ctriangle-draw-wheel painter gradient size width)
+        (q+:rotate painter (- (max 0 (q+:hsv-hue color))))
+        (ctriangle-draw-triangle painter color size)
+        (ctriangle-draw-ticks painter color size width)))))
 
 (define-override (color-triangle mouse-press-event) (ev)
   (when (= (enum-value (q+:button ev)) (q+:qt.left-button))
@@ -67,16 +58,17 @@
   (let* ((size (ctriangle-size color-triangle))
          (width 10)
          (x (- (q+:x ev) (/ (q+:width color-triangle) 2)))
-         (y (- (q+:y ev) (/ (q+:height color-triangle) 2))))
+         (y (- (q+:y ev) (/ (q+:height color-triangle) 2)))
+         (color (direct-value color-triangle)))
     (case pressed
       (:wheel
        (let ((p (round (+ 360 (- (/ (* (atan y x) 180) PI))))))
          (setf (q+:hsv color) (values p (q+:saturation color) (q+:value color))))
-       (setf (value color-triangle) (value color-triangle)))
+       (setf (value color-triangle) color))
       (:picker
-       (multiple-value-bind (s v) (xy-to-sv x y (q+:hsv-hue color) (- size width))
-         (setf (q+:hsv color) (values (q+:hsv-hue color) s v)))
-       (setf (value color-triangle) (value color-triangle))))))
+       (multiple-value-bind (s v) (xy-to-sv x y (max 0 (q+:hsv-hue color)) (- size width))
+         (setf (q+:hsv color) (values (max 0 (q+:hsv-hue color)) s v)))
+       (setf (value color-triangle) color)))))
 
 (define-override (color-triangle size-hint) ()
   (q+:make-qsize 250 250))
@@ -99,7 +91,7 @@
     (q+:draw-ellipse painter (q+:make-qpointf 0 0) (+ size (/ width 2)) (+ size (/ width 2)))))
 
 (defun ctriangle-draw-triangle (painter color size)
-  (with-finalizing ((full-color (q+:qcolor-from-hsv (q+:hsv-hue color) 255 255))
+  (with-finalizing ((full-color (q+:qcolor-from-hsv (max 0 (q+:hsv-hue color)) 255 255))
                     (side (* size (cos (/ (* PI 30) 180)))))
     (q+:begin-native-painting painter)
     (gl:enable :multisample)
