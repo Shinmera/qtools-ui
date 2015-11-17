@@ -97,6 +97,9 @@
     (q+:begin-native-painting painter)
     (gl:enable :multisample)
     (gl:enable :line-smooth)
+    (gl:enable :polygon-smooth)
+    (gl:hint :line-smooth-hint :nicest)
+    (gl:hint :polygon-smooth-hint :nicest)
     (gl:with-primitives :triangles
       (gl:color (/ (q+:red full-color) 255)
                 (/ (q+:green full-color) 255)
