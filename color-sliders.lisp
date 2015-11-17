@@ -64,7 +64,7 @@
       (setf (value b) (q+:blue value)))))
 
 (define-widget hsv-color-slider (QWidget color-storing-input)
-  ())
+  ((color-type :initform :hsv :allocation :class)))
 
 (define-initializer (hsv-color-slider hsv-color-slider)
   (setf (value hsv-color-slider) (value hsv-color-slider)))

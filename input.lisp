@@ -29,10 +29,14 @@
       (signal! input (input-updated)))))
 
 (define-widget storing-input (QWidget input)
-  ((value :initarg :value :accessor direct-value)))
+  ((value :initarg :value :accessor direct-value :accessor value)))
+
+(defmethod (setf value) :around (thing (storing-input storing-input))
+  (unless (equal thing (value storing-input))
+    (call-next-method)))
 
 (define-widget color-storing-input (QWidget storing-input)
-  ()
+  ((color-type :initform :rgb :reader color-type :allocation :class))
   (:default-initargs
     :value (q+:make-qcolor)
     :color (c 0 0 0)))
@@ -43,6 +47,10 @@
 (defmethod reinitialize-instance :after ((color-storing-input color-storing-input) &key color &allow-other-keys)
   (setf (value color-storing-input) color))
 
+(defmethod (setf value) ((rgba integer) (color-storing-input color-storing-input))
+  (unless (= rgba (q+:rgba (direct-value color-storing-input)))
+    (call-next-method)))
+
 (defmethod (setf value) (thing (color-storing-input color-storing-input))
   (error "Don't know how to coerce ~s into a colour." thing))
 
@@ -52,8 +60,17 @@
 (defmethod (setf value) ((color qobject) (color-storing-input color-storing-input))
   (unless (qtypep color "QColor")
     (error "~a is not a QColor." color))
-  (pop *recursive-input-set*)
-  (setf (value color-storing-input) (q+:rgba color)))
+  (ecase (color-type color-storing-input)
+    (:rgb
+     (setf (q+:rgb-f (direct-value color-storing-input))
+           (values (q+:red-f color) (q+:green-f color) (q+:blue-f color) (q+:alpha-f color))))
+    (:hsv
+     (setf (q+:hsv-f (direct-value color-storing-input))
+           (values (if (= (q+:hsv-hue-f color) -1)
+                       (q+:hsv-hue-f (direct-value color-storing-input))
+                       (q+:hsv-hue-f color))
+                   (q+:saturation-f color)
+                   (q+:value-f color))))))
 
 (defmethod (setf value) ((color list) (color-storing-input color-storing-input))
   (destructuring-bind (r g b &optional (a 255)) color

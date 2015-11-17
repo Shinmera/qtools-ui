@@ -8,7 +8,8 @@
 (in-readtable :qtools)
 
 (define-widget color-triangle (QGLWidget color-storing-input)
-  ((gradient :initform (make-circle-rainbow-gradient) :finalized T)
+  ((color-type :initform :hsv :allocation :class)
+   (gradient :initform (make-circle-rainbow-gradient) :finalized T)
    (pressed :initform NIL)))
 
 (define-initializer (color-triangle setup)
