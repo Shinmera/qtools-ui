@@ -16,12 +16,14 @@
    (reader :initarg :reader :accessor reader)
    (writer :initarg :writer :accessor writer)
    (title :initarg :title :accessor title)
-   (accessor-type :initarg :accessor-type :accessor accessor-type))
+   (accessor-type :initarg :accessor-type :accessor accessor-type)
+   (updating :initarg :updating :accessor option-updating))
   (:default-initargs
     :target (error "TARGET required.")
     :reader (error "READER required.")
     :writer NIL
-    :accessor-type :accessor))
+    :accessor-type :accessor
+    :updating :when-done))
 
 (defmethod option-effective-target ((option option))
   (let ((target (target option)))
@@ -58,7 +60,13 @@
 
 (define-slot (option input-done) ()
   (declare (connected option (input-done)))
-  (setf (option-target-value option) (value option)))
+  (when (eql updating :when-done)
+    (setf (option-target-value option) (value option))))
+
+(define-slot (option input-updated) ()
+  (declare (connected option (input-updated)))
+  (when (eql updating :on-change)
+    (setf (option-target-value option) (value option))))
 
 (define-widget string-option (QLineEdit option)
   ())
