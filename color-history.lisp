@@ -31,19 +31,8 @@
       (setf (value (widget 0 color-history)) value))))
 
 (defun rotate-colors (color-history &optional (delta 1))
-  (flet ((rotate-left ()
-           (let ((last (last (widgets color-history))))
-             (setf (cdr last) (butlast (widgets color-history))
-                   (widgets color-history) last)))
-         (rotate-right ()
-           (let ((first (widgets color-history)))
-             (setf (cdr (last (widgets color-history))) first
-                   (widgets color-history) (cdr first)
-                   (cdr first) NIL))))
-    (if (< 0 delta)
-        (dotimes (i delta) (rotate-left))
-        (dotimes (i (- delta)) (rotate-right)))
-    (update color-history)))
+  (rotate-seqf (widgets color-history) delta)
+  (update color-history))
 
 (define-widget color-history-swatch (QPushButton color-storing-input)
   ())
