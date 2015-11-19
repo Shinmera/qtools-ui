@@ -17,4 +17,5 @@
                (:file "documentation"))
   :depends-on (:qtools
                :qtcore
-               :qtgui))
+               :qtgui
+               :array-utils))
