@@ -32,6 +32,9 @@
            (q+:qt.scroll-bar-always-on))))
   (setf (q+:widget-resizable panel-container) T))
 
+(define-override (panel-container size-hint) ()
+  (q+:make-qsize 300 300))
+
 (define-subwidget (panel-container viewport)
                   (make-instance 'splitter :orientation (orientation panel-container))
   (setf (q+:widget panel-container) viewport))
