@@ -28,12 +28,12 @@
 (defmethod find-widget :around (widget layout &key key test test-not)
   (when (and test test-not)
     (error "Cannot specify both TEST and TEST-NOT simultaneously."))
-  (call-next-method widget layout :key (default-test test test-not) :test (or test #'eql) :test-not test-not))
+  (call-next-method widget layout :key key :test (default-test test test-not) :test-not test-not))
 
 (defmethod widget-position :around (widget layout &key key test test-not)
   (when (and test test-not)
     (error "Cannot specify both TEST and TEST-NOT simultaneously."))
-  (call-next-method widget layout :key (default-test test test-not) :test (or test #'eql) :test-not test-not))
+  (call-next-method widget layout :key key :test (default-test test test-not) :test-not test-not))
 
 (defmethod widget-acceptable-p (widget (layout layout))
   NIL)

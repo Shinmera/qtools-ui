@@ -7,6 +7,13 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
+(defun stable-sort-into (sequence predicate &rest args &key key)
+  (declare (ignore key))
+  (let ((sorted (apply #'stable-sort sequence predicate args)))
+    (unless (eq sorted sequence)
+      (map-into sequence #'identity (if (listp sorted) (copy-list sorted) sorted)))
+    sequence))
+
 (defun swapcar (a b list)
   (when (< b a) (rotatef a b))
   (let* ((acell (nthcdr a list))
@@ -16,28 +23,75 @@
           (car bcell) first))
   list)
 
-(defun insert (item pos list)
-  (let ((cell (nthcdr pos list)))
-    (setf (cdr cell) (cons (car cell) (cdr cell))
-          (car cell) item))
-  list)
+(defun insert (item pos sequence)
+  (etypecase sequence
+    (list
+     (let ((cell (nthcdr pos sequence)))
+       (setf (cdr cell) (cons (car cell) (cdr cell))
+             (car cell) item)))
+    (vector
+     (array-utils:vector-push-extend-position item sequence pos)))
+  sequence)
 
-(defmacro remove-nth (pos list)
+(defmacro remove-nth (pos sequence)
   (let ((n (gensym "POS"))
-        (cell (gensym "CELL")))
-    `(let ((,n ,pos))
-       (if (= 0 ,n)
-           (pop ,list)
-           (let ((,cell (nthcdr (1- ,n) ,list)))
-             (prog1 (cadr ,cell)
-               (setf (cdr ,cell) (cddr ,cell))))))))
+        (cell (gensym "CELL"))
+        (seq (gensym "SEQ")))
+    `(let ((,n ,pos)
+           (,seq ,sequence))
+       (etypecase ,seq
+         (list
+          (if (= 0 ,n)
+                   (pop ,seq)
+                   (let ((,cell (nthcdr (1- ,n) ,seq)))
+                     (prog1 (cadr ,cell)
+                       (setf (cdr ,cell) (cddr ,cell))))))
+         (vector
+          (array-utils:vector-pop-position ,seq ,n))))))
+
+(defun rotate-seq (sequence &optional (delta 1))
+  (etypecase sequence
+    (list
+     (when sequence
+       (flet ((rotate-left ()
+                (let ((last (last sequence)))
+                  (setf (cdr last) (butlast sequence)
+                        sequence last)))
+              (rotate-right ()
+                (let ((first sequence))
+                  (setf (cdr (last sequence)) first
+                        sequence (cdr first)
+                        (cdr first) NIL))))
+         (if (< 0 delta)
+             (dotimes (i delta) (rotate-left))
+             (dotimes (i (- delta)) (rotate-right))))))
+    (vector
+     (when (< 0 (length sequence))
+       (flet ((rotate-left ()
+                (let ((last (aref sequence (1- (length sequence)))))
+                  (loop for i downfrom (1- (length sequence)) above 0
+                        do (setf (aref sequence i) (aref sequence (1- i)))
+                        finally (setf (aref sequence 0) last))))
+              (rotate-right ()
+                (let ((first (aref sequence 0)))
+                  (loop for i from 0 below (1- (length sequence))
+                        do (setf (aref sequence i) (aref sequence (1+ i)))
+                        finally (setf (aref sequence (1- (length sequence))) first)))))
+         (let ((delta (mod delta (length sequence))))
+           (if (< 0 delta)
+               (dotimes (i delta) (rotate-left))
+               (dotimes (i (- delta)) (rotate-right))))))))
+  sequence)
+
+(defmacro rotate-seqf (sequence &optional (delta 1))
+  `(setf ,sequence (rotate-seq ,sequence ,delta)))
 
 (defun clamp (low mid high)
   (min (max mid low) high))
 
 (defun default-test (test test-not)
   (if (and (not test) (not test-not))
-      #'identity
+      #'eql
       test))
 
 (defun call-with-translation (painter target function)
