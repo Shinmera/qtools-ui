@@ -66,7 +66,7 @@
    (stepping :initarg :stepping :accessor stepping)
    (default :initarg :default :accessor default))
   (:default-initargs
-    :maximum 100.0 :minimum 0.0 :stepping 1.0 :default 0.0))
+    :maximum 100.0 :minimum 0.0 :stepping 1.0 :default NIL))
 
 (define-signal (slider value-changed) (double))
 
