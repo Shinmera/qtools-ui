@@ -31,7 +31,8 @@
   ())
 
 (define-initializer (string-option setup)
-  (connect! string-option (editing-finished) string-option (input-done)))
+  (connect! string-option (editing-finished) string-option (input-done))
+  (connect! string-option (text-changed string) string-option (input-updated)))
 
 (defmethod value ((string-option string-option))
   (q+:text string-option))
@@ -43,7 +44,11 @@
   ())
 
 (define-initializer (text-option setup)
-  (connect! text-option (text-changed) text-option (input-done)))
+  (connect! text-option (text-changed) text-option (input-updated)))
+
+(define-override (text-option focus-out-event) (ev)
+  (signal! text-option (input-done))
+  (stop-overriding))
 
 (defmethod value ((text-option text-option))
   (q+:to-plain-text text-option))
@@ -60,24 +65,24 @@
 (define-widget small-double-option (QDoubleSpinBox option)
   ())
 
-(define-slot (small-double-option value-changed) ((value double))
-  (declare (connected small-double-option (value-changed double)))
-  (signal! small-double-option (input-done)))
+(define-initializer (small-double-option setup)
+  (connect! small-double-option (editing-finished) small-double-option (input-done))
+  (connect! small-double-option (value-changed double) small-double-option (input-updated)))
 
 (define-widget small-color-option (QPushButton option)
-  ((dialog :initform (make-instance 'color-picker))))
+  ((dialog :initform (make-instance 'color-picker) :finalized T)))
 
 (define-slot (small-color-option pressed) ()
   (declare (connected small-color-option (clicked)))
   (when (show dialog)
-    (repaint small-color-options)))
+    (repaint small-color-option)))
 
 (define-override (small-color-option paint-event) (ev)
   (with-finalizing ((painter (q+:make-qpainter small-color-option)))
     (q+:fill-rect painter (q+:rect small-color-option) (value dialog))))
 
 (defmethod value ((small-color-option small-color-option))
-  (value dialog))
+  (value (slot-value small-color-option 'dialog)))
 
 (defmethod (setf value) (value (small-color-option small-color-option))
-  (setf (value dialog) value))
+  (setf (value (slot-value small-color-option 'dialog)) value))
