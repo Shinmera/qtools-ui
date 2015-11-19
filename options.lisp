@@ -92,7 +92,7 @@
 (define-widget double-option (QWidget slider option)
   ())
 
-(define-widget color-option (QWidget color-triangle option)
+(define-widget color-option (QGLWidget color-triangle option)
   ())
 
 (define-widget small-double-option (QDoubleSpinBox option)
