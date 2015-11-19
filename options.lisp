@@ -7,7 +7,7 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
-(define-widget option (QWidget)
+(define-widget option (QWidget input)
   ((target :initarg :target :accessor target)
    (reader :initarg :reader :accessor reader)
    (writer :initarg :writer :accessor writer)
@@ -16,8 +16,6 @@
     :target (error "TARGET required.")
     :reader (error "READER required.")))
 
-(define-signal (option option-changed) ())
-
 (define-initializer (option setup)
   (unless (slot-boundp option 'writer)
     (setf (writer option) `(setf ,(reader option))))
@@ -25,18 +23,15 @@
     (setf (title option) (string (reader option))))
   (setf (value option) (funcall (fdefinition (reader option)) (target option))))
 
-(define-slot (option option-changed) ()
-  (declare (connected option (option-changed)))
+(define-slot (option input-done) ()
+  (declare (connected option (input-done)))
   (funcall (fdefinition (writer option)) (value option) (target option)))
-
-(defmethod (setf value) :after (value (option option))
-  (signal! option (option-changed)))
 
 (define-widget string-option (QLineEdit option)
   ())
 
 (define-initializer (string-option setup)
-  (connect! string-option (editing-finished) string-option (option-changed)))
+  (connect! string-option (editing-finished) string-option (input-done)))
 
 (defmethod value ((string-option string-option))
   (q+:text string-option))
@@ -48,7 +43,7 @@
   ())
 
 (define-initializer (text-option setup)
-  (connect! text-option (text-changed) text-option (option-changed)))
+  (connect! text-option (text-changed) text-option (input-done)))
 
 (defmethod value ((text-option text-option))
   (q+:to-plain-text text-option))
@@ -67,18 +62,22 @@
 
 (define-slot (small-double-option value-changed) ((value double))
   (declare (connected small-double-option (value-changed double)))
-  (signal! small-double-option (option-changed)))
+  (signal! small-double-option (input-done)))
 
 (define-widget small-color-option (QPushButton option)
-  ())
+  ((dialog :initform (make-instance 'color-picker))))
 
 (define-slot (small-color-option pressed) ()
   (declare (connected small-color-option (clicked)))
-  ())
+  (when (show dialog)
+    (repaint small-color-options)))
+
+(define-override (small-color-option paint-event) (ev)
+  (with-finalizing ((painter (q+:make-qpainter small-color-option)))
+    (q+:fill-rect painter (q+:rect small-color-option) (value dialog))))
 
 (defmethod value ((small-color-option small-color-option))
-  (q+:color (q+:palette small-color-option) (q+:qpalette.button)))
+  (value dialog))
 
 (defmethod (setf value) (value (small-color-option small-color-option))
-  (setf (q+:color (q+:palette small-color-option) (q+:qpalette.button))
-        (coerce-color value)))
+  (setf (value dialog) value))
