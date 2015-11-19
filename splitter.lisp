@@ -15,7 +15,7 @@
 
 (define-widget splitter (QWidget container)
   ((orientation :initarg :orientation :accessor orientation)
-   (handles :initform NIL :accessor handles)
+   (handles :initform (make-array 0 :adjustable T :fill-pointer 0) :accessor handles)
    (handle-size :initarg :handle-size :accessor handle-size))
   (:default-initargs
     :orientation :vertical
@@ -28,8 +28,8 @@
   (update splitter))
 
 (defmethod add-widget :after (widget (splitter splitter))
-  (push (make-instance 'splitter-handle :widget widget :splitter splitter)
-        (handles splitter)))
+  (vector-push-extend (make-instance 'splitter-handle :widget widget :splitter splitter)
+                      (handles splitter)))
 
 (defmethod insert-widget :after ((n integer) widget (splitter splitter))
   (insert (make-instance 'splitter-handle :widget widget :splitter splitter) n (handles splitter)))
@@ -38,7 +38,7 @@
   (finalize (remove-nth n (handles splitter))))
 
 (defmethod swap-widgets :after ((a integer) (b integer) (splitter splitter))
-  (swapcar a b (handles splitter)))
+  (rotatef (elt (handles splitter) a) (elt (handles splitter) b)))
 
 (defmethod resize-widget ((n integer) size (splitter splitter))
   (resize-widget (widget n splitter) size splitter))
@@ -55,19 +55,23 @@
 (defmethod update ((splitter splitter))
   (ecase (orientation splitter)
     (:vertical
-     (loop for y = 0 then (+ y (q+:height widget) (handle-size splitter))
-           for widget in (widgets splitter)
-           for handle in (handles splitter)
-           do (setf (q+:geometry widget) (values 0 y (q+:width splitter) (q+:height widget)))
-              (setf (q+:geometry handle) (values 0 (+ y (q+:height widget)) (q+:width splitter) (handle-size splitter)))
-           finally (setf (q+:minimum-height splitter) y)))
+     (let ((y 0) (i 0))
+       (do-widgets (widget (widgets splitter))
+         (let ((handle (aref (handles splitter) i)))
+           (setf (q+:geometry widget) (values 0 y (q+:width splitter) (q+:height widget)))
+           (setf (q+:geometry handle) (values 0 (+ y (q+:height widget)) (q+:width splitter) (handle-size splitter)))
+           (incf y (+ (q+:height widget) (handle-size splitter)))
+           (incf i)))
+       (setf (q+:minimum-height splitter) y)))
     (:horizontal
-     (loop for x = 0 then (+ x (q+:width widget) (handle-size splitter))
-           for widget in (widgets splitter)
-           for handle in (handles splitter)
-           do (setf (q+:geometry widget) (values x 0 (q+:width widget) (q+:height splitter)))
-              (setf (q+:geometry handle) (values (+ x (q+:width widget)) 0 (handle-size splitter) (q+:height splitter)))
-           finally (setf (q+:minimum-width splitter) x)))))
+     (let ((x 0) (i 0))
+       (do-widgets (widget (widgets splitter))
+         (let ((handle (aref (handles splitter) i)))
+           (setf (q+:geometry widget) (values x 0 (q+:width splitter) (q+:height widget)))
+           (setf (q+:geometry handle) (values (+ x (q+:width widget)) 0 (q+:width splitter) (handle-size splitter)))
+           (incf x (+ (q+:width widget) (handle-size splitter)))
+           (incf i)))
+       (setf (q+:minimum-width splitter) x)))))
 
 
 (define-widget splitter-handle (QWidget draggable)

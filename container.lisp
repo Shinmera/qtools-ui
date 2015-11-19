@@ -26,24 +26,24 @@
      ,result))
 
 (define-widget container (QWidget layout)
-  ((widgets :initform () :accessor widgets)))
+  ((widgets :initform (make-array 0 :adjustable T :fill-pointer 0) :accessor widgets)))
 
 (defmethod initialize-instance :after ((container container) &key widgets &allow-other-keys)
   (add-widget widgets container))
 
 (defmethod widget ((n integer) (container container))
-  (nth n (widgets container)))
+  (elt (widgets container) n))
 
 (defmethod widget ((widget qobject) (container container))
   (find widget (widgets container)))
 
 (defmethod (setf widget) ((widget qobject) (n integer) (container container))
-  (setf (nth n (widgets container)) widget))
+  (setf (elt (widgets container) n) widget))
 
 (defmethod (setf widget) ((widget qobject) (find qobject) (container container))
-  (loop for cell on (widgets container)
-        when (eql (car cell) find)
-        do (return (setf (car cell) widget))))
+  (loop for i from 0 below (length (widgets container))
+        when (eql find (aref (widgets container) i))
+        do (return (setf (aref (widgets container) i) widget))))
 
 (defmethod widget-position (widget (container container) &key key test test-not)
   (position widget (widgets container) :key key :test test :test-not test-not))
@@ -57,7 +57,7 @@
       (return widget))))
 
 (defmethod add-widget ((widget qobject) (container container))
-  (push widget (widgets container))
+  (vector-push-extend widget (widgets container))
   (setf (parent widget) container)
   widget)
 
@@ -78,20 +78,21 @@
   (remove-widget (position widget (widgets container)) container))
 
 (defmethod clear-layout ((container container))
-  (loop for widget = (pop (widgets container))
-        while widget do (setf (parent widget) NIL))
+  (do-widgets (widget container)
+    (setf (parent widget) NIL))
+  (setf (fill-pointer (widgets container)) 0)
   container)
 
 (defmethod swap-widgets ((a integer) (b integer) (container container))
-  (swapcar a b (widgets container))
+  (rotatef (elt (widgets container) a) (elt (widgets container) b))
   container)
 
 (defmethod swap-widgets (a b (container container))
   (swap-widgets (widget-position a container) (widget-position b container) container))
 
 (defmethod map-widgets (function (container container))
-  (dolist (widget (widgets container) container)
-    (funcall function widget)))
+  (loop for widget across (widgets container)
+        do (funcall function widget)))
 
 (defmethod ensure-widget-order ((container container))
   container)
@@ -106,7 +107,7 @@
 
 (defmethod ensure-widget-order ((sorted-container sorted-container))
   (when (sorting sorted-container)
-    (setf (widgets sorted-container) (stable-sort (widgets sorted-container) (sorting sorted-container))))
+    (stable-sort-into (widgets sorted-container) (sorting sorted-container)))
   sorted-container)
 
 (defmethod (setf widget) :after (widget place (sorted-container sorted-container))
@@ -140,7 +141,7 @@
 
 (defmethod ensure-widget-order ((sorted-item-container sorted-item-container))
   (when (sorting sorted-item-container)
-    (setf (widgets sorted-item-container) (stable-sort (widgets sorted-item-container) (sorting sorted-item-container) :key #'widget-item)))
+    (stable-sort-into (widgets sorted-item-container) (sorting sorted-item-container) :key #'widget-item))
   sorted-item-container)
 
 (defmethod (setf sorting) ((sorting (eql T)) (sorted-item-container sorted-item-container))
