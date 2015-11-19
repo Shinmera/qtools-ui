@@ -18,6 +18,7 @@
                :qtools-ui-compass
                :qtools-ui-container
                :qtools-ui-helpers
+               :qtools-ui-dialog
                :qtools-ui-keychord-editor
                :qtools-ui-layout
                :qtools-ui-listing

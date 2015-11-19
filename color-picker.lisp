@@ -7,22 +7,15 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
-(define-widget color-picker (QDialog input)
-  ((color :initarg :color :accessor value))
-  (:default-initargs :color (c 0 0 0)))
+(define-widget color-picker (QDialog simple-input-dialog color-storing-input)
+  ())
 
 (defvar *color-picker-input-done* T)
 
-(define-subwidget (color-picker color-triangle) (make-instance 'color-triangle :color color))
-(define-subwidget (color-picker rgb-color-slider) (make-instance 'rgb-color-slider :color color))
-(define-subwidget (color-picker hsv-color-slider) (make-instance 'hsv-color-slider :color color))
-(define-subwidget (color-picker color-history) (make-instance 'color-history :color color :color-count 10))
-
-(define-subwidget (color-picker ok-button) (q+:make-qpushbutton "&Ok")
-  (connect! ok-button (clicked) color-picker (accept)))
-
-(define-subwidget (color-picker cancel-button) (q+:make-qpushbutton "&Cancel")
-  (connect! cancel-button (clicked) color-picker (reject)))
+(define-subwidget (color-picker color-triangle) (make-instance 'color-triangle :color (value color-picker)))
+(define-subwidget (color-picker rgb-color-slider) (make-instance 'rgb-color-slider :color (value color-picker)))
+(define-subwidget (color-picker hsv-color-slider) (make-instance 'hsv-color-slider :color (value color-picker)))
+(define-subwidget (color-picker color-history) (make-instance 'color-history :color (value color-picker) :color-count 10))
 
 (define-subwidget (color-picker layout) (q+:make-qvboxlayout color-picker)
   (setf (q+:fixed-size color-picker) (values 590 350))
@@ -35,12 +28,7 @@
       (q+:add-layout colors sliders))
     (q+:add-layout layout colors))
   (q+:add-widget layout color-history)
-  (let ((buttons (q+:make-qhboxlayout)))
-    (q+:add-stretch buttons 1)
-    (q+:add-widget buttons ok-button)
-    (q+:add-widget buttons cancel-button)
-    (q+:add-stretch buttons 1)
-    (q+:add-layout layout buttons)))
+  (q+:add-layout layout (slot-value color-picker 'dialog-buttons)))
 
 (define-slot (color-picker input-updated-triangle) ()
   (declare (connected color-triangle (input-updated)))

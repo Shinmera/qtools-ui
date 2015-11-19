@@ -15,6 +15,7 @@
   :components ((:file "color-picker"))
   :depends-on (:qtools-ui-base
                :qtools-ui-helpers
+               :qtools-ui-dialog
                :qtools-ui-color-triangle
                :qtools-ui-color-history
                :qtools-ui-color-sliders))
