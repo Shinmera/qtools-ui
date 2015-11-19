@@ -119,3 +119,42 @@
 
 (defmethod (setf value) (value (small-color-option small-color-option))
   (setf (value (slot-value small-color-option 'dialog)) value))
+
+(define-widget option-container (QWidget item-container)
+  ())
+
+(defmethod coerce-item (item (option-container option-container))
+  (make-instance 'option-container-item :item item :container option-container))
+
+(defmethod item-acceptable-p ((option option) (option-container option-container))
+  T)
+
+(defmethod update ((option-container option-container))
+  (let ((y 0))
+    (do-widgets (widget option-container)
+      (let ((height (max 30 (q+:minimum-height widget) (q+:height (q+:size-hint widget)))))
+        (setf (q+:geometry widget) (values 0 y (q+:width option-container) height))
+        (incf y height)))))
+
+(define-widget option-container-item (QWidget item-widget)
+  ())
+
+(define-subwidget (option-container-item title) (q+:make-qlabel option-container-item)
+  (setf (q+:text title) (title (widget-item option-container-item))))
+
+(define-subwidget (option-container-item layout) (q+:make-qvboxlayout option-container-item)
+  (q+:add-widget layout title)
+  (q+:add-widget layout (widget-item option-container-item)))
+
+(defmacro create-options-for-object (object &body options)
+  (let ((container (gensym "CONTAINER"))
+        (target (gensym "TARGET")))
+    (flet ((create-form (slot &rest args &key type &allow-other-keys)
+             (let ((args (copy-list args)))
+               (remf args :type)
+               `(add-item (make-instance ',type :target ,target :reader ',slot ,@args) ,container))))
+      `(let ((,container (make-instance 'option-container))
+             (,target ,object))
+         ,@(loop for option in options
+                 collect (apply #'create-form option))
+         ,container))))
