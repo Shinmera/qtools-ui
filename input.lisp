@@ -36,9 +36,9 @@
     (call-next-method)))
 
 (define-widget color-storing-input (QWidget storing-input)
-  ((color-type :initform :rgb :reader color-type :allocation :class))
+  ((color-type :initform :rgb :reader color-type :allocation :class)
+   (value :initform (q+:make-qcolor) :accessor direct-value :accessor value :finalized T))
   (:default-initargs
-    :value (q+:make-qcolor)
     :color (c 0 0 0)))
 
 (defmethod initialize-instance :after ((color-storing-input color-storing-input) &key color &allow-other-keys)
