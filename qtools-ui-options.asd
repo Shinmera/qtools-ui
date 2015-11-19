@@ -14,6 +14,7 @@
   :serial T
   :components ((:file "options"))
   :depends-on (:qtools-ui-base
-               :qtools-ui-color-wheel
+               :qtools-ui-helpers
+               :qtools-ui-color-triangle
                :qtools-ui-color-picker
                :qtools-ui-slider))

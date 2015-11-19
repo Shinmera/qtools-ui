@@ -29,4 +29,5 @@
                :qtools-ui-color-sliders
                :qtools-ui-color-triangle
                :qtools-ui-color-history
-               :qtools-ui-color-picker))
+               :qtools-ui-color-picker
+               :qtools-ui-options))
