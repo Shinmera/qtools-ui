@@ -43,7 +43,7 @@
   (let ((writer (or (writer option) (reader option)))
         (target (option-effective-target option)))
     (ecase (accessor-type option)
-      (:accessor (funcall (fdefinition `(setf ,writer)) target))
+      (:accessor (funcall (fdefinition `(setf ,writer)) value target))
       (:slot (setf (slot-value target writer) value))
       (:function (funcall writer value target))
       (:value (setf (value target) value))
