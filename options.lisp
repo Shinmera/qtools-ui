@@ -17,13 +17,15 @@
    (writer :initarg :writer :accessor writer)
    (title :initarg :title :accessor title)
    (accessor-type :initarg :accessor-type :accessor accessor-type)
-   (updating :initarg :updating :accessor option-updating))
+   (updating :initarg :updating :accessor option-updating)
+   (small :initarg :small :accessor option-small-p))
   (:default-initargs
     :target (error "TARGET required.")
     :reader (error "READER required.")
     :writer NIL
     :accessor-type :accessor
-    :updating :when-done))
+    :updating :when-done
+    :small NIL))
 
 (defmethod option-effective-target ((option option))
   (let ((target (target option)))
@@ -68,6 +70,7 @@
   (when (eql updating :on-change)
     (setf (option-target-value option) (value option))))
 
+
 (define-widget string-option (QLineEdit option)
   ())
 
@@ -82,7 +85,8 @@
   (setf (q+:text string-option) (princ-to-string value)))
 
 (define-widget text-option (QPlainTextEdit option)
-  ())
+  ()
+  (:default-initargs :small NIL))
 
 (define-initializer (text-option setup)
   (connect! text-option (text-changed) text-option (input-updated)))
@@ -98,20 +102,24 @@
   (setf (q+:plain-text text-option) (princ-to-string value)))
 
 (define-widget double-option (QWidget slider option)
-  ())
-
-(define-widget color-option (QGLWidget color-triangle option)
-  ())
+  ()
+  (:default-initargs :small NIL))
 
 (define-widget small-double-option (QDoubleSpinBox option)
-  ())
+  ()
+  (:default-initargs :small T))
 
 (define-initializer (small-double-option setup)
   (connect! small-double-option (editing-finished) small-double-option (input-done))
   (connect! small-double-option (value-changed double) small-double-option (input-updated)))
 
+(define-widget color-option (QGLWidget color-triangle option)
+  ()
+  (:default-initargs :small NIL))
+
 (define-widget small-color-option (QPushButton option)
-  ((dialog :initform (make-instance 'color-picker) :finalized T)))
+  ((dialog :initform (make-instance 'color-picker) :finalized T))
+  (:default-initargs :small T))
 
 (define-slot (small-color-option pressed) ()
   (declare (connected small-color-option (clicked)))
