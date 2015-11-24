@@ -136,3 +136,13 @@
     (cons
      (destructuring-bind (r g b &optional (a 255)) color
             (c r g b a)))))
+
+(defun ensure-function (function-ish)
+  (etypecase function-ish
+    (cl:function function-ish)
+    (symbol (fdefinition function-ish))
+    (list (case (first function-ish)
+            ((cl:lambda) (compile NIL function-ish))
+            ((cl:setf cl+qt:setf) (fdefinition function-ish))
+            ((cl:function cl+qt:function) (eval function-ish))
+            (T (error "Don't know how to turn ~s into a function." function-ish))))))
