@@ -137,6 +137,16 @@
 (defmethod item-acceptable-p ((option option) (option-container option-container))
   T)
 
+(define-override (option-container size-hint) ()
+  (let ((w 100)
+        (h 0))
+    (do-widgets (widget option-container)
+      (let ((width (max 30 (q+:minimum-width widget) (q+:width (q+:size-hint widget))))
+            (height (max 30 (q+:minimum-height widget) (q+:height (q+:size-hint widget)))))
+        (setf w (max w width))
+        (incf h height)))
+    (q+:make-qsize w h)))
+
 (defmethod update ((option-container option-container))
   (let ((y 0))
     (do-widgets (widget option-container)
