@@ -136,8 +136,26 @@
 (defmethod (setf value) (value (small-color-option small-color-option))
   (setf (value (slot-value small-color-option 'dialog)) value))
 
-(define-widget option-container (QWidget item-container)
-  ())
+
+(defgeneric make-option (type &key &allow-other-keys)
+  (:method ((type (eql 'double)) &rest args &key small)
+    (apply #'make-instance 
+           (if small 'small-double-option 'double-option)
+           args))
+  (:method ((type (eql 'color)) &rest args &key small)
+    (apply #'make-instance 
+           (if small 'small-color-option 'color-option)
+           args))
+  (:method ((type (eql 'string)) &rest args &key text)
+    (apply #'make-instance
+           (if text 'text-option 'string-option)
+           args)))
+
+
+(define-widget option-container (QWidget listing)
+  ()
+  (:default-initargs
+    :draggable NIL :sortable NIL :selectable NIL))
 
 (defmethod coerce-item (item (option-container option-container))
   (make-instance 'option-container-item :item item :container option-container))
@@ -145,32 +163,23 @@
 (defmethod item-acceptable-p ((option option) (option-container option-container))
   T)
 
-(define-override (option-container size-hint) ()
-  (let ((w 100)
-        (h 0))
-    (do-widgets (widget option-container)
-      (let ((width (max 30 (q+:minimum-width widget) (q+:width (q+:size-hint widget))))
-            (height (max 30 (q+:minimum-height widget) (q+:height (q+:size-hint widget)))))
-        (setf w (max w width))
-        (incf h height)))
-    (q+:make-qsize w h)))
-
-(defmethod update ((option-container option-container))
-  (let ((y 0))
-    (do-widgets (widget option-container)
-      (let ((height (max 30 (q+:minimum-height widget) (q+:height (q+:size-hint widget)))))
-        (setf (q+:geometry widget) (values 0 y (q+:width option-container) height))
-        (incf y height)))))
-
 (define-widget option-container-item (QWidget item-widget)
   ())
 
 (define-subwidget (option-container-item title) (q+:make-qlabel option-container-item)
   (setf (q+:text title) (title (widget-item option-container-item))))
 
-(define-subwidget (option-container-item layout) (q+:make-qvboxlayout option-container-item)
-  (q+:add-widget layout title)
-  (q+:add-widget layout (widget-item option-container-item)))
+(define-subwidget (option-container-item layout) (q+:make-qgridlayout option-container-item)
+  (cond ((option-small-p (widget-item option-container-item))
+         (setf (q+:column-stretch layout 1) 1)
+         (q+:add-widget layout title 0 0 1 1)
+         (q+:add-widget layout (widget-item option-container-item) 0 1 1 1))
+        (T
+         (q+:add-widget layout title 0 0 1 1)
+         (q+:add-widget layout (widget-item option-container-item) 1 0 1 1))))
+
+(defmethod widget-acceptable-p ((option-container-item option-container-item) (option-container option-container))
+  T)
 
 (defmacro create-options-for-object (object &body options)
   (let ((container (gensym "CONTAINER"))
@@ -178,7 +187,7 @@
     (flet ((create-form (slot &rest args &key type &allow-other-keys)
              (let ((args (copy-list args)))
                (remf args :type)
-               `(add-item (make-instance ',type :target ,target :reader ',slot ,@args) ,container))))
+               `(add-item (make-option ',type :target ,target :reader ',slot ,@args) ,container))))
       `(let ((,container (make-instance 'option-container))
              (,target ,object))
          ,@(loop for option in options
