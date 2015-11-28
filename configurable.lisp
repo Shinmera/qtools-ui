@@ -102,7 +102,7 @@
                                                  (setf (slot-value target slot-name) value)))))))
   option)
 
-(defgeneric configuration-dialog (configurable)
+(defgeneric configuration-container (configurable)
   (:method ((configurable configurable))
     (let ((option-container (make-instance 'option-container)))
       (loop for slot-name in (configurable-class-option-order (class-of configurable))
