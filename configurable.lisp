@@ -57,7 +57,7 @@
         (return)))
     effective-slot))
 
-(defmethod c2mop:finalize-inheritance :after ((class widget-class))
+(defmethod c2mop:finalize-inheritance :after ((class configurable-class))
   ;; Make sure the slots get the options.
   (loop for (name . option) in (configurable-class-options class)
         for slot = (find name (c2mop:class-slots class) :key #'c2mop:slot-definition-name)
@@ -102,14 +102,14 @@
                                                  (setf (slot-value target slot-name) value)))))))
   option)
 
-(defgeneric show-configuration-dialog (configurable)
+(defgeneric configuration-dialog (configurable)
   (:method ((configurable configurable))
     (let ((option-container (make-instance 'option-container)))
-      (loop for slot in (configurable-class-option-order (class-of configurable))
-            for (type . args) = (configurable-slot-option
-                                 (find slot (c2mop:class-slots (class-of configurable))
-                                       :key #'c2mop:slot-definition-name))
+      (loop for slot-name in (configurable-class-option-order (class-of configurable))
+            for slot = (find slot-name (c2mop:class-slots (class-of configurable))
+                             :key #'c2mop:slot-definition-name)
+            for (type . args) = (configurable-slot-option slot)
             do (when type
-                 (add-widget (apply #'make-option type :target configurable (coerce-option-for-slot args slot))
+                 (add-item (apply #'make-option type :target configurable (coerce-option-for-slot args slot))
                              option-container)))
-      (q+:show option-container))))
+      option-container)))
