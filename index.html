@@ -20,8 +20,8 @@
   <body>
     <header>
       <h1><img src="qtools-ui-logo.png" alt="qtools-ui"/></h1>
-      <span class="version">0.0.0</span>
-      <p class="description"/>
+      <span class="version">0.1.0</span>
+      <p class="description">A collection of components and utilities for use in Qt applications.</p>
     </header>
     <div id="content">
       <article>
@@ -63,6 +63,10 @@
 <p>Built on top of the layout system is the items system, which very closely mimics the layout API. Items are meant for situations where the actual widget in a layout has to be a wrapper around the actual widget or item the user provides. This is useful in contexts like the <code><a href="#QTOOLS-UI:LISTING">listing</a></code>, which needs to allow changing the colour when a row is selected and so forth. In order to not have to intrude into the user supplied widgets and to provide a more general system for this kind of tasks, the items are there for you. As a user you should however be aware of whether the component you're using is relying on widgets, or has to use the items layer, since you will still be able to access and manipulate the widgets directly, which might then lead to unexpected behaviour. For the most part though, the items functions map rather directly to the widgets ones, plus or minus a <code><a href="#QTOOLS-UI:WIDGET-ITEM">widget-item</a></code> or <code><a href="#QTOOLS-UI:ITEM-WIDGET">item-widget</a></code> call. Similarly to <code><a href="#QTOOLS-UI:WIDGET-ACCEPTABLE-P">widget-acceptable-p</a></code>, the items system has a <code>item-accceptable-p</code> method to control which items the item-layout can handle.</p>
 
 <p>In order to allow sorting, items also allow a general sorting mechanism that is facilitated through the <code>item&lt;</code>, <code><a href="#QTOOLS-UI:ITEM=">item=</a></code>, <code>item&gt;</code>, <code>item&lt;=</code>, and <code>item&gt;=</code> functions. If you provide a widget as an item to a sorted layout, you likely will want to add methods to at least <code>item&lt;</code> and <code><a href="#QTOOLS-UI:ITEM=">item=</a></code> to perform the proper ordering test.</p>
+
+<h2>Demonstrations</h2>
+
+<p>A few, short videos were recorded to show off some of the components included. You can find them on <a href="https://www.youtube.com/playlist?list=PLkDl6Irujx9Mh3BWdBmt4JtIrwYgihTWp">youtube</a>.</p>
 </span>
         
       </article>
@@ -74,7 +78,7 @@
             © <span>Nicolas Hafner &lt;shinmera@tymoon.eu&gt;</span>
             .
           
-          
+          This library can be obtained on <a href="https://github.com/Shinmera/qtools-ui">https://github.com/Shinmera/qtools-ui</a>.
         
       </article>
       
@@ -97,6 +101,58 @@
                       </code>
                     </header>
                     <pre class="docstring">A cell is a generic item container that is selectable and draggable.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:COLOR-HISTORY"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:COLOR-HISTORY" class="name">COLOR-HISTORY</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:COLOR-OPTION"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:COLOR-OPTION" class="name">COLOR-OPTION</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:COLOR-PICKER"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:COLOR-PICKER" class="name">COLOR-PICKER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:COLOR-STORING-INPUT"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:COLOR-STORING-INPUT" class="name">COLOR-STORING-INPUT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
                   </article>
                 </li><li>
                   <a name="QTOOLS-UI:COLOR-TRIANGLE"/>
@@ -142,6 +198,32 @@ the internal representation of the widgets. As such, this class is to be used as
 a superclass for an actual layout that then takes care of the widget arrangement.</pre>
                   </article>
                 </li><li>
+                  <a name="QTOOLS-UI:DIALOG"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:DIALOG" class="name">DIALOG</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:DOUBLE-OPTION"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:DOUBLE-OPTION" class="name">DOUBLE-OPTION</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
                   <a name="QTOOLS-UI:DOUBLE-SLIDER"/>
                   <article>
                     <header class="class">
@@ -176,6 +258,45 @@ See DRAGGING
 See DRAG-START
 See DRAG
 See DRAG-END</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:FLOW-LAYOUT"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:FLOW-LAYOUT" class="name">FLOW-LAYOUT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:HSV-COLOR-SLIDER"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:HSV-COLOR-SLIDER" class="name">HSV-COLOR-SLIDER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A widget for an HSV sliders color chooser.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:INPUT"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:INPUT" class="name">INPUT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
                   </article>
                 </li><li>
                   <a name="QTOOLS-UI:ITEM-CONTAINER"/>
@@ -280,6 +401,45 @@ Unlike the QListWidget, this allows adding actual widgets, not just strings.</pr
 This implements an event filter. To catch the events, use QObject::installEventFilter.</pre>
                   </article>
                 </li><li>
+                  <a name="QTOOLS-UI:OPTION"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:OPTION" class="name">OPTION</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:OPTION-CONTAINER"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:OPTION-CONTAINER" class="name">OPTION-CONTAINER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:OPTION-CONTAINER-ITEM"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:OPTION-CONTAINER-ITEM" class="name">OPTION-CONTAINER-ITEM</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
                   <a name="QTOOLS-UI:PANEL"/>
                   <article>
                     <header class="class">
@@ -324,6 +484,32 @@ Supports iconifying, rearranging of the panels, and vertical or horizontal orien
 See REPAINT</pre>
                   </article>
                 </li><li>
+                  <a name="QTOOLS-UI:RGB-COLOR-SLIDER"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:RGB-COLOR-SLIDER" class="name">RGB-COLOR-SLIDER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">A widget for an RGB sliders color chooser.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SELECTABLE-ITEM"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SELECTABLE-ITEM" class="name">SELECTABLE-ITEM</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring">An item that permits being selected.</pre>
+                  </article>
+                </li><li>
                   <a name="QTOOLS-UI:SELECTABLE-LAYOUT"/>
                   <article>
                     <header class="class">
@@ -335,6 +521,19 @@ See REPAINT</pre>
                       </code>
                     </header>
                     <pre class="docstring">An item-layout that allows selecting a certain item.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SIMPLE-INPUT-DIALOG"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SIMPLE-INPUT-DIALOG" class="name">SIMPLE-INPUT-DIALOG</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
                   </article>
                 </li><li>
                   <a name="QTOOLS-UI:SLIDER"/>
@@ -354,6 +553,32 @@ See MAXIMUM
 See MINIMUM
 See STEPPING
 See DEFAULT</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SMALL-COLOR-OPTION"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SMALL-COLOR-OPTION" class="name">SMALL-COLOR-OPTION</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SMALL-DOUBLE-OPTION"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SMALL-DOUBLE-OPTION" class="name">SMALL-DOUBLE-OPTION</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
                   </article>
                 </li><li>
                   <a name="QTOOLS-UI:SORTED-CONTAINER"/>
@@ -399,6 +624,71 @@ See SORTED-CONTAINER</pre>
                       </code>
                     </header>
                     <pre class="docstring">Similar to QSplitter, but instead of distributing all available space, only uses up and extends to as much space as is needed by its widgets.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SPLITTER-HANDLE"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SPLITTER-HANDLE" class="name">SPLITTER-HANDLE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:STORING-INPUT"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:STORING-INPUT" class="name">STORING-INPUT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:STRING-OPTION"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:STRING-OPTION" class="name">STRING-OPTION</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:TEXT-OPTION"/>
+                  <article>
+                    <header class="class">
+                      <span class="type">class</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:TEXT-OPTION" class="name">TEXT-OPTION</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">()</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:ACCESSOR-TYPE"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:ACCESSOR-TYPE" class="name">ACCESSOR-TYPE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(OPTION)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
                   </article>
                 </li><li>
                   <a name="QTOOLS-UI:ACTIVE-ITEM"/>
@@ -470,19 +760,6 @@ See DETACH</pre>
 
 See COLLAPSE
 See EXPAND</pre>
-                  </article>
-                </li><li>
-                  <a name="QTOOLS-UI:COLOR"/>
-                  <article>
-                    <header class="accessor">
-                      <span class="type">accessor</span>
-                      <code>
-                        <h4><a href="#QTOOLS-UI:COLOR" class="name">COLOR</a></h4>
-                        <span class="qualifiers"></span>
-                        <span class="arguments">(SOURCE)</span>
-                      </code>
-                    </header>
-                    <pre class="docstring">Accessor for the current colour of the colour source.</pre>
                   </article>
                 </li><li>
                   <a name="QTOOLS-UI:CONTAINER"/>
@@ -645,6 +922,45 @@ If iconified, the panels are not actually shown, only their titles or icons.</pr
                     <pre class="docstring">Accessor to the minimum row height of the listing.</pre>
                   </article>
                 </li><li>
+                  <a name="QTOOLS-UI:OPTION-SMALL-P"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:OPTION-SMALL-P" class="name">OPTION-SMALL-P</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(OPTION)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:OPTION-TARGET-VALUE"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:OPTION-TARGET-VALUE" class="name">OPTION-TARGET-VALUE</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(OPTION)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:OPTION-UPDATING"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:OPTION-UPDATING" class="name">OPTION-UPDATING</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(OPTION)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
                   <a name="QTOOLS-UI:ORIENTATION"/>
                   <article>
                     <header class="accessor">
@@ -652,7 +968,7 @@ If iconified, the panels are not actually shown, only their titles or icons.</pr
                       <code>
                         <h4><a href="#QTOOLS-UI:ORIENTATION" class="name">ORIENTATION</a></h4>
                         <span class="qualifiers"></span>
-                        <span class="arguments">(SPLITTER)</span>
+                        <span class="arguments">(CONTAINER)</span>
                       </code>
                     </header>
                     <pre class="docstring">Accessor for the layout's orientation, must be one of :vertical or :horizontal.</pre>
@@ -679,6 +995,19 @@ If iconified, the panels are not actually shown, only their titles or icons.</pr
                         <h4><a href="#QTOOLS-UI:PANEL" class="name">PANEL</a></h4>
                         <span class="qualifiers"></span>
                         <span class="arguments">(OBJECT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:READER"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:READER" class="name">READER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(OPTION)</span>
                       </code>
                     </header>
                     <pre class="docstring"/>
@@ -731,7 +1060,7 @@ The function must accept two arguments to compare.</pre>
                       <code>
                         <h4><a href="#QTOOLS-UI:TARGET" class="name">TARGET</a></h4>
                         <span class="qualifiers"></span>
-                        <span class="arguments">(MOUSE-PROPAGATOR)</span>
+                        <span class="arguments">(OPTION)</span>
                       </code>
                     </header>
                     <pre class="docstring">The target to send the propagated mouse events to.</pre>
@@ -744,7 +1073,7 @@ The function must accept two arguments to compare.</pre>
                       <code>
                         <h4><a href="#QTOOLS-UI:TITLE" class="name">TITLE</a></h4>
                         <span class="qualifiers"></span>
-                        <span class="arguments">(PANEL)</span>
+                        <span class="arguments">(OPTION)</span>
                       </code>
                     </header>
                     <pre class="docstring">The title displayed for the panel.</pre>
@@ -792,6 +1121,19 @@ See ITEM-WIDGET</pre>
 You should not used this unless you are implementing a container yourself, or know
 what you are doing, as the data structure is not necessarily safe to use directly,
 or even specified to be of a certain type.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:WRITER"/>
+                  <article>
+                    <header class="accessor">
+                      <span class="type">accessor</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:WRITER" class="name">WRITER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(OPTION)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
                   </article>
                 </li><li>
                   <a name="QTOOLS-UI:C"/>
@@ -952,6 +1294,19 @@ an error is signalled. Panels can only be attached to one container at a time.</
                     <pre class="docstring">Make the panel's center widget invisible.</pre>
                   </article>
                 </li><li>
+                  <a name="QTOOLS-UI:COLOR-COUNT"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:COLOR-COUNT" class="name">COLOR-COUNT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(OBJECT)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
                   <a name="QTOOLS-UI:DEICONIFY"/>
                   <article>
                     <header class="generic">
@@ -1092,6 +1447,19 @@ See FIND-WIDGET</pre>
                     <pre class="docstring">Find the widget in the layout.
 
 See FIND</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:HSV-COLOR-SLIDER"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:HSV-COLOR-SLIDER" class="name">HSV-COLOR-SLIDER</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(HSV-COLOR-SLIDER)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
                   </article>
                 </li><li>
                   <a name="QTOOLS-UI:ICONIFY"/>
@@ -1241,6 +1609,19 @@ Add your own methods to this if you need more precise sorting.</pre>
 Uses ITEM&lt; and ITEM= to calculate the result. You should not need to add methods to this.</pre>
                   </article>
                 </li><li>
+                  <a name="QTOOLS-UI:MAKE-OPTION"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:MAKE-OPTION" class="name">MAKE-OPTION</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(TYPE &amp;KEY TEXT SMALL &amp;ALLOW-OTHER-KEYS)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
+                  </article>
+                </li><li>
                   <a name="QTOOLS-UI:MAP-ITEMS"/>
                   <article>
                     <header class="generic">
@@ -1267,6 +1648,19 @@ The mapping order is in sequence with the item positions.</pre>
                     </header>
                     <pre class="docstring">Map the function over the container's widgets.
 The mapping order is in sequence with the widget positions.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:OPTION-EFFECTIVE-TARGET"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:OPTION-EFFECTIVE-TARGET" class="name">OPTION-EFFECTIVE-TARGET</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(OPTION)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
                   </article>
                 </li><li>
                   <a name="QTOOLS-UI:REMOVE-ITEM"/>
@@ -1339,6 +1733,19 @@ signal to reach the main thread in which drawing events are permitted.</pre>
                       </code>
                     </header>
                     <pre class="docstring">Resize the layout's widget to the given size.</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:SHOW"/>
+                  <article>
+                    <header class="generic">
+                      <span class="type">generic</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:SHOW" class="name">SHOW</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(DIALOG &amp;KEY MODAL &amp;ALLOW-OTHER-KEYS)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
                   </article>
                 </li><li>
                   <a name="QTOOLS-UI:SWAP-ITEMS"/>
@@ -1453,6 +1860,19 @@ The coordinates have to be relative to the layout.</pre>
                     <pre class="docstring">Find the position of the widget in the layout.
 
 See POSITION</pre>
+                  </article>
+                </li><li>
+                  <a name="QTOOLS-UI:CREATE-OPTIONS-FOR-OBJECT"/>
+                  <article>
+                    <header class="macro">
+                      <span class="type">macro</span>
+                      <code>
+                        <h4><a href="#QTOOLS-UI:CREATE-OPTIONS-FOR-OBJECT" class="name">CREATE-OPTIONS-FOR-OBJECT</a></h4>
+                        <span class="qualifiers"></span>
+                        <span class="arguments">(OBJECT &amp;BODY OPTIONS)</span>
+                      </code>
+                    </header>
+                    <pre class="docstring"/>
                   </article>
                 </li><li>
                   <a name="QTOOLS-UI:DO-ITEMS"/>
