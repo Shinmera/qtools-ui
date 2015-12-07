@@ -14,4 +14,5 @@
   :serial T
   :components ((:file "color-history"))
   :depends-on (:qtools-ui-base
-               :qtools-ui-helpers))
+               :qtools-ui-helpers
+               :qtools-ui-flow-layout))
