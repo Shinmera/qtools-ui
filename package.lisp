@@ -13,6 +13,13 @@
   (:export
    #:padding
    #:cell)
+  ;; color-history.lisp
+  (:export
+   #:color-history
+   #:color-count)
+  ;; color-picker.lisp
+  (:export
+   #:color-picker)
   ;; color-sliders.lisp
   (:export
    #:rgb-color-slider
@@ -23,6 +30,15 @@
   ;; compass.lisp
   (:export
    #:compass)
+  ;; configurable.lisp
+  (:export
+   #:configurable-class
+   #:configurable-class-options
+   #:configurable-class-option-order
+   #:configurable-slot
+   #:configurable-slot-option
+   #:configurable
+   #:configuration-container)
   ;; container.lisp
   (:export
    #:map-widgets
@@ -36,6 +52,12 @@
    #:sorted-container
    #:item-container
    #:sorted-item-container)
+  ;; dialog.lisp
+  (:export
+   #:dialog
+   #:show
+   #:simple-input-dialog
+   #:show)
   ;; draggable.lisp
   (:export
    #:dragging
@@ -43,6 +65,17 @@
    #:drag-start
    #:drag
    #:drag-end)
+  ;; flow-layout.lisp
+  (:export
+   #:flow-layout)
+  ;; input.lisp
+  (:export
+   #:input
+   #:input-updated
+   #:input-done
+   #:value
+   #:storing-input
+   #:color-storing-input)
   ;; items.lisp
   (:export
    #:container
@@ -93,6 +126,28 @@
   (:export
    #:target
    #:mouse-propagator)
+  ;; options.lisp
+  (:export
+   #:option-effective-target
+   #:option-target-value
+   #:target
+   #:reader
+   #:writer
+   #:title
+   #:accessor-type
+   #:option-updating
+   #:option-small-p
+   #:make-option
+   #:option
+   #:string-option
+   #:text-option
+   #:double-option
+   #:small-double-option
+   #:color-option
+   #:small-color-option
+   #:option-container
+   #:option-container-item
+   #:create-options-for-object)
   ;; panel-container.lisp
   (:export
    #:orientation
@@ -100,6 +155,9 @@
    #:iconify
    #:deiconify
    #:panel-container)
+  ;; panel-main-window.lisp
+  (:export
+   #:panel-main-window)
   ;; panel.lisp
   (:export
    #:container
@@ -124,7 +182,8 @@
    #:active-widget
    #:active-item
    #:selectable
-   #:selectable-layout)
+   #:selectable-layout
+   #:selectable-item)
   ;; slider.lisp
   (:export
    #:maximum
@@ -138,7 +197,8 @@
    #:resize-widget
    #:orientation
    #:handle-size
-   #:splitter)
+   #:splitter
+   #:splitter-handle)
   ;; toolkit.lisp
   (:export
    #:call-with-translation
