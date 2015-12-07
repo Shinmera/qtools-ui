@@ -7,6 +7,8 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
+(defgeneric orientation (container))
+(defgeneric (setf orientation) (orientation container))
 (defgeneric iconified-p (container))
 (defgeneric (setf iconified-p) (value container))
 (defgeneric iconify (container))
