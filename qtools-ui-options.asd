@@ -12,9 +12,12 @@
   :description "A system to generate automatic option dialogs."
   :homepage "https://github.com/Shinmera/qtools-ui"
   :serial T
-  :components ((:file "options"))
+  :components ((:file "options")
+               (:file "configurable"))
   :depends-on (:qtools-ui-base
                :qtools-ui-helpers
                :qtools-ui-color-triangle
                :qtools-ui-color-picker
-               :qtools-ui-slider))
+               :qtools-ui-slider
+               :qtools-ui-listing
+               :closer-mop))
