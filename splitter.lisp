@@ -56,7 +56,7 @@
   (ecase (orientation splitter)
     (:vertical
      (let ((y 0) (i 0))
-       (do-widgets (widget (widgets splitter))
+       (do-widgets (widget splitter)
          (let ((handle (aref (handles splitter) i)))
            (setf (q+:geometry widget) (values 0 y (q+:width splitter) (q+:height widget)))
            (setf (q+:geometry handle) (values 0 (+ y (q+:height widget)) (q+:width splitter) (handle-size splitter)))
@@ -65,7 +65,7 @@
        (setf (q+:minimum-height splitter) y)))
     (:horizontal
      (let ((x 0) (i 0))
-       (do-widgets (widget (widgets splitter))
+       (do-widgets (widget splitter)
          (let ((handle (aref (handles splitter) i)))
            (setf (q+:geometry widget) (values x 0 (q+:width splitter) (q+:height widget)))
            (setf (q+:geometry handle) (values (+ x (q+:width widget)) 0 (q+:width splitter) (handle-size splitter)))
