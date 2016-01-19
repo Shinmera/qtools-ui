@@ -70,10 +70,9 @@
 
 (define-override (panel resize-event) (ev)
   (unless (or resizing-self (collapsed-p panel))
-    (cond ((attached-p panel)
-           (fsetf (attached-size panel) (copy (q+:size panel))))
-          (T
-           (fsetf (detached-size panel) (copy (q+:geometry panel))))))
+    (if (attached-p panel)
+        (fsetf (attached-size panel) (copy (q+:size panel)))
+        (fsetf (detached-size panel) (copy (q+:geometry panel)))))
   (update panel)
   (stop-overriding))
 
@@ -178,22 +177,25 @@
 (defmethod collapse ((panel panel))
   (with-self-resizing (panel)
     (when (and (widget :center panel) (collapsable-p panel))
+      ;; Make sure we have a size saved.
+      (if (attached-p panel)
+          (fsetf (attached-size panel) (copy (q+:size panel)))
+          (fsetf (detached-size panel) (copy (q+:geometry panel))))
       (setf (collapsed-p (slot-value panel 'titlebar)) T)
       (q+:hide (widget :center panel))
       (q+:resize panel (q+:width panel) (q+:minimum-height panel)))))
 
 (defmethod drag ((panel panel) px py nx ny)
-  (cond ((attached-p panel)
-         (let* ((pos (q+:map-to-parent panel (q+:make-qpoint nx ny)))
-                (widget (widget-at-point pos (parent panel))))
-           (when (and (typep widget 'panel)
-                      (eql (parent widget) (parent panel))
-                      (not (eql widget panel)))
-             (swap-widgets widget panel (parent panel)))))
-        (T
-         (q+:move panel
-                  (+ (q+:x panel) (- nx px))
-                  (+ (q+:y panel) (- ny py))))))
+  (if (attached-p panel)
+      (let* ((pos (q+:map-to-parent panel (q+:make-qpoint nx ny)))
+             (widget (widget-at-point pos (parent panel))))
+        (when (and (typep widget 'panel)
+                   (eql (parent widget) (parent panel))
+                   (not (eql widget panel)))
+          (swap-widgets widget panel (parent panel))))
+      (q+:move panel
+               (+ (q+:x panel) (- nx px))
+               (+ (q+:y panel) (- ny py)))))
 
 (defmethod exit ((panel panel))
   (detach panel)
