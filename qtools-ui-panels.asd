@@ -13,7 +13,8 @@
   :homepage "https://github.com/Shinmera/qtools-ui"
   :serial T
   :components ((:file "panel")
-               (:file "panel-container"))
+               (:file "panel-container")
+               (:file "panel-main-window"))
   :depends-on (:qtools-ui-base
                :qtools-ui-helpers
                :qtools-ui-compass
