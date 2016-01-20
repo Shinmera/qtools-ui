@@ -19,6 +19,7 @@
 (defgeneric clear-layout (layout))
 (defgeneric update (layout))
 (defgeneric widget-acceptable-p (widget layout))
+(defgeneric appropriate-size (widget layout))
 
 (define-widget layout (QWidget)
   ())
@@ -89,6 +90,13 @@
 (defmethod swap-widgets :around (a b (layout layout))
   (prog1 (call-next-method)
     (update layout)))
+
+(defmethod appropriate-size (widget (layout layout))
+  (let ((hint (q+:size-hint widget)))
+    (if (q+:is-valid hint)
+        hint
+        (q+:make-qsize (max (min (q+:maximum-width widget) (q+:width widget)) (q+:minimum-width widget))
+                       (max (min (q+:maximum-height widget) (q+:height widget)) (q+:minimum-height widget))))))
 
 (define-override (layout resize-event) (ev)
   (update layout)
