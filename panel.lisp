@@ -210,7 +210,8 @@
   (q+:resize panel
              (q+:width panel)
              (+ (q+:height (slot-value panel 'titlebar))
-                (q+:height (q+:size-hint widget)))))
+                (max (q+:height (q+:size-hint widget))
+                     (q+:minimum-height widget)))))
 
 
 (define-widget panel-titlebar (QWidget draggable)
