@@ -146,3 +146,60 @@
             ((cl:setf cl+qt:setf) (fdefinition function-ish))
             ((cl:function cl+qt:function) (eval function-ish))
             (T (error "Don't know how to turn ~s into a function." function-ish))))))
+
+(defun read-symbol (string &optional (case :upcase))
+  (let ((out (make-string-output-stream))
+        (package NIL)
+        (name NIL)
+        (escape NIL))
+    ;; I know this is not entirely right as to how symbols are read, but we are
+    ;; being lenient on purpose.
+    (loop for c across string
+          do (cond (escape (write-char c out)
+                           (setf escape NIL))
+                   (T (case c
+                        (#\\ (setf escape T))
+                        (#\: (cond (package (write-char c out))
+                                   (T (setf package (get-output-stream-string out)))))
+                        (T (case case
+                             (:upcase (write-char (char-upcase c) out))
+                             (:downcase (write-char (char-downcase c) out))
+                             (:preserve (write-char c out))
+                             (:invert (cond ((upper-case-p c) (write-char (char-downcase c) out))
+                                            ((lower-case-p c) (write-char (char-upcase c) out))
+                                            (T (write-char c out)))))))))
+          finally (setf name (get-output-stream-string out)))
+    (cond ((string= package "#")
+           (make-symbol name))
+          ((string= package "")
+           (intern name :keyword))
+          (T
+           (intern name package)))))
+
+(defun format-symbol (symbol &optional (case :upcase))
+  (with-output-to-string (out)
+    (flet ((format-string (string)
+             (loop for c across string
+                   do (cond ((char= c #\:)
+                             (write-string "\\:" out))
+                            ((upper-case-p c)
+                             (case case
+                               (:upcase (write-char (char-downcase c) out))
+                               (:downcase (write-char #\\ out) (write-char c out))
+                               (:preserve (write-char c out))
+                               (:invert (write-char (char-downcase c) out))))
+                            ((lower-case-p c)
+                             (case case
+                               (:upcase (write-char #\\ out) (write-char c out))
+                               (:downcase (write-char c out))
+                               (:preserve (write-char c out))
+                               (:invert (write-char (char-upcase c) out))))
+                            (T (write-char c out))))))
+      (let ((package (symbol-package symbol)))
+        (cond ((eql (find-package :keyword) package))
+              (package
+               (format-string (package-name package)))
+              (T
+               (write-char #\# out))))
+      (write-char #\: out)
+      (format-string (symbol-name symbol)))))
