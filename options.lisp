@@ -55,6 +55,7 @@
       (:accessor (funcall (ensure-function (reader option)) target))
       (:slot (slot-value target (reader option)))
       (:function (funcall (ensure-function (reader option)) target))
+      (:hash-table (gethash (reader option) target))
       (:value (value target))
       (:variable target))))
 
@@ -66,6 +67,7 @@
       (:accessor (funcall (ensure-function (or writer `(setf ,reader))) value target))
       (:slot (setf (slot-value target (or writer reader)) value))
       (:function (funcall (ensure-function (or writer reader)) value target))
+      (:hash-table (setf (gethash (reader option) target) value))
       (:value (setf (value target) value))
       (:variable (setf (symbol-value (target option)) value)))))
 
