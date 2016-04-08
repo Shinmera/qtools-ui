@@ -125,12 +125,15 @@
                          (list :failure err *package*))))))
            (sleep 0.01)))
 
-(defmethod repl-eval-inner ((repl repl) form)
-  (let ((values (multiple-value-list (eval form)))) 
+(defmethod repl-eval-inner :around ((repl repl) form)
+  (let ((values (call-next-method))) 
     (shiftf /// // / values)
     (shiftf *** ** * (first values))
     (shiftf +++ ++ + form)
     values))
+
+(defmethod repl-eval-innner ((repl repl) form)
+  (multiple-value-list (eval form)))
 
 (defun repl-cursor (repl)
   (q+:position (q+:text-cursor repl)))
