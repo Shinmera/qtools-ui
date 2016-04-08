@@ -176,6 +176,14 @@
           (T
            (intern name package)))))
 
+(defun shortest-package-name (package)
+  (let ((package (find-package package))
+        (minimal (package-name package)))
+    (loop for name in (package-nicknames package)
+          do (when (< (length name) (length minimal))
+               (setf minimal name)))
+    minimal))
+
 (defun format-symbol (symbol &optional (case :upcase))
   (with-output-to-string (out)
     (flet ((format-string (string)
@@ -198,7 +206,7 @@
       (let ((package (symbol-package symbol)))
         (cond ((eql (find-package :keyword) package))
               (package
-               (format-string (package-name package)))
+               (format-string (shortest-package-name package)))
               (T
                (write-char #\# out))))
       (write-char #\: out)
