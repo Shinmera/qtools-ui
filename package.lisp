@@ -185,6 +185,12 @@
   (:export
    #:repaint
    #:repaintable)
+  ;; repl.lisp
+  (:export
+   #:repl
+   #:repl-eval
+   #:repl-eval-inner
+   #:repl-output-stream)
   ;; selectable.lisp
   (:export
    #:active-widget
