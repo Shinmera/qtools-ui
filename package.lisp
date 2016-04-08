@@ -143,8 +143,16 @@
    #:text-option
    #:double-option
    #:small-double-option
+   #:complex-option
    #:color-option
    #:small-color-option
+   #:symbol-option
+   #:pathname-option
+   #:hash-table-option
+   #:object-option
+   #:sequence-option
+   #:extern-option
+   #:display-option
    #:option-container
    #:option-container-item
    #:create-options-for-object)
