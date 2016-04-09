@@ -10,6 +10,13 @@
 (defun remove-newlines (string)
   (remove #\Linefeed string))
 
+(defun set-foreground-color (widget color)
+  (setf (q+:color (q+:palette widget) (q+:qpalette.foreground)) color))
+
+(defun make-section-heading (parent format &rest args)
+  (q+:make-qlabel (format NIL "<span style=\"font-weight: bold; font-size: 13pt;\">~?</span>"
+                          format args) parent))
+
 (defun invoke-gui-debugger (condition)
   (dissect:with-capped-stack ()
     (with-finalizing ((debugger (make-instance 'debugger :environment condition)))
@@ -48,10 +55,30 @@
 
 (define-subwidget (debugger layout) (q+:make-qvboxlayout debugger)
   (q+:add-widget layout condition)
-  (q+:add-widget layout (q+:make-qlabel "<b>Active Restarts:</b>" debugger))
+  (q+:add-widget layout (make-section-heading debugger "Active Restarts:"))
   (q+:add-widget layout restarts)
-  (q+:add-widget layout (q+:make-qlabel "<b>Stack Trace:</b>" debugger))
+  (q+:add-widget layout (make-section-heading debugger "Stack Trace:"))
   (q+:add-widget layout scroller))
+
+(define-override (debugger key-release-event) (ev)
+  (flet ((invoke-nth (n)
+           (let ((restart (nth n (dissect:environment-restarts environment))))
+             (when restart (dissect:invoke restart)))))
+    (qtenumcase (q+:key ev)
+      ((q+:qt.key_q) (q+:close debugger))
+      ((q+:qt.key_c) (q+:close debugger) (continue))
+      ((q+:qt.key_a) (q+:close debugger) (abort))
+      ((q+:qt.key_0) (q+:close debugger) (invoke-nth 0))
+      ((q+:qt.key_1) (q+:close debugger) (invoke-nth 1))
+      ((q+:qt.key_2) (q+:close debugger) (invoke-nth 2))
+      ((q+:qt.key_3) (q+:close debugger) (invoke-nth 3))
+      ((q+:qt.key_4) (q+:close debugger) (invoke-nth 4))
+      ((q+:qt.key_5) (q+:close debugger) (invoke-nth 5))
+      ((q+:qt.key_6) (q+:close debugger) (invoke-nth 6))
+      ((q+:qt.key_7) (q+:close debugger) (invoke-nth 7))
+      ((q+:qt.key_8) (q+:close debugger) (invoke-nth 8))
+      ((q+:qt.key_8) (q+:close debugger) (invoke-nth 9))))
+  (stop-overriding))
 
 (define-widget condition-view (QWidget)
   ((condition :initarg :condition)
@@ -61,9 +88,9 @@
   (setf (q+:word-wrap report) T)
   (setf (q+:text report) (format NIL "~a" condition)))
 
-(define-subwidget (condition-view type) (q+:make-qlabel condition-view)
-  (setf (q+:color (q+:palette type) (q+:qpalette.foreground)) (q+:make-qcolor 250 50 50))
-  (setf (q+:text type) (format NIL "Condition of type ~a" (type-of condition))))
+(define-subwidget (condition-view type)
+    (make-section-heading condition-view "Condition of type ~a" (type-of condition))
+  (set-foreground-color type (q+:make-qcolor 250 50 50)))
 
 (define-subwidget (condition-view layout) (q+:make-qvboxlayout condition-view)
   (setf (q+:margin layout) 0)
@@ -98,14 +125,14 @@
 (define-slot (restart-item invoke) ()
   (declare (connected name (clicked)))
   (q+:close debugger)
-  (funcall (dissect:restart restart)))
+  (dissect:invoke restart))
 
 (define-widget stacktrace-view (QWidget)
   ((stacktrace :initarg :stacktrace)
    (debugger :initarg :debugger)))
 
 (define-subwidget (stacktrace-view layout) (q+:make-qformlayout stacktrace-view)
-  (setf (q+:color (q+:palette stacktrace-view) (q+:qpalette.foreground)) (q+:make-qcolor 120 120 120))
+  (set-foreground-color stacktrace-view (q+:make-qcolor 120 120 120))
   (setf (q+:margin layout) 0)
   ;; (setf (q+:spacing layout) 0)
   (dolist (frame stacktrace)
@@ -117,7 +144,7 @@
    (debugger :initarg :debugger)))
 
 (define-subwidget (call-item call) (q+:make-qlabel call-item)
-  (setf (q+:color (q+:palette call) (q+:qpalette.foreground)) (q+:make-qcolor 220 220 220))
+  (set-foreground-color call (q+:make-qcolor 220 220 220))
   (setf (q+:text call) (remove-newlines (prin1-to-string (dissect:call frame))))
   (setf (q+:size-policy call) (values (q+:qsizepolicy.expanding) (q+:qsizepolicy.maximum))))
 
@@ -150,5 +177,6 @@
    (debugger :initarg :debugger)))
 
 (define-initializer (arg-item setup)
-  (setf (q+:color (q+:palette arg-item) (q+:qpalette.foreground)) (q+:make-qcolor 230 0 0))
+  (set-foreground-color arg-item (q+:make-qcolor 230 0 0))
+  (setf (q+:word-wrap arg-item) T)
   (setf (q+:text arg-item) (prin1-to-string arg)))
