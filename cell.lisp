@@ -11,8 +11,9 @@
 (defgeneric (setf padding) (padding cell))
 
 (define-widget cell (QWidget selectable-item draggable mouse-propagator)
-  ((padding :initarg :padding :accessor padding))
-  (:default-initargs :padding 3))
+  ((padding :initarg :padding :accessor padding)
+   (draw-item :initarg :draw-item :accessor draw-item))
+  (:default-initargs :padding 3 :draw-item T))
 
 (define-initializer (cell setup)
   (setf (widget-item cell) (widget-item cell)))
@@ -30,7 +31,7 @@
     (when (active-p cell)
       (setf (q+:brush painter) (q+:highlight (q+:palette cell)))
       (q+:draw-rect painter (q+:rect cell)))
-    (unless (typep (widget-item cell) 'qobject)
+    (when (and draw-item (not (typep (widget-item cell) 'qobject)))
       (q+:draw-text painter (q+:adjusted (q+:rect cell) padding padding (- padding) (- padding))
                     (logior (q+:qt.align-left)
                             (q+:qt.align-vcenter))
