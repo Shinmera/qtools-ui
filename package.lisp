@@ -52,6 +52,10 @@
    #:sorted-container
    #:item-container
    #:sorted-item-container)
+  ;; debugger.lisp
+  (:export
+   #:invoke-gui-debugger
+   #:debugger)
   ;; dialog.lisp
   (:export
    #:dialog
