@@ -20,10 +20,14 @@
 (defun invoke-gui-debugger (condition &optional (debugger-class 'debugger))
   (dissect:with-capped-stack ()
     (with-finalizing ((debugger (make-instance debugger-class :environment condition)))
-      (q+:exec debugger))))
+      (q+:exec debugger)
+      (typecase (exit-restart debugger)
+        (symbol (invoke-restart (exit-restart debugger)))
+        (dissect:restart (dissect:invoke (exit-restart debugger)))))))
 
 (define-widget debugger (QDialog)
-  ((environment :initarg :condition :initarg :environment :accessor environment)))
+  ((environment :initarg :condition :initarg :environment :accessor environment)
+   (exit-restart :initform NIL :accessor exit-restart)))
 
 (define-initializer (debugger setup 100)
   (setf environment
@@ -60,13 +64,9 @@
   (q+:add-widget layout (make-section-heading debugger "Stack Trace:"))
   (q+:add-widget layout scroller))
 
-(defmethod exit-with-restart ((debugger debugger) (restart dissect:restart))
-  (q+:close debugger)
-  (dissect:invoke restart))
-
-(defmethod exit-with-restart ((debugger debugger) (restart symbol))
-  (q+:close debugger)
-  (invoke-restart restart))
+(defmethod exit-with-restart ((debugger debugger) restart)
+  (setf (exit-restart debugger) restart)
+  (q+:close debugger))
 
 (define-override (debugger key-release-event) (ev)
   (flet ((exit-with-nth (n)

@@ -56,7 +56,8 @@
   (:export
    #:invoke-gui-debugger
    #:exit-with-restart
-   #:debugger)
+   #:debugger
+   #:exit-restart)
   ;; dialog.lisp
   (:export
    #:dialog
