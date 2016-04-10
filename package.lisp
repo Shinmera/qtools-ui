@@ -193,6 +193,7 @@
   (:export
    #:repl
    #:repl-eval
+   #:repl-eval-loop
    #:repl-eval-inner
    #:repl-output-stream)
   ;; selectable.lisp

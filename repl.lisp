@@ -99,7 +99,7 @@
              (q+:move-cursor repl (q+:qtextcursor.end))
           finally (setf (fill-pointer print-queue) 0))))
 
-(defun repl-eval (repl form)
+(defmethod repl-eval ((repl repl) form)
   (loop for state = (state repl)
         until (or (eql state :finalizing)
                   (when (eql state :ready)
@@ -113,7 +113,7 @@
                     (return state)))
         do (sleep 0.01)))
 
-(defun repl-eval-loop (repl)
+(defmethod repl-eval-loop ((repl repl))
   (loop for state = (state repl)
         until (eql state :finalizing)
         do (when (and (listp state) (eql (car state) :eval))
@@ -126,7 +126,7 @@
            (sleep 0.01)))
 
 (defmethod repl-eval-inner :around ((repl repl) form)
-  (let ((values (call-next-method))) 
+  (let ((values (call-next-method)))
     (shiftf /// // / values)
     (shiftf *** ** * (first values))
     (shiftf +++ ++ + form)
@@ -159,7 +159,6 @@
   (repl-output repl "<span style=\"color:~a;\">~a</span>" color (apply #'format NIL format-string args)))
 
 (defun repl-output-prefix (repl package)
-  (v:info :test "~a" package)
   (repl-output-colored repl "red" "~@[~a~]&gt;" (shortest-package-name package))
   (repl-output repl "&nbsp;")
   (setf (input-begin repl) (repl-cursor repl)))
