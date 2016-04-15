@@ -55,7 +55,7 @@
 
 (define-subwidget (repl palette) (q+:make-qpalette)
   (let ((background (q+:color palette (q+:qpalette.window)))
-        (foreground (q+:color palette (q+:qpalette.base))))
+        (foreground (q+:color palette (q+:qpalette.text))))
     (setf (q+:color palette (q+:qpalette.base)) background)
     (setf (q+:color palette (q+:qpalette.text)) foreground)
     (setf (q+:palette repl) palette)))
