@@ -132,7 +132,7 @@
     (shiftf +++ ++ + form)
     values))
 
-(defmethod repl-eval-innner ((repl repl) form)
+(defmethod repl-eval-inner ((repl repl) form)
   (multiple-value-list (eval form)))
 
 (defun repl-cursor (repl)
