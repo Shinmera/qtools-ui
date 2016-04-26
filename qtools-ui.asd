@@ -15,19 +15,22 @@
   :serial T
   :depends-on (:qtools-ui-base
                :qtools-ui-cell
+               :qtools-ui-color-history
+               :qtools-ui-color-picker
+               :qtools-ui-color-sliders
+               :qtools-ui-color-triangle
                :qtools-ui-compass
                :qtools-ui-container
-               :qtools-ui-helpers
+               :qtools-ui-debugger
                :qtools-ui-dialog
+               :qtools-ui-flow-layout
+               :qtools-ui-helpers
                :qtools-ui-keychord-editor
                :qtools-ui-layout
                :qtools-ui-listing
+               :qtools-ui-options
                :qtools-ui-panels
+               :qtools-ui-plot
+               :qtools-ui-repl
                :qtools-ui-slider
-               :qtools-ui-splitter
-               :qtools-ui-flow-layout
-               :qtools-ui-color-sliders
-               :qtools-ui-color-triangle
-               :qtools-ui-color-history
-               :qtools-ui-color-picker
-               :qtools-ui-options))
+               :qtools-ui-splitter))
