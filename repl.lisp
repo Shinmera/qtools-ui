@@ -45,7 +45,7 @@
         while (bt:thread-alive-p (eval-thread repl))
         do (sleep 0.01)
            (when (< 10 i)
-             (v:warn :qui.repl "REPL loop did not exit gracefully.")
+             #+verbose (v:warn :qui.repl "REPL loop did not exit gracefully.")
              (bt:destroy-thread (eval-thread repl))
              (return))))
 
