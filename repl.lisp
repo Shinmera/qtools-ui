@@ -15,7 +15,9 @@
    (eval-lock :initform (bt:make-lock) :reader eval-lock)
    (state :initform :ready :accessor state)
    (print-queue :initform (make-array 0 :adjustable T :fill-pointer T) :reader print-queue)
-   (print-lock :initform (bt:make-lock) :reader print-lock)))
+   (print-lock :initform (bt:make-lock) :reader print-lock)
+   (history :initform (make-array 0 :adjustable T :fill-pointer T) :reader history)
+   (history-index :initform 0 :accessor history-index)))
 
 (define-initializer (repl setup)
   (unless (slot-boundp repl 'output-stream)
@@ -76,19 +78,37 @@
     ((= (q+:key ev) (q+:qt.key_backspace))
      (when (< (input-begin repl) (repl-cursor repl))
        (call-next-qmethod)))
+    ;; History movement
+    ((and (= (q+:key ev) (q+:qt.key_up))
+          (= (q+:modifiers ev) (q+:qt.control-modifier)))
+     (when (<= 1 (history-index repl) (length (history repl)))
+       (decf (history-index repl))
+       (repl-clear-input repl)
+       (repl-output repl (elt (history repl) (history-index repl)))
+       (q+:delete-previous-char (q+:text-cursor repl))))
+    ((and (= (q+:key ev) (q+:qt.key_down))
+          (= (q+:modifiers ev) (q+:qt.control-modifier)))
+     (when (<= 0 (history-index repl) (length (history repl)))
+       (repl-clear-input repl)
+       (when (< (1+ (history-index repl)) (length (history repl)))
+         (incf (history-index repl))
+         (repl-output repl (elt (history repl) (history-index repl)))
+         (q+:delete-previous-char (q+:text-cursor repl)))))
     ;; Delegate standard.
     (T
      (call-next-qmethod))))
 
 (define-slot (repl eval) ()
   (declare (connected repl (return-pressed)))
-  (destructuring-bind (type data package)
-      (repl-eval repl (repl-input repl))
-    (let ((*package* package))
-      (case type
-        (:success (repl-output-values repl data))
-        (:failure (repl-output-error repl data))))
-    (repl-output-prefix repl package)))
+  (let ((input (repl-input repl)))
+    (vector-push-extend input (history repl))
+    (setf (history-index repl) (length (history repl)))
+    (destructuring-bind (type data package) (repl-eval repl input)
+      (let ((*package* package))
+        (case type
+          (:success (repl-output-values repl data))
+          (:failure (repl-output-error repl data))))
+      (repl-output-prefix repl package))))
 
 (define-slot (repl process-print-queue) ()
   (declare (connected repl (process-print-queue)))
@@ -180,6 +200,15 @@
   (assert (< (input-begin repl) (repl-cursor repl))
           () "No input at this point.")
   (subseq (q+:to-plain-text repl) (input-begin repl) (repl-cursor repl)))
+
+(defun repl-clear-input (repl)
+  (when (< (input-begin repl) (repl-cursor repl))
+    (let ((cursor (q+:text-cursor repl)))
+      (setf (q+:text-cursor repl) cursor)
+      (q+:move-position cursor (q+:qtextcursor.end) (q+:qtextcursor.move-anchor))
+      (q+:move-position cursor (q+:qtextcursor.left) (q+:qtextcursor.move-anchor) (length (repl-input repl)))
+      (q+:move-position cursor (q+:qtextcursor.end) (q+:qtextcursor.keep-anchor))
+      (q+:remove-selected-text cursor))))
 
 (defclass repl-output-stream (trivial-gray-streams:fundamental-character-output-stream
                               trivial-gray-streams:trivial-gray-stream-mixin)
