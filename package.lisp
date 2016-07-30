@@ -71,6 +71,13 @@
    #:drag-start
    #:drag
    #:drag-end)
+  ;; executable.lisp
+  (:export
+   #:executable
+   #:process-executions
+   #:execute
+   #:execute-in-gui
+   #:with-body-in-gui)
   ;; flow-layout.lisp
   (:export
    #:flow-layout)

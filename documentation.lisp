@@ -124,6 +124,36 @@ See DRAG-START
 See DRAG
 See DRAG-END"))
 
+;; executable.lisp
+(setdocs
+  ((executable type)
+   "A qobject superclass that allows running functions within the GUI thread.
+
+See EXECUTE
+See EXECUTE-IN-GUI
+See WITH-BODY-IN-GUI")
+
+  (execute
+   "Performs the execution of an object.
+
+An ABORT restart is always available during the execution of this method.
+
+A standard method for FUNCTION objects exists.")
+
+  (execute-in-gui
+   "Schedules the execution to be executed within the executable's GUI thread.
+
+When exactly the execution happens cannot be predetermined. However, it should
+be approximately whenever the Qt event loop processes its next batch of events.
+
+See EXECUTABLE
+See EXECUTE")
+
+  ((with-body-in-gui)
+   "Convenience wrapper macro around EXECUTE-IN-GUI
+
+See EXECUTE-IN-GUI"))
+
 ;; items.lisp
 (setdocs
   (container
