@@ -14,6 +14,9 @@
    (proc-queue :initform (make-array 0 :adjustable T :fill-pointer T) :reader proc-queue)
    (lock :initform (bt:make-lock) :reader lock)))
 
+(defmethod initialize-instance :after ((executable executable) &key)
+  (signal! executable (process-executions)))
+
 (define-signal (executable process-executions) ())
 
 (define-slot (executable process-executions) ()
