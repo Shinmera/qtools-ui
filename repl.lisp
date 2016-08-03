@@ -37,6 +37,7 @@
                                       (*query-io* . ,output-stream)
                                       (*trace-output* . ,output-stream)
                                       (*debug-io* . ,output-stream)
+                                      (*package* . ,*package*)
                                       (/ . NIL) (// . NIL) (/// . NIL)
                                       (* . NIL) (** . NIL) (*** . NIL)
                                       (+ . NIL) (++ . NIL) (+++ . NIL)))))
