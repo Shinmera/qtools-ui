@@ -209,6 +209,7 @@
   (:export
    #:active-widget
    #:active-item
+   #:active-p
    #:selectable
    #:selectable-layout
    #:selectable-item)
