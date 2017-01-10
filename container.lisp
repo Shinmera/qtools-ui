@@ -77,9 +77,11 @@
 (defmethod remove-widget ((widget qobject) (container container))
   (remove-widget (position widget (widgets container)) container))
 
-(defmethod clear-layout ((container container))
+(defmethod clear-layout ((container container) &optional finalize)
   (do-widgets (widget container)
-    (setf (parent widget) NIL))
+    (if finalize
+        (finalize widget)
+        (setf (parent widget) NIL)))
   (setf (fill-pointer (widgets container)) 0)
   container)
 

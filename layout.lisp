@@ -16,7 +16,7 @@
 (defgeneric insert-widget (widget place layout))
 (defgeneric remove-widget (place layout))
 (defgeneric swap-widgets (a b layout))
-(defgeneric clear-layout (layout))
+(defgeneric clear-layout (layout &optional finalize))
 (defgeneric update (layout))
 (defgeneric widget-acceptable-p (widget layout))
 (defgeneric appropriate-size (widget layout))
