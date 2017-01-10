@@ -21,6 +21,10 @@
     :active-widget NIL
     :selectable T))
 
+(defmethod clear-layout :before ((layout selectable-layout) &optional finalize)
+  (declare (ignore finalize))
+  (setf (slot-value layout 'active-widget) NIL))
+
 (define-widget selectable-item (QWidget item-widget repaintable mouse-propagator)
   ((active :initform NIL :accessor active-p)))
 
