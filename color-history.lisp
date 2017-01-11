@@ -21,7 +21,7 @@
 (defmethod value ((color-history color-history))
   (value (widget 0 color-history)))
 
-(defmethod (setf value) (value (color-history color-history))
+(defmethod (setf value) ((value qobject) (color-history color-history))
   (let ((current (direct-value (widget 0 color-history))))
     (unless (or (eql current value)
                 (and (= (q+:red-f current) (q+:red-f value))
@@ -29,6 +29,10 @@
                      (= (q+:blue-f current) (q+:blue-f value))))
       (rotate-colors color-history)
       (setf (value (widget 0 color-history)) value))))
+
+(defmethod (setf value) ((value string) (color-history color-history))
+  (with-finalizing ((color (q+:make-qcolor value)))
+    (setf (value color-history) color)))
 
 (defun rotate-colors (color-history &optional (delta 1))
   (rotate-seqf (widgets color-history) delta)
