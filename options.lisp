@@ -393,17 +393,45 @@
 (defmethod option-for-value ((value T)) 'display-option)
 
 (defgeneric make-option (type &key &allow-other-keys)
-  (:method ((type (eql 'double)) &rest args &key small)
-    (apply #'make-instance 
-           (if small 'small-double-option 'double-option)
-           args))
-  (:method ((type (eql 'color)) &rest args &key small)
-    (apply #'make-instance 
-           (if small 'small-color-option 'color-option)
-           args))
   (:method ((type (eql 'string)) &rest args &key text)
     (apply #'make-instance
            (if text 'text-option 'string-option)
+           args))
+  (:method ((type (eql 'integer)) &rest args)
+    (apply #'make-instance
+           'integer-option
+           args))
+  (:method ((type (eql 'double)) &rest args &key small)
+    (apply #'make-instance
+           (if small 'small-double-option 'double-option)
+           args))
+  (:method ((type (eql 'complex)) &rest args)
+    (apply #'make-instance
+           'complex-option
+           args))
+  (:method ((type (eql 'pathname)) &rest args)
+    (apply #'make-instance
+           'pathname-option
+           args))
+  (:method ((type (eql 'symbol)) &rest args)
+    (apply #'make-instance
+           'symbol-option
+           args))
+  (:method ((type (eql 'hash-table)) &rest args)
+    (apply #'make-instance
+           'hash-table-option
+           args))
+  (:method ((type (eql 'sequence)) &rest args)
+    (apply #'make-instance
+           'sequence-option
+           args))
+  (:method ((type (eql 'standard-object)) &rest args)
+    (apply #'make-instance
+           'object-option
+           args))
+  (:method ((type (eql 'color)) &rest args &key small)
+    (apply #'make-instance
+           (if small 'small-color-option 'color-option)
            args)))
 
 (define-widget option-container (QWidget listing)
