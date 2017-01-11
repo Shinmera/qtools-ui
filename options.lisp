@@ -213,15 +213,17 @@
     :small NIL))
 
 (define-widget small-color-option (QPushButton option)
-  ((dialog :initform (make-instance 'color-picker) :finalized T))
+  ()
   (:default-initargs
     :small T))
+
+(define-subwidget (small-color-option dialog) (make-instance 'color-picker)
+  (connect! dialog (input-updated) small-color-option (input-updated)))
 
 (define-slot (small-color-option pressed) ()
   (declare (connected small-color-option (clicked)))
   (when (show dialog)
     (repaint small-color-option))
-  (signal! small-color-option (input-updated))
   (signal! small-color-option (input-done)))
 
 (define-override (small-color-option paint-event) (ev)
