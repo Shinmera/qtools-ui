@@ -476,8 +476,9 @@
   (setf (q+:text title) (title (widget-item option-container-item))))
 
 (define-subwidget (option-container-item layout) (q+:make-qgridlayout option-container-item)
+  (setf (q+:margin layout) 2)
   (cond ((option-small-p (widget-item option-container-item))
-         (setf (q+:column-stretch layout 1) 1)
+         (setf (q+:column-stretch layout 0) 1)
          (q+:add-widget layout title 0 0 1 1)
          (q+:add-widget layout (widget-item option-container-item) 0 1 1 1))
         (T
