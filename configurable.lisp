@@ -73,6 +73,8 @@
 
 (defun coerce-option-for-slot (option slot)
   (let ((slot-name (c2mop:slot-definition-name slot)))
+    (unless (getf option :small)
+      (setf (getf option :small) T))
     ;; Almost the same twice.
     (unless (getf option :reader)
       (case (or (getf option :accessor-type) :accessor)
