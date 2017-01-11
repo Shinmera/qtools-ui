@@ -167,6 +167,17 @@
    #:sequence-option
    #:extern-option
    #:display-option
+   #:boolean
+   #:string
+   #:integer
+   #:double
+   #:complex
+   #:pathname
+   #:symbol
+   #:hash-table
+   #:sequence
+   #:standard-object
+   #:color
    #:option-container
    #:option-container-item
    #:create-options-for-object)
