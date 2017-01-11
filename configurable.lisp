@@ -11,8 +11,14 @@
   ((options :initarg :options :accessor configurable-class-options)
    (option-order :initarg :option-order :accessor configurable-class-option-order))
   (:default-initargs
-   :options ()
-   :option-order ()))
+   :options ()))
+
+(defmethod initialize-instance :after ((class configurable-class) &key (option-order NIL o-p))
+  (declare (ignore option-order))
+  (unless o-p
+    (setf (configurable-class-option-order class)
+          (loop for slot in (c2mop:class-direct-slots class)
+                collect (c2mop:slot-definition-name slot)))))
 
 (defmethod c2mop:validate-superclass ((class configurable-class) (superclass t))
   NIL)
