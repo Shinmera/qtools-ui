@@ -152,6 +152,7 @@
    #:option-small-p
    #:make-option
    #:option
+   #:boolean-option
    #:string-option
    #:text-option
    #:double-option

@@ -101,6 +101,22 @@
     (setf (option-target-value option) (value option))))
 
 
+(define-widget boolean-option (QCheckBox option)
+  ()
+  (:default-initargs
+    :small T))
+
+(define-initializer (boolean-option setup)
+  (connect! boolean-option (state-changed int) boolean-option (input-done))
+  (connect! boolean-option (state-changed int) boolean-option (input-updated))
+  (call-next-method))
+
+(defmethod value ((boolean-option boolean-option))
+  (q+:is-checked boolean-option))
+
+(defmethod (setf value) (value (boolean-option boolean-option))
+  (setf (q+:is-checked boolean-option) value))
+
 (define-widget string-option (QLineEdit option)
   ()
   (:default-initargs
@@ -380,6 +396,7 @@
 (defmethod (setf value) (value (display-option display-option))
   (setf (q+:text display-option) (prin1-to-string value)))
 
+(defmethod option-for-value ((value boolean)) 'boolean-option)
 (defmethod option-for-value ((value character)) 'string-option)
 (defmethod option-for-value ((value string)) 'string-option)
 (defmethod option-for-value ((value integer)) 'integer-option)
@@ -393,6 +410,10 @@
 (defmethod option-for-value ((value T)) 'display-option)
 
 (defgeneric make-option (type &key &allow-other-keys)
+  (:method ((type (eql 'boolean)) &rest args)
+    (apply #'make-instance
+           'boolean-option
+           args))
   (:method ((type (eql 'string)) &rest args &key text)
     (apply #'make-instance
            (if text 'text-option 'string-option)
