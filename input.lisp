@@ -77,5 +77,8 @@
     (pop *recursive-input-set*)
     (setf (value color-storing-input) (color-to-rgba r g b a))))
 
+(defmethod (setf value) ((color string) (color-storing-input color-storing-input))
+  (setf (q+:named-color (direct-value color-storing-input)) color))
+
 (defmethod value ((color-storing-input color-storing-input))
   (copy (direct-value color-storing-input)))
