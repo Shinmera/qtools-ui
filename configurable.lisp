@@ -13,8 +13,8 @@
   (:default-initargs
    :options ()))
 
-(defmethod initialize-instance :after ((class configurable-class) &key (option-order NIL o-p))
-  (declare (ignore option-order))
+(defmethod shared-initialize :after ((class configurable-class) slots &key (option-order NIL o-p))
+  (declare (ignore option-order slots))
   (unless o-p
     (setf (configurable-class-option-order class)
           (loop for slot in (c2mop:class-direct-slots class)
