@@ -220,7 +220,9 @@
 (define-slot (small-color-option pressed) ()
   (declare (connected small-color-option (clicked)))
   (when (show dialog)
-    (repaint small-color-option)))
+    (repaint small-color-option))
+  (signal! small-color-option (input-updated))
+  (signal! small-color-option (input-done)))
 
 (define-override (small-color-option paint-event) (ev)
   (with-finalizing ((painter (q+:make-qpainter small-color-option)))
