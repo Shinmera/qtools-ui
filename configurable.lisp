@@ -89,7 +89,7 @@
         (:slot (setf (getf option :writer) slot-name))
         (:function (setf (getf option :reader) (lambda (target)
                                                  (slot-value target slot-name))))))
-    (unless (not (getf option :writer))
+    (unless (getf option :writer)
       (case (or (getf option :accessor-type) :accessor)
         (:accessor
          (let ((writer (first (c2mop:slot-definition-writers
@@ -97,7 +97,7 @@
            (cond (writer
                   (setf (getf option :writer) writer))
                  (T
-                  (setf (getf option :writer) (lambda (target value)
+                  (setf (getf option :writer) (lambda (value target)
                                                 (setf (slot-value target slot-name) value)))))))
         (:slot (setf (getf option :writer) slot-name))
         (:function (setf (getf option :writer) (lambda (target value)
