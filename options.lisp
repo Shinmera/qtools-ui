@@ -115,7 +115,7 @@
   (q+:is-checked boolean-option))
 
 (defmethod (setf value) (value (boolean-option boolean-option))
-  (setf (q+:is-checked boolean-option) value))
+  (setf (q+:checked boolean-option) value))
 
 (define-widget string-option (QLineEdit option)
   ()
