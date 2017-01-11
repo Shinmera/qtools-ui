@@ -113,3 +113,12 @@
                  (add-item (apply #'make-option type :target configurable (coerce-option-for-slot args slot))
                              option-container)))
       option-container)))
+
+(defmacro define-configurable (name direct-superclasses direct-slots &rest options)
+  (unless (find :metaclass options :key #'car)
+    (push `(:metaclass configurable-class) options))
+  (push 'configurable direct-superclasses)
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (defclass ,name ,direct-superclasses
+       ,direct-slots
+       ,@options)))

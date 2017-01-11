@@ -38,7 +38,8 @@
    #:configurable-slot
    #:configurable-slot-option
    #:configurable
-   #:configuration-container)
+   #:configuration-container
+   #:define-configurable)
   ;; container.lisp
   (:export
    #:map-widgets
