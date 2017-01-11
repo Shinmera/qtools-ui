@@ -396,7 +396,6 @@
 (defmethod (setf value) (value (display-option display-option))
   (setf (q+:text display-option) (prin1-to-string value)))
 
-(defmethod option-for-value ((value boolean)) 'boolean-option)
 (defmethod option-for-value ((value character)) 'string-option)
 (defmethod option-for-value ((value string)) 'string-option)
 (defmethod option-for-value ((value integer)) 'integer-option)
