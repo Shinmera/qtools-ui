@@ -155,6 +155,7 @@
    #:option
    #:boolean-option
    #:string-option
+   #:password-option
    #:text-option
    #:double-option
    #:small-double-option
@@ -170,6 +171,7 @@
    #:display-option
    #:boolean
    #:string
+   #:password
    #:integer
    #:double
    #:complex

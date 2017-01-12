@@ -133,6 +133,13 @@
 (defmethod (setf value) (value (string-option string-option))
   (setf (q+:text string-option) (princ-to-string value)))
 
+(define-widget password-option (QLineEdit string-option)
+  ())
+
+(define-initializer (password-option setup)
+  (setf (q+:echo-mode password-option) (q+:qlineedit.password-echo-on-edit))
+  (call-next-method))
+
 (define-widget text-option (QPlainTextEdit option)
   ()
   (:default-initargs
@@ -423,6 +430,10 @@
   (:method ((type (eql 'string)) &rest args &key text)
     (apply #'make-instance
            (if text 'text-option 'string-option)
+           args))
+  (:method ((type (eql 'password)) &rest args)
+    (apply #'make-instance
+           'password-option
            args))
   (:method ((type (eql 'integer)) &rest args)
     (apply #'make-instance
