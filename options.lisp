@@ -164,13 +164,16 @@
   (:default-initargs
     :small T))
 
-(defmethod initialize-instance :after ((integer-option integer-option) &key (min (- (ash 1 31)))
-                                                                            (max (1- (ash 1 31))))
-  (setf (q+:range integer-option) (values (max min (- (ash 1 31)))
-                                          (min max (1- (ash 1 31)))))
+(define-initializer (integer-option setup)
+  (setf (q+:range integer-option) (values (- (ash 1 31)) (1- (ash 1 31))))
   (connect! integer-option (editing-finished) integer-option (input-done))
   (connect! integer-option (value-changed integer) integer-option (input-updated))
   (call-next-method))
+
+(defmethod initialize-instance :after ((integer-option integer-option) &key (min (- (ash 1 31)))
+                                                                            (max (1- (ash 1 31))))
+  (setf (q+:range integer-option) (values (max min (- (ash 1 31)))
+                                          (min max (1- (ash 1 31))))))
 
 ;; FIXME: range
 (define-widget double-option (QWidget slider option)
@@ -183,13 +186,17 @@
   (:default-initargs
     :small T))
 
-(defmethod initialize-instnace :after ((small-double-option small-double-option) &key (min most-negative-double-float)
-                                                                                      (max most-positive-double-float))
-  (setf (q+:maximum small-double-option) (min max most-positive-double-float)
-        (q+:minimum small-double-option) (max min most-negative-double-float))
+(define-initializer (small-double-option setup)
+  (setf (q+:maximum small-double-option) most-positive-double-float
+        (q+:minimum small-double-option) most-negative-double-float)
   (connect! small-double-option (editing-finished) small-double-option (input-done))
   (connect! small-double-option (value-changed double) small-double-option (input-updated))
   (call-next-method))
+
+(defmethod initialize-instance :after ((small-double-option small-double-option) &key (min most-negative-double-float)
+                                                                                      (max most-positive-double-float))
+  (setf (q+:maximum small-double-option) (min max most-positive-double-float)
+        (q+:minimum small-double-option) (max min most-negative-double-float)))
 
 (define-widget complex-option (QWidget option)
   ()
