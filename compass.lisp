@@ -104,8 +104,15 @@
                      (error "~a is not contained in ~a." widget compass))
                  compass))
 
-(defmethod clear-layout ((compass compass))
-  (remove-widget (list :north :east :south :west :center) compass))
+(defmethod clear-layout ((compass compass) &optional finalize)
+  (flet ((mremove (place)
+           (let ((widget (remove-widget place compass)))
+             (when (and widget finalize) (finalize widget)))))
+    (mremove :north)
+    (mremove :east)
+    (mremove :south)
+    (mremove :west)
+    (mremove :center)))
 
 (defmethod swap-widgets (a b (compass compass))
   (with-slots-bound (compass compass)

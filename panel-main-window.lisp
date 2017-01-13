@@ -49,9 +49,9 @@
 (defmethod swap-widgets (a b (panel-main-window panel-main-window))
   (swap-widgets a b (slot-value panel-main-window 'sidebar)))
 
-(defmethod clear-layout ((panel-main-window panel-main-window))
-  (clear-layout (slot-value panel-main-window 'sidebar))
-  (clear-layout (slot-value panel-main-window 'layout)))
+(defmethod clear-layout ((panel-main-window panel-main-window) &optional finalize)
+  (clear-layout (slot-value panel-main-window 'sidebar) finalize)
+  (clear-layout (slot-value panel-main-window 'layout) finalize))
 
 (defmethod update ((panel-main-window panel-main-window))
   (update (slot-value panel-main-window 'sidebar))
