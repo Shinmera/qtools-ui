@@ -167,7 +167,7 @@
 (define-initializer (integer-option setup)
   (setf (q+:range integer-option) (values (- (ash 1 31)) (1- (ash 1 31))))
   (connect! integer-option (editing-finished) integer-option (input-done))
-  (connect! integer-option (value-changed integer) integer-option (input-updated))
+  (connect! integer-option (value-changed int) integer-option (input-updated))
   (call-next-method))
 
 (defmethod initialize-instance :after ((integer-option integer-option) &key (min (- (ash 1 31)))
