@@ -33,4 +33,5 @@
                :qtools-ui-plot
                :qtools-ui-repl
                :qtools-ui-slider
-               :qtools-ui-splitter))
+               :qtools-ui-splitter
+               :qtools-ui-notification))

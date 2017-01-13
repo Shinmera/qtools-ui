@@ -140,6 +140,9 @@
   (:export
    #:target
    #:mouse-propagator)
+  ;; notification.lisp
+  (:export
+   #:notification)
   ;; options.lisp
   (:export
    #:option-effective-target
