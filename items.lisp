@@ -77,7 +77,7 @@
 (defmethod item-position :around (item (layout item-layout) &key key test test-not)
   (when (and test test-not)
     (error "Cannot specify both TEST and TEST-NOT simultaneously."))
-  (call-next-method item layout :key key :test (default-test test test-not) :test-not test-not))
+  (call-next-method item layout :key (or key #'identity) :test (default-test test test-not) :test-not test-not))
 
 (defmethod item-position (item (layout item-layout) &key key test test-not)
   (widget-position item layout :key (lambda (widget) (funcall key (widget-item widget))) :test test :test-not test-not))
@@ -85,7 +85,7 @@
 (defmethod find-item :around (item (layout item-layout) &key key test test-not)
   (when (and test test-not)
     (error "Cannot specify both TEST and TEST-NOT simultaneously."))
-  (call-next-method item layout :key key :test (default-test test test-not) :test-not test-not))
+  (call-next-method item layout :key (or key #'identity) :test (default-test test test-not) :test-not test-not))
 
 (defmethod find-item (item (layout item-layout) &key key test test-not)
   (widget-item (find-widget item layout :key (lambda (widget) (funcall key (widget-item widget))) :test test :test-not test-not)))
