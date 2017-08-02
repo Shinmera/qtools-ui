@@ -26,6 +26,9 @@
 
 (defmethod update ((layout layout)))
 
+(defmethod update :after ((layout layout))
+  (q+:update-geometry layout))
+
 (defmethod find-widget :around (widget layout &key key test test-not)
   (when (and test test-not)
     (error "Cannot specify both TEST and TEST-NOT simultaneously."))
