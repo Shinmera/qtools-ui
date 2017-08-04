@@ -29,17 +29,21 @@
            (q+:minimum-height widget)
            (q+:height (q+:size-hint widget)))))
 
+(defun listing-useful-width (listing)
+  (let ((parent (parent listing)))
+    (if parent (q+:width parent) (q+:width listing))))
+
 (defmethod update ((listing listing))
-  (let ((y 0))
+  (let ((y 0) (w (listing-useful-width listing)))
     (do-widgets (widget listing)
       (when (or (not (q+:is-visible listing))
                 (q+:is-visible widget))
         (let ((height (listing-widget-height listing widget)))
-          (setf (q+:geometry widget) (values 0 y (q+:width listing) height))
+          (setf (q+:geometry widget) (values 0 y w height))
           (incf y height))))))
 
 (defmethod update-for-added ((new widget) (listing listing))
-  (let ((y 0) (found))
+  (let ((y 0) (w (listing-useful-width listing)) (found))
     (do-widgets (widget listing)
       (when (eql widget new)
         (setf found T))
@@ -47,12 +51,12 @@
                 (q+:is-visible widget))
         (let ((height (listing-widget-height listing widget)))
           (when found
-            (setf (q+:geometry widget) (values 0 y (q+:width listing) height)))
+            (setf (q+:geometry widget) (values 0 y w height)))
           (incf y height))))
     (q+:update-geometry listing)))
 
 (defmethod update-for-removed ((old widget) (listing listing))
-  (let ((y 0) (found))
+  (let ((y 0) (w (listing-useful-width listing)) (found))
     (do-widgets (widget listing)
       (if (eql widget old)
           (setf found T)
@@ -60,7 +64,7 @@
                     (q+:is-visible widget))
             (let ((height (listing-widget-height listing widget)))
               (when found
-                (setf (q+:geometry widget) (values 0 y (q+:width listing) height)))
+                (setf (q+:geometry widget) (values 0 y w height)))
               (incf y height)))))
     (q+:update-geometry listing)))
 
