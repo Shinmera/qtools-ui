@@ -127,6 +127,8 @@
    #:swap-widgets
    #:clear-layout
    #:update
+   #:update-for-added
+   #:update-for-removed
    #:widget-acceptable-p
    #:layout)
   ;; listing.lisp

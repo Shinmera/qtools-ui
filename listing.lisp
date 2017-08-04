@@ -38,6 +38,32 @@
           (setf (q+:geometry widget) (values 0 y (q+:width listing) height))
           (incf y height))))))
 
+(defmethod update-for-added ((new widget) (listing listing))
+  (let ((y 0) (found))
+    (do-widgets (widget listing)
+      (when (eql widget new)
+        (setf found T))
+      (when (or (not (q+:is-visible listing))
+                (q+:is-visible widget))
+        (let ((height (listing-widget-height listing widget)))
+          (when found
+            (setf (q+:geometry widget) (values 0 y (q+:width listing) height)))
+          (incf y height))))
+    (q+:update-geometry listing)))
+
+(defmethod update-for-removed ((old widget) (listing listing))
+  (let ((y 0) (found))
+    (do-widgets (widget listing)
+      (if (eql widget old)
+          (setf found T)
+          (when (or (not (q+:is-visible listing))
+                    (q+:is-visible widget))
+            (let ((height (listing-widget-height listing widget)))
+              (when found
+                (setf (q+:geometry widget) (values 0 y (q+:width listing) height)))
+              (incf y height)))))
+    (q+:update-geometry listing)))
+
 (define-override (listing size-hint) ()
   (let ((w 100)
         (h 0))

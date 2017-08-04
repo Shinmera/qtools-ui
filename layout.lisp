@@ -18,6 +18,8 @@
 (defgeneric swap-widgets (a b layout))
 (defgeneric clear-layout (layout &optional finalize))
 (defgeneric update (layout))
+(defgeneric update-for-added (widget layout))
+(defgeneric update-for-removed (widget layout))
 (defgeneric widget-acceptable-p (widget layout))
 (defgeneric appropriate-size (widget layout))
 
@@ -28,6 +30,12 @@
 
 (defmethod update :after ((layout layout))
   (q+:update-geometry layout))
+
+(defmethod update-for-added (widget (layout layout))
+  (update layout))
+
+(defmethod update-for-removed (widget (layout layout))
+  (update layout))
 
 (defmethod find-widget :around (widget layout &key key test test-not)
   (when (and test test-not)
@@ -67,7 +75,7 @@
 (defmethod add-widget :around (widget (layout layout))
   (check-widget-permitted widget layout)
   (prog1 (call-next-method)
-    (update layout)))
+    (update-for-added widget layout)))
 
 (defmethod add-widget ((widgets list) (layout layout))
   (dolist (widget widgets widgets)
@@ -76,7 +84,7 @@
 (defmethod insert-widget :around (widget place (layout layout))
   (check-widget-permitted widget layout)
   (prog1 (call-next-method)
-    (update layout)))
+    (update-for-added widget layout)))
 
 (defmethod insert-widget ((widgets list) place (layout layout))
   (dolist (widget widgets widgets)
@@ -84,7 +92,7 @@
 
 (defmethod remove-widget :around (place (layout layout))
   (prog1 (call-next-method)
-    (update layout)))
+    (update-for-removed place layout)))
 
 (defmethod remove-widget ((widgets list) (layout layout))
   (dolist (widget widgets widgets)
