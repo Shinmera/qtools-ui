@@ -4,7 +4,7 @@
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(in-package #:cl-user)
+
 (asdf:defsystem qtools-ui-helpers
   :license "Artistic"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
