@@ -214,6 +214,13 @@
    #:collapse
    #:exit
    #:panel)
+  ;; progress-bar.lisp
+  (:export
+   #:progress-bar
+   #:text
+   #:progress
+   #:maximum
+   #:minimum)
   ;; repaintable.lisp
   (:export
    #:repaint
