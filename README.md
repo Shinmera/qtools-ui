@@ -31,12 +31,11 @@ Built on top of the layout system is the items system, which very closely mimics
 In order to allow sorting, items also allow a general sorting mechanism that is facilitated through the `item<`, `item=`, `item>`, `item<=`, and `item>=` functions. If you provide a widget as an item to a sorted layout, you likely will want to add methods to at least `item<` and `item=` to perform the proper ordering test.
 
 ## General Drag And Drop Concepts
-
 Drag and drop functionality in Qt revolves around MIME types. A single drag can contain data in multiple formats, each of them described by a single MIME type in form of a string.
 
-For simplicity, the mechanism used in the Drag and Drop implementation in `drag-and-drop.lisp` uses only a single MIME type, which, by default, is `"application/qtools-mime-data-with-object"`, being the value of `*mime-data-with-object-type*`.
+For simplicity, the mechanism used in the Drag and Drop implementation uses only a single MIME type, which, by default, is `"application/qtools-mime-data-with-object"`, being the value of `*mime-data-with-object-type*`.
 
-You can provide your own separate MIME type by providing a `:MIME-TYPE` keyword argument to the constructors of `draggable` and `drop-target` or client classes that subclass them. This can be used to create several drag and drop mechanisms that should not interact with each other, for example, when your application makes it possible to drag around multiple mutually incompatible types of data.
+You can provide your own separate MIME type by providing a `:mime-type` keyword argument to the constructors of `draggable` and `drop-target` or client classes that subclass them. This can be used to create several drag and drop mechanisms that should not interact with each other, for example, when your application makes it possible to drag around multiple mutually incompatible types of data.
 
 ## Demonstrations
 A few, short videos were recorded to show off some of the components included. You can find them on [youtube](https://www.youtube.com/playlist?list=PLkDl6Irujx9Mh3BWdBmt4JtIrwYgihTWp).
