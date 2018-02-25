@@ -14,7 +14,7 @@
 
 (define-widget mime-data-with-object (QMimeData)
   ((object :accessor object :initarg :object))
-  (:default-initargs :object NIL))
+  (:default-initargs :object (error "OBJECT required.")))
 
 (defmethod initialize-instance :after ((object mime-data-with-object) &key mime-type)
   (setf (q+:data object mime-type) ""))
