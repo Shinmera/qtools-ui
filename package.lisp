@@ -72,6 +72,16 @@
    #:drag-start
    #:drag
    #:drag-end)
+  ;; drag-and-drop.lisp
+  (:export
+   #:*mime-data-with-object-type*
+   #:drop
+   #:drop-acceptable-p
+   #:mime-data-with-object
+   #:object
+   #:droppable
+   #:mime-type
+   #:drop-target)
   ;; executable.lisp
   (:export
    #:executable
