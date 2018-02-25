@@ -19,22 +19,20 @@
 (defmethod initialize-instance :after ((object mime-data-with-object) &key mime-type)
   (setf (q+:data object mime-type) ""))
 
-(define-widget draggable (QWidget)
+(define-widget droppable (QWidget draggable)
   ((mime-type :accessor mime-type :initarg :mime-type))
-  (:default-initargs *mime-data-with-object-type*))
+  (:default-initargs :mime-type *mime-data-with-object-type*))
 
-(define-override (draggable mouse-press-event) (event)
-  (when (eq (enum-value (q+:button event)) (q+:qt.left-button))
-    (let ((drag (q+:make-qdrag draggable))
-          (mime-data (make-instance 'mime-data-with-object
-                                    :object draggable
-                                    :mime-type mime-type)))
-      (setf (q+:mime-data drag) mime-data)
-      (let ((drop-action (q+:exec drag (q+:qt.move-action))))
-        (when (= (enum-value drop-action) (q+:qt.ignore-action))
-          (q+:delete-later drag)
-          (q+:delete-later mime-data)))))
-  (stop-overriding))
+(defmethod drag-start :before ((droppable droppable) x y)
+  (let ((drag (q+:make-qdrag droppable))
+        (mime-data (make-instance 'mime-data-with-object
+                                  :object droppable
+                                  :mime-type (mime-type droppable))))
+    (setf (q+:mime-data drag) mime-data)
+    (let ((drop-action (q+:exec drag (q+:qt.move-action))))
+      (when (= (enum-value drop-action) (q+:qt.ignore-action))
+        (q+:delete-later drag)
+        (q+:delete-later mime-data)))))
 
 (define-widget drop-target (QWidget)
   ((mime-type :accessor mime-type :initarg :mime-type))
