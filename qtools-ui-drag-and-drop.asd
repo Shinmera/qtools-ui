@@ -13,6 +13,4 @@
   :homepage "https://github.com/Shinmera/qtools-ui"
   :serial T
   :components ((:file "drag-and-drop"))
-  :depends-on (:qtools
-               :qtcore
-               :qtgui))
+  :depends-on (:qtools-ui-base))
