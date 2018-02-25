@@ -22,6 +22,7 @@
                :qtools-ui-compass
                :qtools-ui-container
                :qtools-ui-debugger
+               :qtools-ui-drag-and-drop
                :qtools-ui-dialog
                :qtools-ui-flow-layout
                :qtools-ui-helpers
