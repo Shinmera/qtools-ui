@@ -10,7 +10,9 @@
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "Provides synchronisation between threads by allowing execution of functions within the gui thread."
-  :homepage "https://github.com/Shinmera/qtools-ui"
+  :homepage "https://Shinmera.github.io/qtools-ui/"
+  :bug-tracker "https://github.com/Shinmera/qtools-ui/issues"
+  :source-control (:git "https://github.com/Shinmera/qtools-ui.git")
   :serial T
   :components ((:file "executable"))
   :depends-on (:qtools-ui-base

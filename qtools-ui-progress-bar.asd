@@ -10,7 +10,9 @@
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "A progress bar"
-  :homepage "https://github.com/Shinmera/qtools-ui"
+  :homepage "https://Shinmera.github.io/qtools-ui/"
+  :bug-tracker "https://github.com/Shinmera/qtools-ui/issues"
+  :source-control (:git "https://github.com/Shinmera/qtools-ui.git")
   :serial T
   :components ((:file "progress-bar"))
   :depends-on (:qtools-ui-base))

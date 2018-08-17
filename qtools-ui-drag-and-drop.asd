@@ -10,7 +10,9 @@
   :author "Michał \"phoe\" Herda <phoe@teknik.io>"
   :maintainer "Michał \"phoe\" Herda <phoe@teknik.io>"
   :description "Classes implementing simple drag-and-drop in Qtools."
-  :homepage "https://github.com/Shinmera/qtools-ui"
+  :homepage "https://Shinmera.github.io/qtools-ui/"
+  :bug-tracker "https://github.com/Shinmera/qtools-ui/issues"
+  :source-control (:git "https://github.com/Shinmera/qtools-ui.git")
   :serial T
   :components ((:file "drag-and-drop"))
   :depends-on (:qtools-ui-base
