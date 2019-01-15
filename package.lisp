@@ -9,6 +9,10 @@
 (defpackage #:qtools-ui
   (:nicknames #:qui #:org.shirakumo.qtools.ui)
   (:use #:cl+qt)
+  ;; bytearray.lisp
+  (:export
+   #:from-byte-array
+   #:to-byte-array)
   ;; cell.lisp
   (:export
    #:padding
