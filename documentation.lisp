@@ -19,6 +19,7 @@
 (docs:define-docs
   (type rgb-color-slider
     "A widget for an RGB sliders color chooser.")
+
   (type hsv-color-slider
     "A widget for an HSV sliders color chooser."))
 
@@ -109,6 +110,7 @@ a part of this drag and drop framework. Instead, the user should subclass DRAGGA
 
 See DRAGGABLE
 See DROP-TARGET")
+
   (type draggable
     "Superclass of all objects that are draggable.
 
@@ -125,6 +127,7 @@ See MIME-DATA-WITH-OBJECT
 See DROP-TARGET
 See DROP-ACCEPTABLE-P
 See DROP")
+
   (type drop-target
     "Superclass of all objects that accept drops.
 
@@ -141,6 +144,7 @@ See MIME-DATA-WITH-OBJECT
 See DRAGGABLE
 See DROP-ACCEPTABLE-P
 See DROP")
+
   (cl:function drop-acceptable-p
     "Whether it is possible to drop ITEM onto TARGET.
 
@@ -160,6 +164,7 @@ See MIME-DATA-WITH-OBJECT
 See DRAGGABLE
 See DROP-TARGET
 See DROP")
+
   (cl:function drop
     "Implements logic to be run after an item is dropped.
 
