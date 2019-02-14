@@ -7,6 +7,16 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
+;; bytearray.lisp
+(docs:define-docs
+  (cl:function from-byte-array
+    "Converts from a QByteArray into a (vector (unsigned-byte 8)).
+
+The optional argument FINALIZE states whether the QByteArray should be finalized
+after the call completes.")
+  (cl:function to-byte-array
+    "Converts from a (vector (unsigned-byte 8)) into a QByteArray."))
+
 ;; cell.lisp
 (docs:define-docs
   (cl:function padding

@@ -21,7 +21,8 @@
 (define-hot-patching from-byte-array (bytes &optional (finalize T))
   (prog1 (cffi:foreign-array-to-lisp
           (fast-call (data qbytearray "void**") bytes)
-          `(:array :uchar ,(fast-call (length qbytearray "int") bytes)))
+          `(:array :uchar ,(fast-call (length qbytearray "int") bytes))
+          :element-type '(unsigned-byte 8))
     (when finalize (optimized-delete bytes))))
 
 (define-hot-patching to-byte-array (data)
