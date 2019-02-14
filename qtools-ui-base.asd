@@ -20,4 +20,5 @@
   :depends-on (:qtools
                :qtcore
                :qtgui
+               :documentation-utils
                :array-utils))
