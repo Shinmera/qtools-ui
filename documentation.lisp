@@ -9,7 +9,7 @@
 
 ;; cell.lisp
 (docs:define-docs
-  (padding
+  (cl:function padding
     "Padding in the number of pixels to use between the cell edge and the item.")
 
   (type cell
@@ -35,23 +35,23 @@ Use the corresponding keywords for the widget places."))
 
 ;; container.lisp
 (docs:define-docs
-  (map-widgets
+  (cl:function map-widgets
     "Map the function over the container's widgets.
 The mapping order is in sequence with the widget positions.")
 
-  (map-items
+  (cl:function map-items
     "Map the function over the container's items.
 The mapping order is in sequence with the item positions.")
 
-  (ensure-widget-order
+  (cl:function ensure-widget-order
     "Make sure that the widgets of the container are in the right order.
 This may change the widget's positions.")
 
-  (sorting
+  (cl:function sorting
     "The function used for sorting the container. If NIL, no sorting is applied.
 The function must accept two arguments to compare.")
 
-  (widgets
+  (cl:function widgets
     "The direct widgets stored in the container.
 You should not used this unless you are implementing a container yourself, or know
 what you are doing, as the data structure is not necessarily safe to use directly,
@@ -141,7 +141,7 @@ See MIME-DATA-WITH-OBJECT
 See DRAGGABLE
 See DROP-ACCEPTABLE-P
 See DROP")
-  (drop-acceptable-p
+  (cl:function drop-acceptable-p
     "Whether it is possible to drop ITEM onto TARGET.
 
 Syntax: (drop-acceptable-p item target)
@@ -160,7 +160,7 @@ See MIME-DATA-WITH-OBJECT
 See DRAGGABLE
 See DROP-TARGET
 See DROP")
-  (drop
+  (cl:function drop
     "Implements logic to be run after an item is dropped.
 
 Syntax: (drop item target)
@@ -176,18 +176,18 @@ See DROP-ACCEPTABLE-P"))
 
 ;; draggable.lisp
 (docs:define-docs
-  (dragging
+  (cl:function dragging
     "Whether the draggable is currently being dragged.")
 
-  (drag-start
+  (cl:function drag-start
     "Called whenever the draggable is beginning to be dragged.
 This usually happens during a mouse-press event.")
 
-  (drag
+  (cl:function drag
     "Called whenever the draggable is being dragged around.
 This usually happens during a mouse-move event.")
 
-  (drag-end
+  (cl:function drag-end
     "Called whenever the draggable has stopped being dragged.
 This usually happens during a mouse-release event.")
 
@@ -208,14 +208,14 @@ See EXECUTE
 See EXECUTE-IN-GUI
 See WITH-BODY-IN-GUI")
 
-  (execute
+  (cl:function execute
     "Performs the execution of an object.
 
 An ABORT restart is always available during the execution of this method.
 
 A standard method for FUNCTION objects exists.")
 
-  (execute-in-gui
+  (cl:function execute-in-gui
     "Schedules the execution to be executed within the executable's GUI thread.
 
 When exactly the execution happens cannot be predetermined. However, it should
@@ -231,95 +231,95 @@ See EXECUTE-IN-GUI"))
 
 ;; items.lisp
 (docs:define-docs
-  (container
+  (cl:function container
     "The container of the item-widget.
 
 See ITEM-WIDGET")
 
-  (widget-item
+  (cl:function widget-item
     "The actual item wrapped by the item-widget.
 
 See ITEM-WIDGET")
 
-  (item-widget
+  (cl:function item-widget
     "Find the item-widget for the given item in the layout.")
 
-  (coerce-item
+  (cl:function coerce-item
     "Create a suitable item-widget for the item.")
 
-  (item-at
+  (cl:function item-at
     "Return the item at the specified place in the layout.")
 
-  (item-position
+  (cl:function item-position
     "Return the position of the item in the layout.
 
 See WIDGET-POSITION")
 
-  (find-item
+  (cl:function find-item
     "Find the item in the layout.
 
 See FIND-WIDGET")
 
-  (add-item
+  (cl:function add-item
     "Add the item to the layout.
 
 See ADD-WIDGET
 See COERCE-ITEM")
 
-  (insert-item
+  (cl:function insert-item
     "Insert the item into the layout at the specified place.
 
 See INSERT-WIDGET
 See COERCE-ITEM")
 
-  (remove-item
+  (cl:function remove-item
     "Remove the item from the layout.
 
 See REMOVE-WIDGET
 See ITEM-WIDGET")
 
-  (remove-item-at
+  (cl:function remove-item-at
     "Remove the item at the specified place in the layout.
 
 See REMOVE-WIDGET")
 
-  (swap-items
+  (cl:function swap-items
     "Swap the two items in their place in the layout.
 Note that the implementation might swap the corresponding item-widget,
 or it may also choose to swap the items in place. As such, the item-widget's
 positions may change, or the actual item-widget of the item may change.")
 
-  (swap-items-at
+  (cl:function swap-items-at
     "Swap the two items at the specified places in the layout.
 
 See SWAP-ITEMS")
 
-  (item-acceptable-p
+  (cl:function item-acceptable-p
     "A predicate to decide whether the item is suitable for inclusion in the widget.")
 
-  (item<
+  (cl:function item<
     "Whether A precedes B.
 Default methods for STRING and NUMBER exist, as well as a general method that simply
 prints the object to a string using PRINC and calls ITEM< again with the results of that.
 
 Add your own methods to this if you need more precise sorting.")
 
-  (item=
+  (cl:function item=
     "Whether A is equal to B.
 Default methods for STRING and NUMBER exist, as well as a general method that simply
 prints the object to a string using PRINC and calls ITEM= again with the results of that.
 
 Add your own methods to this if you need more precise sorting.")
 
-  (item>
+  (cl:function item>
     "Whether A follows B.
 Uses ITEM< and ITEM= to calculate the result. You should not need to add methods to this.")
 
-  (item<=
+  (cl:function item<=
     "Whether A precedes B.
 Uses ITEM< and ITEM= to calculate the result. You should not need to add methods to this.")
 
-  (item>=
+  (cl:function item>=
     "Whether A follows B.
 Uses ITEM< and ITEM= to calculate the result. You should not need to add methods to this.")
 
@@ -343,41 +343,41 @@ See QTOOLS:DEFINE-MENU"))
 
 ;; layout.lisp
 (docs:define-docs
-  (widget
+  (cl:function widget
     "Returns the widget at the specified place in the layout.")
 
-  (find-widget
+  (cl:function find-widget
     "Find the widget in the layout.
 
 See FIND")
 
-  (widget-position
+  (cl:function widget-position
     "Find the position of the widget in the layout.
 
 See POSITION")
 
-  (widget-at-point
+  (cl:function widget-at-point
     "See if there is a widget in the layout at the point and return it if it exists.
 POINT can be a cons of X and Y or a QPoint.
 The coordinates have to be relative to the layout.")
 
-  (add-widget
+  (cl:function add-widget
     "Add the widget to the layout.
 The positioning of the widget is completely up to the layout.")
 
-  (insert-widget
+  (cl:function insert-widget
     "Insert the widget at the specified place in the layout.")
 
-  (remove-widget
+  (cl:function remove-widget
     "Remove the widget or the widget at the specified place from the layout.")
 
-  (swap-widgets
+  (cl:function swap-widgets
     "Swap the two widgets or the widgets at the specified places in the layout.")
 
-  (clear-layout
+  (cl:function clear-layout
     "Clear all widgets from the layout.")
 
-  (update
+  (cl:function update
     "Update the layout widgets' geometry.
 
 This is automatically called if the layout receives a layout-request event or is resized.
@@ -388,7 +388,7 @@ ones, you should call this method to ensure the widgets are restored as appropra
 If you subclass a layout, you should implement a method on this to calculate yout layouts
 widgets' geometry properly.")
 
-  (widget-acceptable-p
+  (cl:function widget-acceptable-p
     "Predicate to determine whether the layout accepts the given widget.
 This test is automatically called on all the predefined widget adding functions to make
 sure no bad widgets can be inserted into a layout.
@@ -402,14 +402,14 @@ that don't call out to the standard layout functions.")
 
 ;; listing.lisp
 (docs:define-docs
-  (minimum-row-height
+  (cl:function minimum-row-height
     "Accessor to the minimum row height of the listing.")
 
-  (fixed-row-height
+  (cl:function fixed-row-height
     "Accessor to the fixed row height of the listing.
 If NIL, the row heights are dynamic, otherwise the listing will enforce this height.")
 
-  (draggable
+  (cl:function draggable
     "Accessor to whether widgets are draggable or not.")
 
   (type listing
@@ -422,7 +422,7 @@ Unlike the QListWidget, this allows adding actual widgets, not just strings.")
 
 ;; mouse-propagator.lisp
 (docs:define-docs
-  (target
+  (cl:function target
     "The target to send the propagated mouse events to.")
 
   (type mouse-propagator
@@ -431,16 +431,16 @@ This implements an event filter. To catch the events, use QObject::installEventF
 
 ;; panel-container.lisp
 (docs:define-docs
-  (iconified-p
+  (cl:function iconified-p
     "Accessor to whether the panel-container is iconified or not.
 If iconified, the panels are not actually shown, only their titles or icons.")
 
-  (iconify
+  (cl:function iconify
     "Iconify the panel-container.
 
 See ICONFIFIED-P")
 
-  (deiconify
+  (cl:function deiconify
     "Deiconify the panel-container.
 
 See ICONFIFIED-P")
@@ -451,48 +451,48 @@ Supports iconifying, rearranging of the panels, and vertical or horizontal orien
 
 ;; panel.lisp
 (docs:define-docs
-  (title
+  (cl:function title
     "The title displayed for the panel.")
 
-  (detachable-p
+  (cl:function detachable-p
     "Accessor to whether the panel is detachable.")
 
-  (collapsable-p
+  (cl:function collapsable-p
     "Accessor to whether the panel is collapsable.")
 
-  (titlebar-shown-p
+  (cl:function titlebar-shown-p
     "Accessor to whether the panel's titlebar is visible.")
 
-  (attached-p
+  (cl:function attached-p
     "Accessor to whether the panel is attached.
 
 See ATTACH
 See DETACH")
 
-  (collapsed-p
+  (cl:function collapsed-p
     "Accessor to whether the panel is collapsed.
 
 See COLLAPSE
 See EXPAND")
 
-  (attach
+  (cl:function attach
     "Tell the panel to attach itself to a container.
 If NIL is passed as the container, the panel will try to use the last container it has been
 attached to to attach to again. If no container is given or no previous container exists,
 an error is signalled. Panels can only be attached to one container at a time.")
 
-  (detach
+  (cl:function detach
     "Tell the panel to detach itself from a container.
 If it is not currently attached to anything, an error is signalled. The panel will remember
 the container it has been attached to so it can easily be reattached later.")
 
-  (expand
+  (cl:function expand
     "Make the panel's center widget visible.")
 
-  (collapse
+  (cl:function collapse
     "Make the panel's center widget invisible.")
 
-  (exit
+  (cl:function exit
     "Close the panel.")
 
   (type panel
@@ -502,7 +502,7 @@ should be able to freely arrange to their liking."))
 
 ;; repaintable.lisp
 (docs:define-docs
-  (repaint
+  (cl:function repaint
     "Cause the repaintable to be repainted.
 Unlike QWidget::repaint, this method is safe to be called from any thread as it will use a
 signal to reach the main thread in which drawing events are permitted.")
@@ -514,13 +514,13 @@ See REPAINT"))
 
 ;; selectable.lisp
 (docs:define-docs
-  (active-widget
+  (cl:function active-widget
     "Accessor for the currently active widget on the layout.")
 
-  (active-item
+  (cl:function active-item
     "Accessor for the currently active item on the layout.")
 
-  (selectable
+  (cl:function selectable
     "Accessor for whether selecting a widget/item is allowed.")
 
   (type selectable-layout
@@ -531,16 +531,16 @@ See REPAINT"))
 
 ;; slider.lisp
 (docs:define-docs
-  (maximum
+  (cl:function maximum
     "Accessor for the maximum of the slider.")
 
-  (minimum
+  (cl:function minimum
     "Accessor for the minimum of the slider.")
 
-  (stepping
+  (cl:function stepping
     "Accessor for the step size of the slider.")
 
-  (default
+  (cl:function default
     "Accessor for the slider's default value, if any.")
 
   (type double-slider
@@ -562,13 +562,13 @@ See DEFAULT"))
 
 ;; splitter.lisp
 (docs:define-docs
-  (resize-widget
+  (cl:function resize-widget
     "Resize the layout's widget to the given size.")
 
-  (orientation
+  (cl:function orientation
     "Accessor for the layout's orientation, must be one of :vertical or :horizontal.")
 
-  (handle-size
+  (cl:function handle-size
     "Accessor for the size of a splitter's handle.")
 
   (type splitter
@@ -576,7 +576,7 @@ See DEFAULT"))
 
 ;; toolkit.lisp
 (docs:define-docs
-  (call-with-translation
+  (cl:function call-with-translation
     "Call the function while translating the painter by the target.
 
 See QPainter::translate")
@@ -586,17 +586,17 @@ See QPainter::translate")
 
 See CALL-WITH-TRANSLATION")
 
-  (color-to-rgba
+  (cl:function color-to-rgba
     "Turns an rgba quadruplet into an integer.")
 
-  (rgba-to-color
+  (cl:function rgba-to-color
     "Turns an integer into an rgba quadruplet.")
 
-  (c
+  (cl:function c
     "Returns a corresponding QColor object.
 Note that these objects are cached. You should never modify them.")
 
-  (coerce-color
+  (cl:function coerce-color
     "Coerce the color into a QColor object.
 Can be either a QColor, a list of the R G B and A components, or an RGBA integer.
 If not a direct QColor, the value is resolved as per C.
