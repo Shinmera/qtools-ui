@@ -93,6 +93,9 @@
    #:execute
    #:execute-in-gui
    #:with-body-in-gui)
+  ;; fixed-qtextedit.lisp
+  (:export
+   #:fixed-qtextedit)
   ;; flow-layout.lisp
   (:export
    #:flow-layout)
