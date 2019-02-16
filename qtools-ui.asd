@@ -26,6 +26,7 @@
                :qtools-ui-debugger
                :qtools-ui-drag-and-drop
                :qtools-ui-dialog
+               :qtools-ui-fixed-qtextedit
                :qtools-ui-flow-layout
                :qtools-ui-helpers
                :qtools-ui-keychord-editor
