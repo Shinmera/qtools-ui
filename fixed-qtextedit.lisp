@@ -11,7 +11,9 @@
 
 (define-subwidget (fixed-qtextedit fix-context-menu-widget) (q+:make-qwidget))
 
-(define-override (fixed-qtextedit context-menu-event) (event)
+(define-override
+    (fixed-qtextedit context-menu-event fixed-qtextedit-context-menu)
+    (event)
   ;; I have no idea why it works this way, but it seems to work.
   (call-next-qmethod)
   (let ((position (q+:pos event)))
