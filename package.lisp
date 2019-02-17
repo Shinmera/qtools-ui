@@ -273,6 +273,9 @@
    #:handle-size
    #:splitter
    #:splitter-handle)
+  ;; svgtools.lisp
+  (:export
+   #:svg-pixmap)
   ;; toolkit.lisp
   (:export
    #:call-with-translation

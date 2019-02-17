@@ -579,6 +579,18 @@ See DEFAULT"))
   (type splitter
     "Similar to QSplitter, but instead of distributing all available space, only uses up and extends to as much space as is needed by its widgets."))
 
+;; svgtools.lisp
+(docs:define-docs
+  (cl:function svg-pixmap
+    "Draws the provided SVG file on a new pixmap with the provided scale and returns the pixmap.
+
+The SCALE keyword argument may be a positive integer or float. The SVG's
+original sizes will be multiplied by that factor and rounded to the nearest
+integer.
+The RENDERER keyword argument may be provided in case multiple SVG are rendered
+one after another. This should avoid the cost of instantiating new QSvgRenderers
+in succession."))
+
 ;; toolkit.lisp
 (docs:define-docs
   (cl:function call-with-translation
