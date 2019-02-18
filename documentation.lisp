@@ -60,6 +60,8 @@ creation via the keyword argument :COLOR-COUNT.")
     "A layout widget that aligns items North, East, South, West, and Center.
 Use the corresponding keywords for the widget places."))
 
+;; TODO configurable.lisp
+
 ;; container.lisp
 (docs:define-docs
   (cl:function map-widgets
@@ -117,6 +119,18 @@ See ITEM-LAYOUT")
 
 See ITEM-CONTAINER
 See SORTED-CONTAINER"))
+
+;; debugger.lisp
+
+(docs:define-docs
+  (cl:function invoke-gui-debugger
+    "Invokes the Qtools debugger with the provided condition.")
+  (cl:function exit-with-restart
+    "Returns the restart selected in the debugger widget after it closes.")
+  (type debugger
+    "A Lisp debugger widget implemented in Qtools.")
+  (cl:function exit-restart
+    "Accesses the debugger widget's exit restart slot."))
 
 ;; drag-and-drop.lisp
 
