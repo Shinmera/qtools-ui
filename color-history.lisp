@@ -13,7 +13,7 @@
     :color-count 5))
 
 (defmethod initialize-instance :after ((color-history color-history) &key)
-  (when (< (color-count color-history) 1)
+  (unless (typep (color-count color-history) '(integer 1))
     (error "Invalid color-count ~s. Must be a positive integer." (color-count color-history)))
   (dotimes (i (color-count color-history))
     (add-widget (make-instance 'color-history-swatch) color-history)))

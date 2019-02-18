@@ -25,6 +25,17 @@ after the call completes.")
   (type cell
     "A cell is a generic item container that is selectable and draggable."))
 
+;; color-history.lisp
+(docs:define-docs
+  (type color-history
+    "A widget allowing access to N most recently accessed colors.
+
+The number of colors stored in the color history can be set during widget
+creation via the keyword argument :COLOR-COUNT.")
+
+  (cl:function color-count
+    "Returns the color count of the given color history widget."))
+
 ;; color-sliders.lisp
 (docs:define-docs
   (type rgb-color-slider
