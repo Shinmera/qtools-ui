@@ -36,6 +36,11 @@ creation via the keyword argument :COLOR-COUNT.")
   (cl:function color-count
     "Returns the color count of the given color history widget."))
 
+;; color-picker.lisp
+(docs:define-docs
+  (type color-picker
+    "A widget allowing the user to choose a color via its RGB or HSV values."))
+
 ;; color-sliders.lisp
 (docs:define-docs
   (type rgb-color-slider
