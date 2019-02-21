@@ -67,8 +67,7 @@
   (:export
    #:dialog
    #:show
-   #:simple-input-dialog
-   #:show)
+   #:simple-input-dialog)
   ;; draggable.lisp
   (:export
    #:dragging

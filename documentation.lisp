@@ -121,7 +121,6 @@ See ITEM-CONTAINER
 See SORTED-CONTAINER"))
 
 ;; debugger.lisp
-
 (docs:define-docs
   (cl:function invoke-gui-debugger
     "Invokes the Qtools debugger with the provided condition.")
@@ -132,6 +131,16 @@ See SORTED-CONTAINER"))
   (cl:function exit-restart
     "Accesses the debugger widget's exit restart slot."))
 
+#+(or)
+;; dialog.lisp TODO
+(docs:define-docs
+  (type dialog
+    "")
+  (cl:function show
+    "")
+  (type simple-input-dialog
+    ""))
+
 ;; drag-and-drop.lisp
 
 (docs:define-docs
@@ -140,13 +149,14 @@ See SORTED-CONTAINER"))
 
 This class is a direct subclass of QMimeData with two modifications:
 
-  * One of them is a slot called OBJECT that can be used to transmit arbitrary Lisp data v
-    ia drag and drop.
-  * The other is the :MIME-TYPE constructor keyword. This keyword can be used to provide
-    the MIME type of the dragged data.
+  * It contains a slot called OBJECT that can be used to transmit arbitrary Lisp
+    data via drag and drop.
+  * The other is the :MIME-TYPE constructor keyword. This keyword can be used to
+    provide the MIME type of the dragged data.
 
-Class MIME-DATA-WITH-OBJECT is not meant to be instantiated directly by the user as it is
-a part of this drag and drop framework. Instead, the user should subclass DRAGGABLE.
+Class MIME-DATA-WITH-OBJECT is not meant to be instantiated directly by the user
+as it is a part of this drag and drop framework. Instead, the user should
+subclass DRAGGABLE.
 
 See DRAGGABLE
 See DROP-TARGET")
