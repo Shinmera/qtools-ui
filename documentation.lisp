@@ -142,8 +142,10 @@ See SORTED-CONTAINER"))
     ""))
 
 ;; drag-and-drop.lisp
-
 (docs:define-docs
+  (variable *mime-data-with-object-type*
+    "The default value for MIME types used by draggable objects.")
+
   (type mime-data-with-object
     "Subclass of QMimeData capable of holding Lisp objects.
 
@@ -229,6 +231,7 @@ See DRAGGABLE
 See DROP-TARGET
 See DROP-ACCEPTABLE-P"))
 
+;; TODO add "See ..." at the end of docstrings where applicable
 ;; draggable.lisp
 (docs:define-docs
   (cl:function dragging
