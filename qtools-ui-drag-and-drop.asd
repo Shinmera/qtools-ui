@@ -7,8 +7,8 @@
 
 (asdf:defsystem qtools-ui-drag-and-drop
   :license "Artistic"
-  :author "Michał \"phoe\" Herda <phoe@teknik.io>"
-  :maintainer "Michał \"phoe\" Herda <phoe@teknik.io>"
+  :author "Michał \"phoe\" Herda <phoe@disroot.org>"
+  :maintainer "Michał \"phoe\" Herda <phoe@disroot.org>"
   :description "Classes implementing simple drag-and-drop in Qtools."
   :homepage "https://Shinmera.github.io/qtools-ui/"
   :bug-tracker "https://github.com/Shinmera/qtools-ui/issues"
