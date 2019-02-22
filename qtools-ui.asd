@@ -24,6 +24,7 @@
                :qtools-ui-compass
                :qtools-ui-container
                :qtools-ui-debugger
+               :qtools-ui-dictionary
                :qtools-ui-drag-and-drop
                :qtools-ui-dialog
                :qtools-ui-fixed-qtextedit
