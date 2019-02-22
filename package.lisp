@@ -68,6 +68,11 @@
    #:dialog
    #:show
    #:simple-input-dialog)
+  ;; dictionary.lisp
+  (:export
+   #:dictionary
+   #:empty-browser-text
+   #:not-found-text)
   ;; draggable.lisp
   (:export
    #:dragging
