@@ -1,6 +1,6 @@
 #|
  This file is a part of Qtools-UI
- (c) 2015 Shirakumo http://tymoon.eu (shinmera@tymoon.eu)
+ (c) 2019 Shirakumo http://tymoon.eu (shinmera@tymoon.eu)
  Author: Michał "phoe" Herda <phoe@disroot.org>
 |#
 
