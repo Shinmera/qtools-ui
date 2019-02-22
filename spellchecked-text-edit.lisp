@@ -1,7 +1,7 @@
 #|
-This file is a part of Qtools-UI
-(c) 2019 Shirakumo http://tymoon.eu (shinmera@tymoon.eu)
-Author: Michał "phoe" Herda <phoe@disroot.org>
+ This file is a part of Qtools-UI
+ (c) 2019 Shirakumo http://tymoon.eu (shinmera@tymoon.eu)
+ Author: Michał "phoe" Herda <phoe@disroot.org>
 |#
 
 (in-package #:org.shirakumo.qtools.ui)
