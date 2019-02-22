@@ -270,6 +270,12 @@
    #:default
    #:double-slider
    #:slider)
+  ;; spellchecked-text-edit.lisp
+  (:export
+   #:spellchecked-text-edit
+   #:delay
+   #:clear-on-text-changed-p
+   #:spellcheck)
   ;; splitter.lisp
   (:export
    #:resize-widget

@@ -37,5 +37,6 @@
                :qtools-ui-plot
                :qtools-ui-repl
                :qtools-ui-slider
+               :qtools-ui-spellchecked-text-edit
                :qtools-ui-splitter
                :qtools-ui-notification))
