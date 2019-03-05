@@ -14,21 +14,15 @@
                    :initarg :not-found-text))
   (:default-initargs
     :empty-browser-text
-    "<i><p align=center>Type your query below and hit Search.</p></i>"
+    "<p align=center><i>Type your query below and hit Search.</i></p>"
     :not-found-text
-    "<i><p align=center>The entry for \"~A\" was not found.</p><i>"))
-
-(define-subwidget (dictionary layout) (q+:make-qgridlayout)
-  (setf (q+:layout dictionary) layout
-        (q+:contents-margins layout) (values 0 0 0 0)))
+    "<p align=center><i>The entry for \"~A\" was not found.</i></p>"))
 
 (define-subwidget (dictionary browser)
-    (make-instance 'browser :dictionary dictionary)
-  (q+:add-widget layout browser 0 0 1 2)
+    (make-instance 'dictionary-browser :dictionary dictionary)
   (setf (q+:html browser) empty-browser-text))
 
-(define-subwidget (dictionary input) (q+:make-qlineedit)
-  (q+:add-widget layout input 1 0))
+(define-subwidget (dictionary input) (q+:make-qlineedit))
 
 (defun make-text-qtoolbutton (text)
   (let ((button (q+:make-qtoolbutton)))
@@ -38,8 +32,13 @@
     button))
 
 (define-subwidget (dictionary button) (make-text-qtoolbutton "Search")
-  (q+:add-widget layout button 1 1)
   (setf (q+:focus input) (q+:qt.other-focus-reason)))
+
+(define-subwidget (dictionary layout) (q+:make-qgridlayout dictionary)
+  (setf (q+:contents-margins layout) (values 0 0 0 0))
+  (q+:add-widget layout browser 0 0 1 2)
+  (q+:add-widget layout input 1 0)
+  (q+:add-widget layout button 1 1))
 
 (defun trim-whitespace (string)
   (string-trim '(#\Space #\Newline #\Tab) string))
@@ -61,14 +60,11 @@
   (%set-focus-from-browser dictionary new))
 
 (defmethod set-focus-from-browser ((dictionary dictionary) old (new qobject))
-  (%set-focus-from-browser dictionary new))
-
-(defmethod set-focus-from-browser ((dictionary dictionary) old new))
-
-(defun %set-focus-from-browser (dictionary new)
   (with-slots-bound (dictionary dictionary)
     (when (eq new browser)
       (setf (q+:focus input) (q+:qt.other-focus-reason)))))
+
+(defmethod set-focus-from-browser ((dictionary dictionary) old new))
 
 (defun htmlize-wordnet (results)
   (with-output-to-string (*standard-output*)
@@ -88,11 +84,11 @@
             (format T "<p>Antonyms: ~{~{~%  <a href=#~A>~A</a>~}~^,~}~%</p>~%"
                     (mapcar #'anchorize antonyms))))))))
 
-(define-widget browser (qtextbrowser)
+(define-widget dictionary-browser (qtextbrowser)
   ((clicked-anchor :accessor clicked-anchor :initform "")
    (dictionary :accessor dictionary :initarg :dictionary)))
 
-(defmethod initialize-instance :after ((object browser) &key)
+(defmethod initialize-instance :after ((object dictionary-browser) &key)
   (let* ((palette (q+:palette object))
          (color (q+:color palette (q+:background-role object))))
     (when (and (< (q+:red color) 80)
@@ -101,20 +97,20 @@
       (setf (q+:default-style-sheet (q+:document object))
             "a { color: #8888ff; }"))))
 
-(define-override (browser mouse-press-event) (event)
+(define-override (dictionary-browser mouse-press-event) (event)
   (setf clicked-anchor
         (if (= (enum-value (q+:button event)) (q+:qt.left-button))
-            (q+:anchor-at browser (q+:pos event))
+            (q+:anchor-at dictionary-browser (q+:pos event))
             NIL))
   (call-next-qmethod))
 
-(define-override (browser mouse-release-event) (event)
+(define-override (dictionary-browser mouse-release-event) (event)
   (when (and (= (enum-value (q+:button event)) (q+:qt.left-button))
              (string/= clicked-anchor "")
              (string= clicked-anchor
-                      (q+:anchor-at browser (q+:pos event))))
+                      (q+:anchor-at dictionary-browser (q+:pos event))))
     (let ((text (substitute #\Space #\_ (subseq clicked-anchor 1))))
       (setf (q+:text (slot-value dictionary 'input)) text
-            (q+:html browser)
+            (q+:html dictionary-browser)
             (htmlize-wordnet (wordnet:wordnet-describe* text)))))
   (call-next-qmethod))
