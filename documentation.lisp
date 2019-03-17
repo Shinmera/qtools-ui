@@ -133,6 +133,7 @@ See SORTED-CONTAINER"))
 
 #+(or)
 ;; dialog.lisp TODO
+;; wait for https://github.com/Shinmera/qtools-ui/issues/18 to be fixed
 (docs:define-docs
   (type dialog
     "")
@@ -140,6 +141,17 @@ See SORTED-CONTAINER"))
     "")
   (type simple-input-dialog
     ""))
+
+;; dictionary.lisp
+(docs:define-docs
+  (type dictionary
+    "A dictionary widget utilizing the WordNet database.")
+
+  (cl:function empty-browser-text
+    "Accessor for the dictionary text displayed when the browser is empty.")
+
+  (cl:function not-found-text
+    "Accessor for the dictionary text displayed when the word was not found."))
 
 ;; drag-and-drop.lisp
 (docs:define-docs
@@ -160,20 +172,18 @@ Class MIME-DATA-WITH-OBJECT is not meant to be instantiated directly by the user
 as it is a part of this drag and drop framework. Instead, the user should
 subclass DRAGGABLE.
 
-See DRAGGABLE
+See DROPPABLE
 See DROP-TARGET")
 
-  (type draggable
-    "Superclass of all objects that are draggable.
+  (type droppable
+    "Superclass of all objects that are droppable.
 
-This class should be subclassed by all widgets that are meant to be draggable.
-Mouse-clicking an instance of this class will initiate drag behaviour.
+This class should be subclassed by all widgets that are meant to be droppable.
+Mouse-clicking an instance of this class will initiate drag-and-drop behaviour.
 
-Each DRAGGABLE has a MIME-TYPE slot, describing the MIME type of the content that is
-being dragged around. Its value must be a string and defaults to the value of
-*MIME-DATA-WITH-OBJECT-TYPE*.
-
-This class overrides MOUSE-PRESS-EVENT.
+Each DROPPABLE has a MIME-TYPE slot, describing the MIME type of the content
+that is being dragged around. Its value must be a string and defaults to the
+value of *MIME-DATA-WITH-OBJECT-TYPE*.
 
 See MIME-DATA-WITH-OBJECT
 See DROP-TARGET
@@ -183,71 +193,69 @@ See DROP")
   (type drop-target
     "Superclass of all objects that accept drops.
 
-This class should be subclassed by all widgets that are meant to accept drops. Dropping a
-drag over this widget will initiate drop behaviour.
+This class should be subclassed by all widgets that are meant to accept drops.
+Dropping a drag over this widget will initiate drop behaviour.
 
-Each DROP-TARGET has a MIME-TYPE slot, describing the MIME type of the content that is
-acceptable for dropping. Its value must be a string and defaults to the value of
-*MIME-DATA-WITH-OBJECT-TYPE*.
-
-This class overrides DRAG-ENTER-EVENT and DROP-EVENT.
+Each DROP-TARGET has a MIME-TYPE slot, describing the MIME type of the content
+that is acceptable for dropping. Its value must be a string and defaults to the
+value of *MIME-DATA-WITH-OBJECT-TYPE*.
 
 See MIME-DATA-WITH-OBJECT
-See DRAGGABLE
+See DROPPABLE
 See DROP-ACCEPTABLE-P
 See DROP")
 
   (cl:function drop-acceptable-p
-    "Whether it is possible to drop ITEM onto TARGET.
+    "Returns whether it is possible to drop ITEM onto TARGET.
 
-Syntax: (drop-acceptable-p item target)
-
-To make it possible to drop item of class A onto an object of class B, define a method
-\(defmethod drop-acceptable-p ((item A) (target B)) T). Keep in mind that the MIME types of
-the DRAGGABLE and DROP-TARGET in question must match, even if such a method is defined on
-both classes. (This is why we use a single MIME type for everything - to move the
-drag-and-drop dispatch to the Common Lisp GF mechanism.)
+To make it possible to drop item of class A onto an object of class B, define a
+method (defmethod drop-acceptable-p ((item A) (target B)) T). Keep in mind that
+the MIME types of the DRAGGABLE and DROP-TARGET in question must match, even if
+such a method is defined on both classes. (This is why we use a single MIME type
+for everything - to move the drag-and-drop dispatch to the Common Lisp GF
+mechanism.)
 
 This generic function has a default method that returns NIL.
 
 A method is provided for MIME-DATA-WITH-OBJECT that returns T.
 
 See MIME-DATA-WITH-OBJECT
-See DRAGGABLE
+See DROPPABLE
 See DROP-TARGET
 See DROP")
 
   (cl:function drop
     "Implements logic to be run after an item is dropped.
 
-Syntax: (drop item target)
-
-This generic function implements the consequences of dropping ITEM onto TARGET.
-
-No default methods are provided for this method.
-
 See MIME-DATA-WITH-OBJECT
 See DRAGGABLE
 See DROP-TARGET
 See DROP-ACCEPTABLE-P"))
 
-;; TODO add "See ..." at the end of docstrings where applicable
 ;; draggable.lisp
 (docs:define-docs
   (cl:function dragging
-    "Whether the draggable is currently being dragged.")
+    "Whether the draggable is currently being dragged.
+
+See DRAGGABLE")
 
   (cl:function drag-start
     "Called whenever the draggable is beginning to be dragged.
-This usually happens during a mouse-press event.")
+This usually happens during a mouse-press event.
+
+See DRAGGABLE")
 
   (cl:function drag
     "Called whenever the draggable is being dragged around.
-This usually happens during a mouse-move event.")
+This usually happens during a mouse-move event.
+
+See DRAGGABLE")
 
   (cl:function drag-end
     "Called whenever the draggable has stopped being dragged.
-This usually happens during a mouse-release event.")
+This usually happens during a mouse-release event.
+
+See DRAGGABLE")
 
   (type draggable
     "A helper class to be used when you need to support dragging of your widget.
@@ -261,6 +269,9 @@ See DRAG-END"))
 (docs:define-docs
   (type executable
     "A qobject superclass that allows running functions within the GUI thread.
+
+Accepts a signal named PROCESS-EXECUTIONS. When signalled runs all pending
+functions.
 
 See EXECUTE
 See EXECUTE-IN-GUI
@@ -286,6 +297,47 @@ See EXECUTE")
     "Convenience wrapper macro around EXECUTE-IN-GUI
 
 See EXECUTE-IN-GUI"))
+
+;; fixed-qtextedit.lisp
+(docs:define-docs
+  (type fixed-qtextedit
+    "A QTextEdit with a workaround for QTBUG-9592.")
+
+  (cl:function fixed-qtextedit-context-menu
+    "Override function for FIXED-QTEXTEDIT's context-menu-event.
+
+See FIXED-QTEXTEDIT"))
+
+;; flow-layout.lisp
+(docs:define-docs
+  (type flow-layout
+    "A QUI layout widget that fits as many widgets as it is able to horizontally, and overflows the rest."))
+
+;; input.lisp
+(docs:define-docs
+  (type input
+    "A superclass for input widgets.
+
+Accepts signals named INPUT-UPDATED and INPUT-DONE.")
+
+  (cl:function value
+    "Accessor for the value of the input widget.
+
+See INPUT
+See STORING-INPUT")
+
+  (type storing-input
+    "A superclass for all widgets that store input.")
+
+  (type color-storing-input
+    "An input widget that stores colors.")
+
+  (cl:function color-type
+    "Reader for the color storing input's color type.
+
+Valid values are :RGB and :HSV.
+
+See COLOR-STORING-INPUT"))
 
 ;; imagetools.lisp
 (docs:define-docs
@@ -365,29 +417,34 @@ See SWAP-ITEMS")
 
   (cl:function item<
     "Whether A precedes B.
-Default methods for STRING and NUMBER exist, as well as a general method that simply
-prints the object to a string using PRINC and calls ITEM< again with the results of that.
+Default methods for STRING and NUMBER exist, as well as a general method that
+simply prints the object to a string using PRINC and calls ITEM< again with the
+results of that.
 
 Add your own methods to this if you need more precise sorting.")
 
   (cl:function item=
     "Whether A is equal to B.
-Default methods for STRING and NUMBER exist, as well as a general method that simply
-prints the object to a string using PRINC and calls ITEM= again with the results of that.
+Default methods for STRING and NUMBER exist, as well as a general method that
+simply prints the object to a string using PRINC and calls ITEM= again with the
+results of that.
 
 Add your own methods to this if you need more precise sorting.")
 
   (cl:function item>
     "Whether A follows B.
-Uses ITEM< and ITEM= to calculate the result. You should not need to add methods to this.")
+Uses ITEM< and ITEM= to calculate the result. You should not need to add methods
+to this.")
 
   (cl:function item<=
     "Whether A precedes B.
-Uses ITEM< and ITEM= to calculate the result. You should not need to add methods to this.")
+Uses ITEM< and ITEM= to calculate the result. You should not need to add methods
+to this.")
 
   (cl:function item>=
     "Whether A follows B.
-Uses ITEM< and ITEM= to calculate the result. You should not need to add methods to this.")
+Uses ITEM< and ITEM= to calculate the result. You should not need to add methods
+to this.")
 
   (type item-layout
     "A layout to contain items.
@@ -396,14 +453,15 @@ See LAYOUT")
 
   (type item-widget
     "A widget to contain an item.
-Depending on the item type, an item may or may not be contained in multiple item-widgets
-at the same time. However, an item-widget itself can only be contained once and only in
-one layout at a time."))
+Depending on the item type, an item may or may not be contained in multiple
+item-widgets at the same time. However, an item-widget itself can only be
+contained once and only in one layout at a time."))
 
 ;; keychord-editor.lisp
 (docs:define-docs
   (type keychord-editor
-    "A simple dialog to allow dynamic changing of keychords as defined in a menu definition.
+    "A simple dialog to allow dynamic changing of keychords as defined in a menu
+definition.
 
 See QTOOLS:DEFINE-MENU"))
 
@@ -445,7 +503,6 @@ The positioning of the widget is completely up to the layout.")
 
   (cl:function update
     "Update the layout widgets' geometry.
-
 This is automatically called if the layout receives a layout-request event or is resized.
 It's also automatically called on the various layout modifying operations.
 If you add new operations that modify the layout as well without calling the preexisting
@@ -453,6 +510,14 @@ ones, you should call this method to ensure the widgets are restored as appropra
 
 If you subclass a layout, you should implement a method on this to calculate yout layouts
 widgets' geometry properly.")
+
+  (cl:function update-for-added
+    "Update the layout widgets' geometry for added widgets.
+This calls UPDATE unless overridden.")
+
+  (cl:function update-for-removed
+    "Update the layout widgets' geometry for removed widgets.
+This calls UPDATE unless overridden.")
 
   (cl:function widget-acceptable-p
     "Predicate to determine whether the layout accepts the given widget.
@@ -495,8 +560,19 @@ Unlike the QListWidget, this allows adding actual widgets, not just strings.")
     "A helper class that propagates mouse events somewhere else, by default to itself.
 This implements an event filter. To catch the events, use QObject::installEventFilter."))
 
+;; notification
+(docs:define-docs
+  (type notification
+    "A Qtools notification widget."))
+
+;; TODO options.lisp
+
 ;; panel-container.lisp
 (docs:define-docs
+  (cl:function orientation
+    "Accessor to the orientation of the panel container.
+Valid values are :HORIZONTAL and :VERTICAL.")
+
   (cl:function iconified-p
     "Accessor to whether the panel-container is iconified or not.
 If iconified, the panels are not actually shown, only their titles or icons.")
@@ -515,8 +591,19 @@ See ICONFIFIED-P")
     "A container for panels.
 Supports iconifying, rearranging of the panels, and vertical or horizontal orientation."))
 
+;; panel-main-window.lisp
+(docs:define-docs
+  (type panel-main-window
+    "A main window with a compass layout and a side panel on the east.
+
+See PANEL-CONTAINER
+See COMPASS"))
+
 ;; panel.lisp
 (docs:define-docs
+  (type container
+    "Accessor to the container widget of the panel.")
+
   (cl:function title
     "The title displayed for the panel.")
 
@@ -565,6 +652,25 @@ the container it has been attached to so it can easily be reattached later.")
     "A dockable and collapsible panel to contain a widget.
 Useful in situations where you want to build a UI that contains several parts that the user
 should be able to freely arrange to their liking."))
+
+;; TODO plot.lisp
+
+;; progress-bar.lisp
+(docs:define-docs
+  (type progress-bar
+    "A progress bar widget.")
+
+  (cl:function text
+    "Accessor for the text of the progress bar.")
+
+  (cl:function progress
+    "Accessor for the progress of the progress bar.")
+
+  (cl:function maximum
+    "Accessor for the maximum of the progress bar.")
+
+  (cl:function minimum
+    "Accessor for the minimum of the progress bar."))
 
 ;; repaintable.lisp
 (docs:define-docs
@@ -671,14 +777,10 @@ See SPELLCHECK")
 
 The valid values are a number of milliseconds that must pass between the text
 being edited and the spellcheck being performed, or NIL if the spellchecking
-should not be done automatically.
-
-See SPELLCHECKED-TEXT-EDIT")
+should not be done automatically.")
 
   (cl:function clear-on-text-changed-p
-    "Accessor for whether the spellchecked text edit should clear its spellchecking selections on text edit.
-
-See SPELLCHECKED-TEXT-EDIT")
+    "Accessor for whether the spellchecked text edit should clear its spellchecking selections on text edit.")
 
   (cl:function spellcheck
     "Performs spellchecking on the spellchecked text edit.

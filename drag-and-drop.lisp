@@ -64,3 +64,6 @@
 
 (defmethod drop ((item mime-data-with-object) target)
   (drop (object item) target))
+
+(defmethod drop ((item droppable) target)
+  (declare (ignore item target)))
