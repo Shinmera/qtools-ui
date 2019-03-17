@@ -645,6 +645,8 @@ the container it has been attached to so it can easily be reattached later.")
 Useful in situations where you want to build a UI that contains several parts that the user
 should be able to freely arrange to their liking."))
 
+;; TODO plot.lisp
+
 ;; progress-bar.lisp
 (docs:define-docs
   (type progress-bar
