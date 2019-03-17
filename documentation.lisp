@@ -570,6 +570,34 @@ signal to reach the main thread in which drawing events are permitted.")
 
 See REPAINT"))
 
+;; repl.lisp
+(docs:define-docs
+  (type repl
+    "A Common Lisp read-eval-print-loop widget.")
+
+  (cl:function repl-eval
+    "The function that schedules the form for execution, blocks until its execution is complete, and returns the results.
+
+See REPL")
+
+  (cl:function repl-eval-loop
+    "The function implementing the loop of the REPL.
+
+See REPL")
+
+  (cl:function repl-eval-inner
+    "The inner function called by REPL-EVAL-LOOP.
+
+This function is responsible for shifting the values of the variables +, ++,
++++, *, **, ***, /, //, /// and calling the Lisp evaluator.
+
+See REPL")
+
+  (type repl-output-stream
+    "A Gray stream implementing the output functionality of the REPL widget.
+
+See REPL"))
+
 ;; selectable.lisp
 (docs:define-docs
   (cl:function active-widget
@@ -577,6 +605,9 @@ See REPAINT"))
 
   (cl:function active-item
     "Accessor for the currently active item on the layout.")
+
+  (cl:function active-p
+    "Accessor for whether this item is currently active.")
 
   (cl:function selectable
     "Accessor for whether selecting a widget/item is allowed.")
@@ -618,6 +649,38 @@ See MINIMUM
 See STEPPING
 See DEFAULT"))
 
+;; spellchecked-text-edit.lisp
+(docs:define-docs
+  (type spellchecked-text-edit
+    "A QTextEdit with the possibility of spellchecking its contents.
+
+See DELAY
+See CLEAR-ON-TEXT-CHANGED-P
+See SPELLCHECK")
+
+  (cl:function delay
+    "Accessor for the delay slot of the spellchecked text edit.
+
+The valid values are a number of milliseconds that must pass between the text
+being edited and the spellcheck being performed, or NIL if the spellchecking
+should not be done automatically.
+
+See SPELLCHECKED-TEXT-EDIT")
+
+  (cl:function clear-on-text-changed-p
+    "Accessor for whether the spellchecked text edit should clear its spellchecking selections on text edit.
+
+See SPELLCHECKED-TEXT-EDIT")
+
+  (cl:function spellcheck
+    "Performs spellchecking on the spellchecked text edit.
+
+Invoking this function manually is only needed if the delay value of the
+spellchecked text edit is NIL.
+
+See SPELLCHECKED-TEXT-EDIT
+See DELAY"))
+
 ;; splitter.lisp
 (docs:define-docs
   (cl:function resize-widget
@@ -630,7 +693,12 @@ See DEFAULT"))
     "Accessor for the size of a splitter's handle.")
 
   (type splitter
-    "Similar to QSplitter, but instead of distributing all available space, only uses up and extends to as much space as is needed by its widgets."))
+    "Similar to QSplitter, but instead of distributing all available space, only uses up and extends to as much space as is needed by its widgets.")
+
+  (type splitter-handle
+    "The handle subwidget for splitter.
+
+See SPLITTER"))
 
 ;; svgtools.lisp
 (docs:define-docs
