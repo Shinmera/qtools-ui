@@ -668,8 +668,13 @@ Note that these objects are cached. You should never modify them.")
 
   (cl:function coerce-color
     "Coerce the color into a QColor object.
-Can be either a QColor, a list of the R G B and A components, or an RGBA integer.
-If not a direct QColor, the value is resolved as per C.
+Can be either a QColor, a list of the R G B and A components, or an RGBA
+integer. If not a direct QColor, the value is resolved as per C.
 
 See RGBA-TO-COLOR
-See C"))
+See C")
+
+  (cl:function hue-shift
+    "Destructively shifts the hue of target image by the provided amount of degrees.
+IMAGE must be a ARGB32-format QImage and rotation must be a single-float between
+0.0 (inclusive) and 360.0 (exclusive)."))

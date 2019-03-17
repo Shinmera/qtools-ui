@@ -298,4 +298,5 @@
    #:color-to-rgba
    #:rgba-to-color
    #:c
-   #:coerce-color))
+   #:coerce-color
+   #:hue-shift))

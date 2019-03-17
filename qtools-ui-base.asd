@@ -21,4 +21,5 @@
                :qtcore
                :qtgui
                :documentation-utils
-               :array-utils))
+               :array-utils
+               :simple-rgb))
