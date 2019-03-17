@@ -232,7 +232,6 @@ See DRAGGABLE
 See DROP-TARGET
 See DROP-ACCEPTABLE-P"))
 
-;; TODO add "See ..." at the end of docstrings where applicable
 ;; draggable.lisp
 (docs:define-docs
   (cl:function dragging
@@ -298,6 +297,47 @@ See EXECUTE")
     "Convenience wrapper macro around EXECUTE-IN-GUI
 
 See EXECUTE-IN-GUI"))
+
+;; fixed-qtextedit.lisp
+(docs:define-docs
+  (type fixed-qtextedit
+    "A QTextEdit with a workaround for QTBUG-9592.")
+
+  (cl:function fixed-qtextedit-context-menu
+    "Override function for FIXED-QTEXTEDIT's context-menu-event.
+
+See FIXED-QTEXTEDIT"))
+
+;; flow-layout.lisp
+(docs:define-docs
+  (type flow-layout
+    "A QUI layout widget that fits as many widgets as it is able to horizontally, and overflows the rest."))
+
+;; input.lisp
+(docs:define-docs
+  (type input
+    "A superclass for input widgets.
+
+Accepts signals named INPUT-UPDATED and INPUT-DONE.")
+
+  (cl:function value
+    "Accessor for the value of the input widget.
+
+See INPUT
+See STORING-INPUT")
+
+  (type storing-input
+    "A superclass for all widgets that store input.")
+
+  (type color-storing-input
+    "An input widget that stores colors.")
+
+  (cl:function color-type
+    "Reader for the color storing input's color type.
+
+Valid values are :RGB and :HSV.
+
+See COLOR-STORING-INPUT"))
 
 ;; items.lisp
 (docs:define-docs
@@ -369,29 +409,34 @@ See SWAP-ITEMS")
 
   (cl:function item<
     "Whether A precedes B.
-Default methods for STRING and NUMBER exist, as well as a general method that simply
-prints the object to a string using PRINC and calls ITEM< again with the results of that.
+Default methods for STRING and NUMBER exist, as well as a general method that
+simply prints the object to a string using PRINC and calls ITEM< again with the
+results of that.
 
 Add your own methods to this if you need more precise sorting.")
 
   (cl:function item=
     "Whether A is equal to B.
-Default methods for STRING and NUMBER exist, as well as a general method that simply
-prints the object to a string using PRINC and calls ITEM= again with the results of that.
+Default methods for STRING and NUMBER exist, as well as a general method that
+simply prints the object to a string using PRINC and calls ITEM= again with the
+results of that.
 
 Add your own methods to this if you need more precise sorting.")
 
   (cl:function item>
     "Whether A follows B.
-Uses ITEM< and ITEM= to calculate the result. You should not need to add methods to this.")
+Uses ITEM< and ITEM= to calculate the result. You should not need to add methods
+to this.")
 
   (cl:function item<=
     "Whether A precedes B.
-Uses ITEM< and ITEM= to calculate the result. You should not need to add methods to this.")
+Uses ITEM< and ITEM= to calculate the result. You should not need to add methods
+to this.")
 
   (cl:function item>=
     "Whether A follows B.
-Uses ITEM< and ITEM= to calculate the result. You should not need to add methods to this.")
+Uses ITEM< and ITEM= to calculate the result. You should not need to add methods
+to this.")
 
   (type item-layout
     "A layout to contain items.
@@ -400,14 +445,15 @@ See LAYOUT")
 
   (type item-widget
     "A widget to contain an item.
-Depending on the item type, an item may or may not be contained in multiple item-widgets
-at the same time. However, an item-widget itself can only be contained once and only in
-one layout at a time."))
+Depending on the item type, an item may or may not be contained in multiple
+item-widgets at the same time. However, an item-widget itself can only be
+contained once and only in one layout at a time."))
 
 ;; keychord-editor.lisp
 (docs:define-docs
   (type keychord-editor
-    "A simple dialog to allow dynamic changing of keychords as defined in a menu definition.
+    "A simple dialog to allow dynamic changing of keychords as defined in a menu
+definition.
 
 See QTOOLS:DEFINE-MENU"))
 
@@ -449,7 +495,6 @@ The positioning of the widget is completely up to the layout.")
 
   (cl:function update
     "Update the layout widgets' geometry.
-
 This is automatically called if the layout receives a layout-request event or is resized.
 It's also automatically called on the various layout modifying operations.
 If you add new operations that modify the layout as well without calling the preexisting
@@ -457,6 +502,14 @@ ones, you should call this method to ensure the widgets are restored as appropra
 
 If you subclass a layout, you should implement a method on this to calculate yout layouts
 widgets' geometry properly.")
+
+  (cl:function update-for-added
+    "Update the layout widgets' geometry for added widgets.
+This calls UPDATE unless overridden.")
+
+  (cl:function update-for-removed
+    "Update the layout widgets' geometry for removed widgets.
+This calls UPDATE unless overridden.")
 
   (cl:function widget-acceptable-p
     "Predicate to determine whether the layout accepts the given widget.
@@ -498,6 +551,13 @@ Unlike the QListWidget, this allows adding actual widgets, not just strings.")
   (type mouse-propagator
     "A helper class that propagates mouse events somewhere else, by default to itself.
 This implements an event filter. To catch the events, use QObject::installEventFilter."))
+
+;; notification
+(docs:define-docs
+  (type notification
+    "A Qtools notification widget."))
+
+;; TODO options.lisp
 
 ;; panel-container.lisp
 (docs:define-docs

@@ -110,7 +110,8 @@
    #:input-done
    #:value
    #:storing-input
-   #:color-storing-input)
+   #:color-storing-input
+   #:color-type)
   ;; items.lisp
   (:export
    #:container
@@ -129,6 +130,7 @@
    #:item-acceptable-p
    #:item<
    #:item=
+   #:item>
    #:item<=
    #:item>=
    #:item-layout
