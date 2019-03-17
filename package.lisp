@@ -73,18 +73,12 @@
    #:dictionary
    #:empty-browser-text
    #:not-found-text)
-  ;; draggable.lisp
-  (:export
-   #:dragging
-   #:draggable
-   #:drag-start
-   #:drag
-   #:drag-end)
   ;; drag-and-drop.lisp
   (:export
    #:*mime-data-with-object-type*
    #:mime-data-with-object
-   #:draggable
+   #:droppable
+   #:mime-type
    #:drop-target
    #:drop-acceptable-p
    #:drop)
