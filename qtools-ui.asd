@@ -30,6 +30,7 @@
                :qtools-ui-fixed-qtextedit
                :qtools-ui-flow-layout
                :qtools-ui-helpers
+               :qtools-ui-imagetools
                :qtools-ui-keychord-editor
                :qtools-ui-layout
                :qtools-ui-listing

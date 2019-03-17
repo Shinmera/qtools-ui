@@ -339,6 +339,14 @@ Valid values are :RGB and :HSV.
 
 See COLOR-STORING-INPUT"))
 
+;; imagetools.lisp
+(docs:define-docs
+  (cl:function hue-shift
+    "Destructively rotates the hue of the provided QImage.
+
+RATIO should be a real number, by which this function rotates the color wheel.
+0.5 will turn all colors to their negatives, 1.0 is* a no-op."))
+
 ;; items.lisp
 (docs:define-docs
   (cl:function container

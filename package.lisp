@@ -103,6 +103,9 @@
   ;; flow-layout.lisp
   (:export
    #:flow-layout)
+  ;; imagetools.lisp
+  (:export
+   #:hue-shift)
   ;; input.lisp
   (:export
    #:input
