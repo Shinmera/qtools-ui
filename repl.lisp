@@ -113,7 +113,7 @@
 (define-slot (repl process-print-queue) ()
   (declare (connected repl (process-print-queue)))
   (bt:with-lock-held ((print-lock repl))
-    (loop for string across print-queue 
+    (loop for string across print-queue
           do (q+:move-cursor repl (q+:qtextcursor.end))
              (q+:insert-html repl string)
              (q+:move-cursor repl (q+:qtextcursor.end))

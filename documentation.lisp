@@ -489,6 +489,10 @@ This implements an event filter. To catch the events, use QObject::installEventF
 
 ;; panel-container.lisp
 (docs:define-docs
+  (cl:function orientation
+    "Accessor to the orientation of the panel container.
+Valid values are :HORIZONTAL and :VERTICAL.")
+
   (cl:function iconified-p
     "Accessor to whether the panel-container is iconified or not.
 If iconified, the panels are not actually shown, only their titles or icons.")
@@ -507,8 +511,19 @@ See ICONFIFIED-P")
     "A container for panels.
 Supports iconifying, rearranging of the panels, and vertical or horizontal orientation."))
 
+;; panel-main-window.lisp
+(docs:define-docs
+  (type panel-main-window
+    "A main window with a compass layout and a side panel on the east.
+
+See PANEL-CONTAINER
+See COMPASS"))
+
 ;; panel.lisp
 (docs:define-docs
+  (type container
+    "Accessor to the container widget of the panel.")
+
   (cl:function title
     "The title displayed for the panel.")
 
@@ -557,6 +572,23 @@ the container it has been attached to so it can easily be reattached later.")
     "A dockable and collapsible panel to contain a widget.
 Useful in situations where you want to build a UI that contains several parts that the user
 should be able to freely arrange to their liking."))
+
+;; progress-bar.lisp
+(docs:define-docs
+  (type progress-bar
+    "A progress bar widget.")
+
+  (cl:function text
+    "Accessor for the text of the progress bar.")
+
+  (cl:function progress
+    "Accessor for the progress of the progress bar.")
+
+  (cl:function maximum
+    "Accessor for the maximum of the progress bar.")
+
+  (cl:function minimum
+    "Accessor for the minimum of the progress bar."))
 
 ;; repaintable.lisp
 (docs:define-docs
@@ -663,14 +695,10 @@ See SPELLCHECK")
 
 The valid values are a number of milliseconds that must pass between the text
 being edited and the spellcheck being performed, or NIL if the spellchecking
-should not be done automatically.
-
-See SPELLCHECKED-TEXT-EDIT")
+should not be done automatically.")
 
   (cl:function clear-on-text-changed-p
-    "Accessor for whether the spellchecked text edit should clear its spellchecking selections on text edit.
-
-See SPELLCHECKED-TEXT-EDIT")
+    "Accessor for whether the spellchecked text edit should clear its spellchecking selections on text edit.")
 
   (cl:function spellcheck
     "Performs spellchecking on the spellchecked text edit.
