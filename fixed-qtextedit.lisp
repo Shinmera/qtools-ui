@@ -11,6 +11,8 @@
 
 (define-subwidget (fixed-qtextedit fix-context-menu-widget) (q+:make-qwidget))
 
+;; This fix only works fully if FIXED-QTEXTEDIT is *NOT* a main window.
+;; Otherwise, QTBUG-17559 is going to manifest.
 (define-override
     (fixed-qtextedit context-menu-event fixed-qtextedit-context-menu)
     (event)
