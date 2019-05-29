@@ -57,14 +57,14 @@
 (define-slot (dictionary set-focus-from-browser set-focus-from-browser)
              ((old "QWidget*") (new "QWidget*"))
   (declare (connected qt:*qapplication* (focus-changed "QWidget*" "QWidget*")))
-  (%set-focus-from-browser dictionary new))
+  (%set-focus-from-browser dictionary old new))
 
-(defmethod set-focus-from-browser ((dictionary dictionary) old (new qobject))
+(defmethod %set-focus-from-browser ((dictionary dictionary) old (new qobject))
   (with-slots-bound (dictionary dictionary)
     (when (eq new browser)
       (setf (q+:focus input) (q+:qt.other-focus-reason)))))
 
-(defmethod set-focus-from-browser ((dictionary dictionary) old new))
+(defmethod %set-focus-from-browser ((dictionary dictionary) old new))
 
 (defun htmlize-wordnet (results)
   (with-output-to-string (*standard-output*)
