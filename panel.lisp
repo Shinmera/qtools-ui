@@ -32,13 +32,13 @@
    (detachable :initarg :detachable :accessor detachable-p)
    (collapsable :initarg :collapsable :accessor collapsable-p)
    (titlebar-shown :initarg :titlebar-shown :accessor titlebar-shown-p)
-   
+
    (attached-size :initform NIL :accessor attached-size)
    (detached-size :initform NIL :accessor detached-size)
    (resizing-self :initform NIL :accessor resizing-self))
   (:default-initargs
    :container NIL
-   :icon NIL 
+   :icon NIL
    :title NIL
    :detachable T
    :collapsable T
