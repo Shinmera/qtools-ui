@@ -247,6 +247,11 @@
    #:progress
    #:maximum
    #:minimum)
+  ;; placeholder-text-edit.lisp
+  (:export
+   #:placeholder-text-edit
+   #:placeholder
+   #:placeholder-font)
   ;; repaintable.lisp
   (:export
    #:repaint

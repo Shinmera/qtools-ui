@@ -36,6 +36,7 @@
                :qtools-ui-listing
                :qtools-ui-options
                :qtools-ui-panels
+               :qtools-ui-placeholder-text-edit
                :qtools-ui-plot
                :qtools-ui-repl
                :qtools-ui-slider
