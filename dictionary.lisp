@@ -22,7 +22,7 @@
     (make-instance 'dictionary-browser :dictionary dictionary)
   (setf (q+:html browser) empty-browser-text))
 
-(define-subwidget (dictionary input) (q+:make-qlineedit))
+(define-subwidget (dictionary dictionary-input) (q+:make-qlineedit))
 
 (defun make-text-qtoolbutton (text)
   (let ((button (q+:make-qtoolbutton)))
@@ -32,12 +32,12 @@
     button))
 
 (define-subwidget (dictionary button) (make-text-qtoolbutton "Search")
-  (setf (q+:focus input) (q+:qt.other-focus-reason)))
+  (setf (q+:focus dictionary-input) (q+:qt.other-focus-reason)))
 
 (define-subwidget (dictionary layout) (q+:make-qgridlayout dictionary)
   (setf (q+:contents-margins layout) (values 0 0 0 0))
   (q+:add-widget layout browser 0 0 1 2)
-  (q+:add-widget layout input 1 0)
+  (q+:add-widget layout dictionary-input 1 0)
   (q+:add-widget layout button 1 1))
 
 (defun trim-whitespace (string)
@@ -45,8 +45,8 @@
 
 (define-slot (dictionary search) ()
   (declare (connected button (clicked)))
-  (declare (connected input (return-pressed)))
-  (let ((text (trim-whitespace (q+:text input))))
+  (declare (connected dictionary-input (return-pressed)))
+  (let ((text (trim-whitespace (q+:text dictionary-input))))
     (when (string/= "" text)
       (let ((response (htmlize-wordnet (wordnet:wordnet-describe* text))))
         (if (string/= "" response)
@@ -60,11 +60,14 @@
   (%set-focus-from-browser dictionary new))
 
 (defmethod set-focus-from-browser ((dictionary dictionary) old (new qobject))
-  (with-slots-bound (dictionary dictionary)
-    (when (eq new browser)
-      (setf (q+:focus input) (q+:qt.other-focus-reason)))))
+  (%set-focus-from-browser dictionary new))
 
 (defmethod set-focus-from-browser ((dictionary dictionary) old new))
+
+(defun %set-focus-from-browser (dictionary new)
+  (with-slots-bound (dictionary dictionary)
+    (when (eq new browser)
+      (setf (q+:focus dictionary-input) (q+:qt.other-focus-reason)))))
 
 (defun htmlize-wordnet (results)
   (with-output-to-string (*standard-output*)
@@ -110,7 +113,7 @@
              (string= clicked-anchor
                       (q+:anchor-at dictionary-browser (q+:pos event))))
     (let ((text (substitute #\Space #\_ (subseq clicked-anchor 1))))
-      (setf (q+:text (slot-value dictionary 'input)) text
+      (setf (q+:text (slot-value dictionary 'dictionary-input)) text
             (q+:html dictionary-browser)
             (htmlize-wordnet (wordnet:wordnet-describe* text)))))
   (call-next-qmethod))

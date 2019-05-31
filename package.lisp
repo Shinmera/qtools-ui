@@ -71,6 +71,7 @@
   ;; dictionary.lisp
   (:export
    #:dictionary
+   #:dictionary-input
    #:empty-browser-text
    #:not-found-text)
   ;; drag-and-drop.lisp
