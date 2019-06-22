@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-layout
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "The basic layout and item-layout components required to build layouts."

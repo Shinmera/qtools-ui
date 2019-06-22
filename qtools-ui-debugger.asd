@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-debugger
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "A portable debugger to handle and display errors."

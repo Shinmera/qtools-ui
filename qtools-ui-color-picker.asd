@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-color-picker
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "A color picker dialog alternative to QColorChooser"

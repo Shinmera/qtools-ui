@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-helpers
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "A collection of useful little helper widgets."

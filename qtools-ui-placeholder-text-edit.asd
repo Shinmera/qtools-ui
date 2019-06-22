@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-placeholder-text-edit
-  :license "Artistic"
+  :license "zlib"
   :author "Michał \"phoe\" Herda <phoe@disroot.org>"
   :maintainer "Michał \"phoe\" Herda <phoe@disroot.org>"
   :description "A QTextEdit with placeholder text."

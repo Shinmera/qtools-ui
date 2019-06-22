@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-flow-layout
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "A flow-layout that lets widgets flow to the next line."

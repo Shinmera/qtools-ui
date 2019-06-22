@@ -5,7 +5,7 @@
 |#
 
 (asdf:defsystem qtools-ui-imagetools
-  :license "Artistic"
+  :license "zlib"
   :author "Michał \"phoe\" Herda <phoe@disroot.org>"
   :maintainer "Michał \"phoe\" Herda <phoe@disroot.org>"
   :description "Toolkit for dealing with QImage files in Qt."

@@ -5,7 +5,7 @@
 |#
 
 (asdf:defsystem qtools-ui-fixed-qtextedit
-  :license "Artistic"
+  :license "zlib"
   :author "Michał \"phoe\" Herda <phoe@disroot.org>"
   :maintainer "Michał \"phoe\" Herda <phoe@disroot.org>"
   :description "QTextEdit with working context menu - workaround for QTBUG-9592"

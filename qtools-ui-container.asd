@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-container
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "A basic superclass for arbitrary element container layouts."

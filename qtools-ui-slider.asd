@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-slider
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "A more convenient slider than the QSlider."

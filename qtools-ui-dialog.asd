@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-dialog
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "Helper classes for constructing dialogs."

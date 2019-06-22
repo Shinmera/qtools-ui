@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-listing
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "A basic item listing widget that allows selection, sorting, and dragging."

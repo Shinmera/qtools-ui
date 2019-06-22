@@ -7,7 +7,7 @@
 
 (asdf:defsystem qtools-ui
   :version "0.1.0"
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "A collection of components and utilities for use in Qt applications."

@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-base
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "Qtools-UI's base toolkit, package, and documentation."

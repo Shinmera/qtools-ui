@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-color-triangle
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "An HSV color wheel triangle as used in graphics applications."

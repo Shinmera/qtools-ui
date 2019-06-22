@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-cell
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "An item-widget that presents a draggable and selectable cell."

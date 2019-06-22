@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-dictionary
-  :license "Artistic"
+  :license "zlib"
   :author "Michał \"phoe\" Herda <phoe@disroot.org>"
   :maintainer "Michał \"phoe\" Herda <phoe@disroot.org>"
   :description "A widget allowing lookups in English WordNet dictionary."

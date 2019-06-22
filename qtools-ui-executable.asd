@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-executable
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "Provides synchronisation between threads by allowing execution of functions within the gui thread."

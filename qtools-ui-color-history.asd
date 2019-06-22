@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-color-history
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "A simple history for colors."

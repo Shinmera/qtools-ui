@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-repl
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "An implementation of a REPL."

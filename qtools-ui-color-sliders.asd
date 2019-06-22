@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-color-sliders
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "A color slider widgets as used in graphics applications."

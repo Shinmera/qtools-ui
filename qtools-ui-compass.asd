@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-compass
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "A compass layout orienting things N/E/S/W/C."

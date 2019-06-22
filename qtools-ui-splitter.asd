@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-splitter
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "A better version of the QSplitter, allowing a dynamic size based on the components' size."

@@ -6,7 +6,7 @@
 
 
 (asdf:defsystem qtools-ui-panels
-  :license "Artistic"
+  :license "zlib"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :maintainer "Nicolas Hafner <shinmera@tymoon.eu>"
   :description "A panelling system that allows floating, docking, and collapsing."
