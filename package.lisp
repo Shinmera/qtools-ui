@@ -9,6 +9,10 @@
 (defpackage #:qtools-ui
   (:nicknames #:qui #:org.shirakumo.qtools.ui)
   (:use #:cl+qt)
+  ;; auto-resizing-textedit.lisp
+  (:export
+   #:auto-resizing-textedit
+   #:minimum-lines)
   ;; bytearray.lisp
   (:export
    #:from-byte-array
