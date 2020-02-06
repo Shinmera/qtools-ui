@@ -7,6 +7,18 @@
 (in-package #:org.shirakumo.qtools.ui)
 (in-readtable :qtools)
 
+;; auto-resizing-textedit.lisp
+(docs:define-docs
+  (cl:function minimum-lines
+    "Accesses the minimum lines value of the auto-resizing text edit.")
+
+  (type auto-resizing-textedit
+    "A QTextEdit whose height automatically adjusts based on its text when it is
+placed inside a layout.
+
+The height computation assumes that only the standard font is used in the
+document."))
+
 ;; bytearray.lisp
 (docs:define-docs
   (cl:function from-byte-array

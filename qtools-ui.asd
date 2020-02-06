@@ -15,7 +15,8 @@
   :bug-tracker "https://github.com/Shinmera/qtools-ui/issues"
   :source-control (:git "https://github.com/Shinmera/qtools-ui.git")
   :serial T
-  :depends-on (:qtools-ui-base
+  :depends-on (:qtools-ui-auto-resizing-textedit
+               :qtools-ui-base
                :qtools-ui-cell
                :qtools-ui-color-history
                :qtools-ui-color-picker
